@@ -12,13 +12,16 @@ body {
     font-family: 'Inter', sans-serif;
     background-color: #000000;
     color: #e0e0e0;
-    scroll-behavior: smooth;
+    scroll-behavior: smooth; /* Smooth scroll for internal links (if any) */
 }
 .search-modal-content { max-height: 80vh; }
+
+/* Scrollbar Styling (WebKit - Chrome, Safari, Edge) */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: #0a0a0a; }
 ::-webkit-scrollbar-thumb { background: #555; border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: #777; }
+/* Firefox will use its default scrollbar, which is fine */
 
 /* Heading Glows */
 h1 {
@@ -43,7 +46,7 @@ h1 {
 }
 
 /* Section-specific heading glows */
-#home h2, #genetics-lab h2, #automation-iot h2, #calculators h2 { 
+#home h2, #genetics h2, #automation h2, #calculators h2 { 
     text-shadow: 0 0 var(--glow-blur-light) var(--grohio-purple); 
     border-color: var(--grohio-purple); 
 }
@@ -60,7 +63,7 @@ h1 {
     border-color: var(--grohio-red); 
 }
 
-#home h3, #genetics-lab h3, #automation-iot h3, #calculators h3 { 
+#home h3, #genetics h3, #automation h3, #calculators h3 { 
     text-shadow: 0 0 var(--glow-blur-light) var(--grohio-purple); 
     color: var(--grohio-purple); 
 }
@@ -77,6 +80,7 @@ h1 {
     color: var(--grohio-red); 
 }
 
+/* Content Typography */
 .content-section h4 {
     font-size: 1.25rem;
     font-weight: 700;
@@ -89,7 +93,7 @@ h1 {
 .content-section p, .content-section ul, .content-section ol {
     margin-bottom: 1.25rem;
     line-height: 1.8;
-    font-size: 1.05rem;
+    font-size: 1.05rem; /* Slightly larger for readability */
     color: #bbbbbb;
 }
 .content-section ul { list-style-type: disc; padding-left: 24px; }
@@ -122,6 +126,7 @@ h1 {
     transition: all 0.2s;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    font-size: 0.8rem; /* Smaller font for more buttons */
 }
 .nav-btn:hover {
     background-color: #282828;
@@ -164,7 +169,7 @@ h1 {
 #search-modal button { background-color: var(--grohio-blue); color: #000; transition: background-color 0.2s, box-shadow 0.2s; font-weight: 700;}
 #search-modal button:hover { background-color: #00a0d8; box-shadow: 0 0 12px 3px rgba(0, 191, 255, 0.8); }
 
-.spinner-color { border-color: var(--grohio-purple); border-top-color: transparent;}
+.spinner-color { border-color: var(--grohio-purple); border-top-color: transparent;} /* Spinner animation color */
 .note {
     background-color: #111;
     border-left: 6px solid var(--grohio-red);
@@ -175,23 +180,24 @@ h1 {
 }
 .note strong { color: var(--grohio-red); }
 
+/* Table Styling */
 .table-auto { width: 100%; border-collapse: collapse; margin: 2rem 0; font-size: 0.95rem;}
 .table-auto th, .table-auto td { border: 1px solid #222; padding: 0.9rem; text-align: left;}
 .table-auto th { background-color: #1a1a1a; color: #f0f0f0; font-weight: 700; border-bottom: 3px solid var(--grohio-blue);}
 .table-auto td { color: #bbb;}
 .table-auto tr:nth-child(even) { background-color: #050505; }
 
-/* Specific styling for the GROHIO logo to enable horizontal stretch */
+/* GROHIO Logo Styling */
 #grohio-logo-img {
-     width: 100%; /* Allows it to stretch to its container's width */
+     width: 100%; /* Stretches to container width */
      height: auto; /* Maintains aspect ratio */
-     max-width: 80%; /* Limits maximum width if window is super wide */
-     object-fit: contain; /* Ensures the entire image is visible within its bounds */
+     max-width: 80%; /* Prevents it from being TOO wide on ultrawide screens */
+     object-fit: contain; 
      margin-left: auto;
      margin-right: auto;
 }
 
-/* Calculator Styles (unchanged) */
+/* Calculator Styles */
 .calculator-container {
     background-color: #0d0d0d;
     padding: 2rem;
@@ -206,6 +212,7 @@ h1 {
     padding: 0.75rem;
     border-radius: 0.5rem;
     transition: border-color 0.2s;
+    font-size: 1.1rem;
 }
 .calc-input:focus {
     outline: none;
@@ -222,8 +229,28 @@ h1 {
     font-size: 1.15rem;
     box-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
     min-height: 5rem;
+    display: flex; /* Use flex to center text vertically and horizontally */
+    align-items: center;
+    justify-content: center;
 }
-.source-link { color: var(--grohio-blue); text-decoration: underline; font-size: 0.9rem; margin-top: 0.5rem; display: block; }
-.source-container { border-top: 1px solid #333; margin-top: 1rem; padding-top: 1rem; font-size: 0.9rem; }
-.source-container p { margin-bottom: 0.5rem; line-height: 1.4; color: #999; }
 
+/* Search Modal Source Link Styling */
+.source-link { 
+    color: var(--grohio-blue); 
+    text-decoration: underline; 
+    font-size: 0.9rem; 
+    margin-top: 0.5rem; 
+    display: block; 
+    word-break: break-all; /* Prevents long links from overflowing */
+}
+.source-container { 
+    border-top: 1px solid #333; 
+    margin-top: 1rem; 
+    padding-top: 1rem; 
+    font-size: 0.9rem; 
+}
+.source-container p { 
+    margin-bottom: 0.5rem; 
+    line-height: 1.4; 
+    color: #999; 
+}
