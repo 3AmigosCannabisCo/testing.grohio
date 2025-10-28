@@ -3,851 +3,354 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Grow Guide by 3 Amigos Cannabis Co.</title>
+    <title>GROHIO by 3 Amigos Cannabis Co.: Quantum CEA Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            /* GROHIO Neon Palette */
-            --grohio-red: #ff3162; /* Vibrant Pink/Red from text */
-            --grohio-blue: #00bfff; /* Bright Blue from swirl */
-            --grohio-green: #39ff14; /* Lime Green from swirl */
-            --grohio-purple: #9f50ff; /* Bright Purple from swirl */
-            --glow-blur: 10px;
-            --glow-blur-light: 5px;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #000000; /* Pure Black Background */
-            color: #e0e0e0; /* Lighter base text */
-        }
-        .search-modal-content { max-height: 80vh; }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #1a1a1a; }
-        ::-webkit-scrollbar-thumb { background: #555; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #777; }
-
-        /* Heading Glows - GROHIO Style */
-        h1 {
-            text-shadow: 0 0 var(--glow-blur) var(--grohio-red), 0 0 calc(var(--glow-blur) * 1.5) var(--grohio-red);
-            color: #fff;
-        }
-        .content-section h2 {
-            font-size: 2rem;
-            font-weight: 900;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom-width: 3px;
-            color: #ffffff;
-            letter-spacing: -0.05em;
-        }
-        .content-section h3 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-            color: #f5f5f5;
-        }
-         /* Section-specific heading glows */
-         #home h2, #advanced h2, #tools h2 { text-shadow: 0 0 var(--glow-blur-light) var(--grohio-purple); border-color: var(--grohio-purple); }
-         #legal h2, #indoor h2 { text-shadow: 0 0 var(--glow-blur-light) var(--grohio-blue); border-color: var(--grohio-blue); }
-         #outdoor h2 { text-shadow: 0 0 var(--glow-blur-light) var(--grohio-green); border-color: var(--grohio-green); }
-         #pests h2 { text-shadow: 0 0 var(--glow-blur-light) var(--grohio-red); border-color: var(--grohio-red); }
-
-         #home h3, #advanced h3, #tools h3 { text-shadow: 0 0 var(--glow-blur-light) var(--grohio-purple); color: var(--grohio-purple); }
-         #legal h3, #indoor h3 { text-shadow: 0 0 var(--glow-blur-light) var(--grohio-blue); color: var(--grohio-blue); }
-         #outdoor h3 { text-shadow: 0 0 var(--glow-blur-light) var(--grohio-green); color: var(--grohio-green); }
-         #pests h3 { text-shadow: 0 0 var(--glow-blur-light) var(--grohio-red); color: var(--grohio-red); }
-
-        .content-section h4 {
-            font-size: 1.15rem;
-            font-weight: 600;
-            margin-top: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: #cccccc;
-        }
-        .content-section p, .content-section ul, .content-section ol {
-            margin-bottom: 1rem;
-            line-height: 1.7;
-            font-size: 1.05rem;
-            color: #bbbbbb;
-        }
-        .content-section ul { list-style-type: disc; padding-left: 20px; }
-        .content-section ol { list-style-type: decimal; padding-left: 20px; }
-        .content-section li { margin-bottom: 0.5rem; }
-         .content-section strong { color: #f0f0f0; }
-        .content-section code {
-            background-color: #1a1a1a;
-            padding: 3px 7px;
-            border-radius: 6px;
-            font-family: monospace;
-            color: #f0f0f0;
-        }
-        .card {
-            background-color: #0d0d0d;
-            border: 1px solid #333;
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-            border-radius: 1rem;
-        }
-        /* Card Glow on Hover */
-        #home .card:nth-child(1):hover { box-shadow: 0 0 15px 3px rgba(0, 191, 255, 0.6); transform: translateY(-5px); border-color: var(--grohio-blue);} /* Blue Glow */
-        #home .card:nth-child(2):hover { box-shadow: 0 0 15px 3px rgba(57, 255, 20, 0.6); transform: translateY(-5px); border-color: var(--grohio-green);} /* Green Glow */
-
-        /* Button Styling */
-        .nav-btn {
-            background-color: #181818;
-            color: #bbb;
-            cursor: pointer;
-            border: 1px solid #444;
-            transition: background-color 0.2s, box-shadow 0.2s, color 0.2s;
-        }
-        .nav-btn:hover {
-            background-color: #282828;
-            color: #fff;
-            border-color: var(--grohio-blue);
-            box-shadow: 0 0 8px 1px rgba(0, 191, 255, 0.7);
-        }
-        .nav-btn.active {
-            background-color: var(--grohio-red) !important;
-            color: #000 !important;
-            border-color: var(--grohio-red);
-            box-shadow: 0 0 12px 3px rgba(255, 49, 98, 0.8);
-        }
-
-        .nav-btn-internal { cursor: pointer; transition: text-shadow 0.2s; }
-        .nav-btn-internal:hover { text-shadow: 0 0 8px currentColor; }
-
-        /* Neon Color Classes */
-        .text-brand-red { color: var(--grohio-red); }
-        .text-brand-blue { color: var(--grohio-blue); }
-        .text-brand-green { color: var(--grohio-green); }
-        .text-brand-purple { color: var(--grohio-purple); }
-        .border-brand-red { border-color: var(--grohio-red); }
-        .border-brand-blue { border-color: var(--grohio-blue); }
-        .border-brand-green { border-color: var(--grohio-green); }
-        .border-brand-purple { border-color: var(--grohio-purple); }
-
-        /* Search Input/Modal */
-        .search-input-focus:focus {
-            box-shadow: 0 0 0 3px rgba(0, 191, 255, 0.6);
-            border-color: var(--grohio-blue);
-        }
-        #search-modal { background-color: rgba(0,0,0, 0.9); }
-        #search-modal > div {
-            background-color: #050505;
-            border: 1px solid var(--grohio-purple);
-            box-shadow: 0 0 25px 5px rgba(159, 80, 255, 0.5);
-        }
-        #search-modal h2 { text-shadow: 0 0 8px var(--grohio-purple); }
-        #search-modal button { background-color: var(--grohio-blue); color: #000; transition: background-color 0.2s, box-shadow 0.2s; }
-        #search-modal button:hover { background-color: #00a0d8; box-shadow: 0 0 10px 2px rgba(0, 191, 255, 0.7); }
-
-        .spinner-color { border-color: var(--grohio-purple); }
-        .note {
-            background-color: #111;
-            border-left: 4px solid #444;
-            padding: 1rem;
-            margin: 1.5rem 0;
-            border-radius: 0.5rem;
-        }
-        .note strong { color: #ccc; }
-         .table-auto { width: 100%; border-collapse: collapse; margin: 1.5rem 0;}
-        .table-auto th, .table-auto td { border: 1px solid #444; padding: 0.75rem; text-align: left;}
-        .table-auto th { background-color: #1a1a1a; color: #f0f0f0; font-weight: 600;}
-        .table-auto td { color: #bbb;}
-        #logo-img {
-             width: 14rem;
-             height: 14rem;
-             margin-bottom: 1rem;
-             object-fit: contain;
-             filter: drop-shadow(0 0 10px rgba(159, 80, 255, 0.6)); /* Subtle purple glow */
-        }
-    </style>
+    <!-- Linking external CSS --><link rel="stylesheet" href="./style.css">
 </head>
 <body class="bg-black text-gray-300">
 
-    <div id="app" class="max-w-4xl mx-auto p-4 md:p-6">
-        <header class="text-center mb-8 flex flex-col items-center">
-            <img id="logo-img" src="" alt="3 Amigos Cannabis Co. Logo">
-            <h1 class="text-5xl font-black text-white uppercase tracking-tighter">The Grow Guide</h1>
-            <p class="text-lg text-gray-400 mt-2">by 3 Amigos Cannabis Co.</p>
+    <div id="app" class="max-w-5xl mx-auto p-4 md:p-8">
+        <header class="text-center mb-10 flex flex-col items-center">
+            <!-- GROHIO Logo (Stretched Horizontally) --><img id="grohio-logo-img" src="https://raw.githubusercontent.com/3AmigosCannabisCo/testing.grohio/main/grohio_nobg.png" 
+                 alt="GROHIO by 3 Amigos Cannabis Co. Logo" 
+                 class="w-full h-auto max-w-4xl mb-4" 
+                 style="filter: drop-shadow(0 0 18px var(--grohio-purple));">
+            
+            <h1 class="text-6xl font-black text-white uppercase tracking-tighter hidden">GROHIO V11.0</h1> <!-- Hidden as image now carries the text --><p class="text-xl text-gray-400 mt-3 hidden">Quantum Controlled Environment Agriculture (CEA) Platform by 3 Amigos Cannabis Co.</p> <!-- Hidden as text is now in footer --><p id="user-id-display" class="text-xs text-gray-600 mt-1">Authenticating...</p>
         </header>
 
-         <!-- Sticky Search Bar -->
-        <div class="sticky top-0 z-10 bg-black/80 backdrop-blur-sm py-4 mb-8">
+         <!-- Sticky Search Bar --><div class="sticky top-0 z-20 bg-black/90 backdrop-blur-md py-4 mb-8 border-b-2 border-gray-900 shadow-xl">
             <div class="relative">
-                <input type="search" id="search-input" placeholder="Ask the Amigos anything..." class="w-full p-4 pl-12 text-lg border-2 border-gray-700 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition bg-gray-900 text-white placeholder-gray-500 search-input-focus">
+                <input type="search" id="search-input" placeholder="Ask GROHIO anything (powered by Gemini/Google Search)..." class="w-full p-4 pl-12 text-lg border-2 border-gray-700 rounded-full focus:ring-4 focus:ring-brand-blue transition bg-gray-900 text-white placeholder-gray-500 search-input-focus">
                 <div class="absolute inset-y-0 left-0 flex items-center pl-4">
                     <svg class="h-6 w-6 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </div>
             </div>
         </div>
 
-        <!-- Navigation Buttons -->
-        <nav class="flex flex-wrap justify-center gap-2 md:gap-4 mb-10">
-            <button data-section="home" class="nav-btn active px-5 py-2 rounded-full font-semibold shadow-md transition">🏠 Home</button>
-            <button data-section="legal" class="nav-btn px-5 py-2 rounded-full font-semibold shadow-md transition">⚖️ Legal Guide</button>
-            <button data-section="indoor" class="nav-btn px-5 py-2 rounded-full font-semibold shadow-md transition">💡 Indoor Grow</button>
-            <button data-section="outdoor" class="nav-btn px-5 py-2 rounded-full font-semibold shadow-md transition">☀️ Outdoor Grow</button>
-            <button data-section="pests" class="nav-btn px-5 py-2 rounded-full font-semibold shadow-md transition">🐛 Problem Hub</button>
-            <button data-section="advanced" class="nav-btn px-5 py-2 rounded-full font-semibold shadow-md transition">👨‍🔬 Advanced Tech</button>
-            <button data-section="tools" class="nav-btn px-5 py-2 rounded-full font-semibold shadow-md transition">🛠️ Tools & Products</button>
+        <!-- Navigation Buttons (Content unchanged) --><nav class="flex flex-wrap justify-center gap-2 md:gap-3 mb-12">
+            <button data-section="home" class="nav-btn active px-4 py-2 rounded-full font-semibold transition">🏠 Home</button>
+            <button data-section="legal" class="nav-btn px-4 py-2 rounded-full font-semibold transition">⚖️ Legal</button>
+            <button data-section="indoor" class="nav-btn px-4 py-2 rounded-full font-semibold transition">💡 Indoor CEA</button>
+            <button data-section="outdoor" class="nav-btn px-4 py-2 rounded-full font-semibold transition">☀️ Outdoor</button>
+            <button data-section="pests" class="nav-btn px-4 py-2 rounded-full font-semibold transition">🐛 Problem Hub</button>
+            <button data-section="genetics-lab" class="nav-btn px-4 py-2 rounded-full font-semibold transition">🧬 Genetics Lab</button>
+            <button data-section="automation-iot" class="nav-btn px-4 py-2 rounded-full font-semibold transition">⚙️ Automation & IoT</button>
+            <button data-section="calculators" class="nav-btn px-4 py-2 rounded-full font-semibold transition">🛠️ Calculators</button>
         </nav>
 
-        <!-- Main Content Area (Full Robust Content Restored) -->
-        <main id="main-content">
-            <div id="home" class="content-section">
-                <h2 class="border-brand-purple">Welcome, Ohio Grower!</h2>
-                <p>Embark on your cannabis cultivation journey with confidence! This guide, brought to you by 3 Amigos Cannabis Co., is designed to be your comprehensive, university-level companion for successfully and legally growing cannabis at home in Ohio. We delve deep into the science and art of cultivation, breaking down complex topics into understandable steps for the intelligent beginner.</p>
+        <!-- Main Content Area --><main id="main-content">
+            <!-- HOME SECTION --><div id="home" class="content-section">
+                <h2 class="border-brand-purple">Welcome to the GROHIO Quantum Lab</h2>
+                <p>This platform represents the culmination of industry-leading research, data analysis, and open-source cultivation knowledge. Our goal is to transform the Ohio home grower into an elite **Controlled Environment Agriculture ($\text{CEA}$) Scientist**, maximizing **yield** (biomass), **potency** (cannabinoids), and **quality** (terpene profile).</p>
                  <div class="note">
-                    <p><strong>Our Philosophy: Knowledge is Yield.</strong> We believe that understanding the 'why' behind each technique—the plant science, the environmental factors, the chemical processes—empowers you to become a truly intuitive and successful grower. This guide is intentionally detailed; treat it as your go-to reference throughout your cultivation adventure.</p>
+                    <p><strong>MISSION CRITICAL: Data-Driven Cultivation.</strong> Success hinges on controlling the micro-environment. Utilize the **Calculators** tab and **Amigo Answers** search to maintain optimal $\text{VPD}$, $\text{DLI}$, and nutrient concentration ($\text{EC}/\text{PPM}$). **Precision is Profit.**</p>
                 </div>
-                <p>Whether you choose the controlled precision of indoor growing or harness the natural power of the sun outdoors, this guide provides the detailed knowledge you need. Explore the sections using the navigation above, or use the search bar (currently in preview mode) to jump directly to specific topics.</p>
+
+                <h3 class="text-brand-purple">Core Pillars of Quantum Cultivation</h3>
+                <ol>
+                    <li>**Environmental Control:** Dial in Vapor Pressure Deficit ($\text{VPD}$) and Daily Light Integral ($\text{DLI}$) with absolute precision.</li>
+                    <li>**Genomic Selection:** Choose phenos based on desired chemotypes, flowering speed, and specific disease resistance.</li>
+                    <li>**High-Frequency Fertigation ($\text{HFF}$):** Master inert substrates (Coco, Rockwool) and deliver targeted, frequent nutrient doses to ensure constant root health and rapid growth.</li>
+                    <li>**IPM & Biosecurity:** Implement aggressive Integrated Pest Management protocols, prioritizing beneficial insects and biosecurity to eliminate chemical intervention.</li>
+                </ol>
+
                 <div class="grid md:grid-cols-2 gap-8 mt-10">
-                    <div class="card p-8 shadow-lg">
-                        <h3 class="mt-0 text-brand-blue">💡 Indoor Growing: The Controlled Universe</h3>
-                        <p>Master the intricate dance of light, air, water, and nutrients in a controlled environment. Ideal for year-round harvests, strain-specific optimization, and achieving top-tier potency and aesthetics. Dive into the science of CEA (Controlled Environment Agriculture).</p>
-                        <button data-section="indoor" class="mt-5 text-brand-blue font-semibold hover:underline nav-btn-internal">Explore the Indoor Guide &rarr;</button>
+                    <div class="card p-8 shadow-lg border-brand-blue hover:box-shadow: 0 0 20px 5px rgba(0, 191, 255, 0.8);">
+                        <h3 class="mt-0 text-brand-blue">💡 The CEA Protocol</h3>
+                        <p>Explore the protocols for indoor cultivation, focusing on advanced substrates like Rockwool, $\text{HFF}$ techniques, and maximizing yield density through strategic pruning and trellising.</p>
+                        <button data-section="indoor" class="mt-5 text-brand-blue font-semibold hover:underline nav-btn-internal">Optimize Your Indoor Lab &rarr;</button>
                     </div>
-                    <div class="card p-8 shadow-lg">
-                        <h3 class="mt-0 text-brand-green">☀️ Outdoor Growing: Nature's Bounty</h3>
-                        <p>Partner with the sun and soil to cultivate robust, flavorful plants, often with larger yields than indoor setups. Learn to adapt to Ohio's unique climate, leverage natural pest control, and produce incredible sun-grown cannabis.</p>
-                        <button data-section="outdoor" class="mt-5 text-brand-green font-semibold hover:underline nav-btn-internal">Explore the Outdoor Guide &rarr;</button>
+                    <div class="card p-8 shadow-lg border-brand-green hover:box-shadow: 0 0 20px 5px rgba(57, 255, 20, 0.8);">
+                        <h3 class="mt-0 text-brand-green">⚙️ Data & Automation</h3>
+                        <p>Learn how to use microcontrollers ($\text{Raspberry Pi}$/$\text{Arduino}$) and open-source software to log environmental data ($\text{JSON}$ format) and automate your grow room for absolute stability. </p>
+                        <button data-section="automation-iot" class="mt-5 text-brand-green font-semibold hover:underline nav-btn-internal">Implement IoT Control &rarr;</button>
                     </div>
                 </div>
             </div>
-            <div id="legal" class="content-section hidden">
-                <h2 class="border-brand-blue">⚖️ Ohio Cultivation Law: Navigating Compliance</h2>
+
+            <!-- LEGAL SECTION --><div id="legal" class="content-section hidden">
+                <h2 class="border-brand-blue">⚖️ Ohio Compliance & Transport Protocol (ORC 3780.35)</h2>
                 <div class="note">
-                    <p><strong>Crucial Disclaimer:</strong> This information reflects our understanding of Ohio law as of late 2024 and serves educational purposes ONLY. It is NOT legal advice. Laws are complex, subject to change, and interpretation varies. Always consult the official, most current text of the Ohio Revised Code (ORC) and seek advice from a qualified legal professional regarding your specific circumstances and property.</p>
+                    <p><strong>LEGAL WARNING:</strong> This detailed breakdown is for educational purposes only and does not constitute legal advice. Laws are dynamic. Your grow must strictly adhere to the Ohio Revised Code ($\text{ORC}$) concerning personal cultivation, possession, and transport. Always consult the most current $\text{ORC}$ text and a legal professional.</p>
                 </div>
-                 <h3 class="text-brand-blue">Core Provisions for Personal Use (Adults 21+)</h3>
+                 <h3 class="text-brand-blue">Deep Dive: Cultivation Requirements</h3>
                 <ul>
-                    <li><strong>Eligibility:</strong> Must be 21 years of age or older.</li>
-                    <li><strong>Location Restriction:</strong> Cultivation is permitted ONLY at your **primary residence**. This means the place where you predominantly live. Growing at secondary properties, business locations, or anywhere else is prohibited.</li>
-                    <li><strong>Plant Count Limits (Strictly Enforced):</strong>
-                        <ul>
-                            <li><strong>Per Individual:</strong> An adult (21+) may cultivate, possess, and process up to **six (6)** cannabis plants.</li>
-                            <li><strong>Per Household:</strong> Regardless of the number of adults (21+) residing there, a single household/residence is limited to a maximum of **twelve (12)** cannabis plants total. This is a firm cap per dwelling.</li>
-                            <li><strong>Definition of "Plant":</strong> While not explicitly defined in minute detail in the initial statute, generally refers to a plant beyond the seedling stage. Assume any rooted plant counts towards your limit.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Security & Concealment Requirements:</strong>
-                        <ul>
-                            <li><strong>Secure Location:</strong> Plants must be grown within a **secure, enclosed area**. Examples include a locked room, closet, basement, or a dedicated grow tent within your residence. The area must reasonably prevent unauthorized access.</li>
-                            <li><strong>Inaccessibility to Minors:</strong> The cultivation area MUST be secured in a way that prevents access by anyone under the age of 21. This often implies a locked door or container.</li>
-                            <li><strong>No Public Visibility:</strong> This is a key requirement. Plants must **NOT be visible "using normal unaided vision"** from a public space. Growing on balconies, front porches, or near windows facing public streets is prohibited. Outdoor grows must typically be behind a solid, opaque fence (at least 6 feet high is a common standard, though not explicitly stated in the law) within your private yard.</li>
-                        </ul>
-                    </li>
-                     <li><strong>Possession Limits from Home Cultivation:</strong> The general public possession limit is 2.5 ounces of flower. However, the amount of cannabis harvested and possessed *at your residence* derived *from your personal cultivation* is not subject to this specific limit, provided it is solely for personal use and stored securely. Transporting amounts over the public limit outside your home remains illegal.</li>
-                    <li><strong>Prohibition on Distribution & Sale:</strong> It is **strictly illegal** to sell, trade, barter, gift-for-remuneration, or distribute homegrown cannabis in any way. All cultivated cannabis must be for the personal use of the residents (21+) of that household.</li>
-                </ul>
-                <h3 class="text-brand-blue">Potential Penalties & Considerations</h3>
-                <ul>
-                    <li>Exceeding plant counts, growing outside the primary residence, failing security/visibility requirements, or distribution can lead to significant legal penalties, including fines and potential criminal charges, depending on the severity of the violation.</li>
-                    <li>Landlord/HOA Rules: Renters should be aware that landlords may prohibit cultivation via lease agreements. Homeowners Associations (HOAs) may also have covenants restricting cultivation, especially outdoors. State law does not override private contracts or HOA rules.</li>
-                    <li>Odor Control: While not explicitly a legal violation *per se* under the cultivation statute, strong cannabis odors emanating from your property could potentially lead to nuisance complaints or attract unwanted attention. Indoor growers should strongly consider carbon filters.</li>
-                </ul>
-                <div class="note">
-                    <p><strong>Stay Informed:</strong> Cannabis laws and regulations can evolve. Regularly check official Ohio government websites (like the Department of Commerce) for updates or clarifications.</p>
-                </div>
-            </div>
-            <div id="indoor" class="content-section hidden">
-                <h2 class="border-brand-blue">💡 The Complete Indoor Grow Guide</h2>
-                <h3 class="text-brand-blue">Chapter 1: The Environment - Architecting Perfection</h3>
-                <p>Indoor cultivation is about creating a controlled ecosystem tailored to the precise needs of cannabis. You become the provider of light, air, water, and nutrients. Environmental stability is paramount; fluctuations stress plants, hindering growth and inviting problems.</p>
-
-                <h4 class="text-gray-300">Light Science: The Photosynthetic Engine 💡</h4>
-                <p>Light fuels photosynthesis, the process converting light energy into chemical energy (sugars) for growth. Quality and quantity matter immensely.</p>
-                <ul>
-                    <li><strong>Light Types Explained:</strong>
-                        <ul>
-                            <li><strong>LED (Light Emitting Diode):</strong> The modern standard. Highly efficient, tunable spectrums, low heat output. "Quantum boards" or "bar-style" LEDs offer excellent canopy penetration and uniformity. Invest in a quality, full-spectrum LED from a reputable manufacturer (e.g., Mars Hydro, Spider Farmer, AC Infinity, HLG). Avoid cheap "blurple" (blue/red diode only) lights – they lack crucial spectrums.</li>
-                            <li><strong>HID (High-Intensity Discharge):</strong> Older tech, includes Metal Halide (MH - blue spectrum for veg) and High-Pressure Sodium (HPS - red spectrum for flower). Powerful but inefficient, produce significant heat requiring robust ventilation/cooling.</li>
-                            <li><strong>CMH (Ceramic Metal Halide):</strong> A type of HID offering a fuller spectrum than traditional MH/HPS, good efficiency, but still generate considerable heat.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Key Light Metrics:</strong>
-                        <ul>
-                            <li><strong>PAR (Photosynthetically Active Radiation):</strong> The range of light wavelengths (400-700nm) plants use. A light's PAR map shows its effectiveness across the footprint.</li>
-                            <li><strong>PPF (Photosynthetic Photon Flux):</strong> Total PAR output of the light fixture per second (measured in µmol/s). Indicates the light's overall power.</li>
-                            <li><strong>PPFD (Photosynthetic Photon Flux Density):</strong> The crucial metric. Measures the amount of PAR hitting a specific area (your plant canopy) per second (µmol/m²/s). Use manufacturer PAR maps and potentially a PAR meter (expensive but accurate) to ensure correct PPFD levels.</li>
-                            <li><strong>DLI (Daily Light Integral):</strong> Total amount of PAR received over a 24-hour period. Calculated as `PPFD x (seconds of light per day) / 1,000,000`. Cannabis generally needs a DLI between 20-40 mol/m²/day during veg and 30-50+ mol/m²/day during flower.</li>
-                        </ul>
-                    </li>
-                     <li><strong>Target PPFD Levels:</strong>
-                        <ul>
-                            <li><strong>Seedlings/Clones:</strong> 100-300 µmol/m²/s (Low DLI: 6-12)</li>
-                            <li><strong>Vegetative Stage:</strong> 300-600 µmol/m²/s (Moderate DLI: 18-35)</li>
-                            <li><strong>Flowering Stage:</strong> 600-1000 µmol/m²/s (High DLI: 35-60). Above 1000 PPFD often requires CO2 supplementation for plants to utilize the extra light effectively.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Light Cycle (Photoperiod) Management:</strong>
-                        <ul>
-                            <li><strong>Vegetative (18/6):</strong> 18 hours ON, 6 hours OFF. Promotes leafy growth.</li>
-                            <li><strong>Flowering (12/12):</strong> 12 hours ON, 12 hours **uninterrupted** OFF. Triggers budding. Light leaks during the dark period are a major stressor and can cause hermaphroditism or revegetation. Ensure your space is light-proof!</li>
-                            <li><strong>Timers:</strong> Use reliable digital or mechanical timers to automate your light schedule precisely.</li>
-                        </ul>
-                    </li>
-                </ul>
-                <div class="note">
-                    <p><strong>VPD (Vapor Pressure Deficit):</strong> An advanced but crucial concept. VPD measures the difference between the amount of moisture the air *can* hold and the amount it *is* holding. It directly impacts the plant's transpiration rate (how it "sweats" water vapor). Maintaining optimal VPD ranges for each growth stage promotes faster growth and nutrient uptake. You'll need accurate temperature and humidity readings to calculate or reference a VPD chart. Generally: Seedlings (0.4-0.8 kPa), Veg (0.8-1.2 kPa), Flower (1.0-1.5 kPa).</p>
-                </div>
-
-                <h4 class="text-gray-300">Airflow Dynamics: Respiration & Environment Control 💨</h4>
-                <p>Plants need fresh air for CO2 uptake (photosynthesis) and oxygen (respiration). Airflow also manages heat and humidity produced by lights and transpiration.</p>
-                <ul>
-                    <li><strong>Exhaust System:</strong>
-                        <ul>
-                            <li><strong>Inline Fan:</strong> The engine of your ventilation. Pulls air out. Choose a size based on your tent volume (LxWxH in feet = Volume in cubic feet). Aim to exchange the air volume every 1-3 minutes (Volume / 1 = High CFM target, Volume / 3 = Low CFM target).</li>
-                            <li><strong>Carbon Filter:</strong> Essential for odor control. Attaches to the exhaust fan intake. Choose a filter rated for slightly higher CFM than your fan. Note: Filters reduce fan efficiency by ~25%.</li>
-                            <li><strong>Ducting:</strong> Connects fan and filter, vents air outside the tent (ideally outside the room or house).</li>
-                            <li><strong>Speed Controller:</strong> Highly recommended. Allows you to adjust fan speed to fine-tune temperature and humidity. AC Infinity fans with smart controllers are excellent for automating this based on sensor readings.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Intake:</strong> Fresh air needs to replace exhausted air. Passive intakes (screened vents at the tent bottom) are usually sufficient for small tents due to negative pressure. Larger setups might need an intake fan.</li>
-                    <li><strong>Internal Circulation:</strong> Small oscillating fans (clip-on or floor) are vital. They should create a gentle breeze that rustles leaves but doesn't blast the plants directly. Benefits: strengthens stems, prevents stagnant air pockets, reduces humidity around buds, helps deter pests.</li>
+                    <li>**Primary Residence Mandate:** Growing is strictly limited to the adult's ($\text{21+}$) **primary residence**. Any grow site outside of this is a felony offense.</li>
+                    <li>**Plant Count Enforcement:** **Household Maximum ($\text{12 plants}$):** This is non-negotiable. Exceeding this limit is a felony. Plants must be securely enclosed (locked room, locked tent, locked cabinet).</li>
+                    <li>**Visibility Check (The "Unaided Vision" Rule):** Plants must **not** be visible "using normal unaided vision" from any public space. Compliance requires opaque, secure fencing ($\text{6-8}$ feet high) for outdoor sites, or non-visible indoor placement.</li>
+                    <li>**Plant Definition:** While ambiguity exists, treat **any rooted plant** (beyond the unrooted cutting stage) as counting toward the $\text{12-plant}$ limit.</li>
                 </ul>
 
-                <h3 class="text-brand-blue">Chapter 2: The Grow Medium & Nutrition</h3>
-                <h4 class="text-gray-300">Choosing Your Foundation: Soil vs. Hydro</h4>
+                <h3 class="text-brand-blue">Possession, Storage, and Transport Limits</h3>
+                <h4 class="text-gray-300">Possession within the Primary Residence</h4>
+                <p>The $\text{ORC}$ allows an individual $\text{21+}$ to possess up to $\text{2.5}$ ounces of flower outside the home. However, the amount cultivated, processed, and stored **at the primary residence** derived from personal cultivation is not subject to this $\text{2.5 oz}$ limit, provided it is **securely locked** and solely for personal use. Storage must prevent access by minors ($\text{under 21}$).</p>
+
+                <h4 class="text-gray-300">Transport Protocol</h4>
                 <ul>
-                    <li><strong>Soil/Soilless Mixes:</strong> The most forgiving for beginners. Good soil acts as a buffer for pH and nutrients.
-                        <ul>
-                            <li><strong>Types:</strong> Potting mixes often contain peat moss, coco coir, perlite, compost, worm castings. "Super soils" are pre-amended with organic nutrients designed to feed the plant through most of its life with just water. Coco coir provides excellent aeration but requires more frequent watering/feeding and careful nutrient management (especially Cal-Mag).</li>
-                            <li><strong>Container Choice:</strong> Fabric pots are highly recommended over plastic. They allow roots to breathe and "air prune," preventing root circling and promoting a denser root mass. Choose appropriate sizes (e.g., 1-gal for veg, 5-7+ gal for final flower pot).</li>
-                        </ul>
-                    </li>
-                    <li><strong>Hydroponics/Deep Water Culture (DWC):</strong> Roots are suspended in or periodically flooded with nutrient-rich, oxygenated water. Offers faster growth potential but is less forgiving of errors in pH, nutrient levels, or water temperature. Requires more equipment (pumps, airstones, reservoirs).</li>
-                </ul>
-                <h4 class="text-gray-300">Plant Nutrition: Macronutrients & Micronutrients</h4>
-                <p>Cannabis needs a balanced diet. Nutrients are broadly categorized:</p>
-                <ul>
-                    <li><strong>Macronutrients (Needed in large amounts):</strong> Nitrogen (N), Phosphorus (P), Potassium (K). Ratios change based on growth stage (High N in Veg, High P/K in Flower). Also includes Calcium (Ca), Magnesium (Mg), Sulfur (S).</li>
-                    <li><strong>Micronutrients (Needed in trace amounts):</strong> Iron (Fe), Manganese (Mn), Zinc (Zn), Copper (Cu), Boron (B), Molybdenum (Mo). Deficiencies are less common but can occur, often linked to pH issues.</li>
-                    <li><strong>Nutrient Sources:</strong>
-                        <ul>
-                            <li><strong>Synthetic/Salt-Based:</strong> Immediately available to the plant. Precise control but easier to overfeed ("burn") plants. Requires careful measurement and monitoring of EC/PPM. Examples: General Hydroponics Flora Series, Advanced Nutrients pH Perfect.</li>
-                            <li><strong>Organic:</strong> Nutrients are broken down by microbes in the soil before becoming available to the plant. Slower release, less risk of burning, often results in better flavor. Requires building a healthy soil ecosystem. Examples: Gaia Green dry amendments, FoxFarm Big Bloom (liquid).</li>
-                        </ul>
-                    </li>
-                    <li><strong>Feeding Schedule & Strength:</strong> Start low! Begin with 1/4 to 1/2 the manufacturer's recommended dose. Observe your plants and gradually increase if they look healthy and hungry. "Less is more" is wise advice for beginners.</li>
-                    <li><strong>EC/PPM Monitoring (Especially Synthetics):</strong> Electrical Conductivity (EC) or Parts Per Million (PPM) measures the total dissolved solids (nutrient strength) in your water. Using an EC/PPM meter helps prevent over/underfeeding. Check both your input solution and the runoff water. High runoff EC compared to input EC indicates salt buildup in the medium.</li>
-                </ul>
-                <div class="note">
-                    <p><strong>The Crucial Role of pH:</strong> As stressed in the Problem Hub, pH controls nutrient availability. Even if nutrients are present, the wrong pH locks them out. Soil: 6.0-6.8. Coco/Hydro: 5.5-6.5. Always pH *after* adding nutrients/supplements. Invest in a quality digital pH pen and calibration solutions.</p>
-                </div>
-
-                <h3 class="text-brand-blue">Chapter 3: The Plant Lifecycle - Step-by-Step</h3>
-                <h4 class="text-gray-300">Phase 1: Germination (3-10 days)</h4>
-                <p>Goal: Convince the seed it's safe to sprout.</p>
-                <ol>
-                    <li><strong>Preparation:</strong> Gather seeds, paper towels, two plates, distilled/RO water (or tap water left out for 24hrs to dechlorinate).</li>
-                    <li><strong>Moisten Towels:</strong> Dampen paper towels – wet but not dripping.</li>
-                    <li><strong>Sandwich Seeds:</strong> Place seeds between damp towels on one plate.</li>
-                    <li><strong>Cover & Warmth:</strong> Cover with the second plate. Place in a consistently warm (70-80°F) dark place.</li>
-                    <li><strong>Check Daily:</strong> Keep towels damp. Look for the white taproot emerging.</li>
-                    <li><strong>Planting:</strong> Once taproot is 0.25-0.5 inches, gently plant (root down) 0.5 inches deep in a small container (solo cup w/ drainage holes) filled with light seedling mix or coco. Lightly cover.</li>
-                </ol>
-
-                <h4 class="text-gray-300">Phase 2: Seedling Stage (2-3 weeks post-sprout)</h4>
-                <p>Goal: Establish roots and first true leaves. Extreme vulnerability.</p>
-                <ul>
-                    <li><strong>Environment:</strong> High humidity (70-80% RH) via a dome. Warm temps (72-78°F). Low light intensity (100-300 PPFD, light far away or dimmed). Gentle airflow *after* true leaves appear.</li>
-                    <li><strong>Watering:</strong> Critical! Overwatering kills. Soil should be barely moist. Water only a small ring around the seedling when the top feels dry. Use a spray bottle initially.</li>
-                    <li><strong>First Leaves:</strong> Cotyledons (round) emerge first, then the first set of serrated "true" leaves.</li>
-                    <li><strong>Nutrients:</strong> Generally not needed for the first 1-2 weeks as the seedling uses stored energy and light soil mix nutrients. Introduce very dilute (1/8 strength) veg nutrients only if using inert media like coco or if leaves start yellowing *after* true leaves are established.</li>
-                </ul>
-
-                <h4 class="text-gray-300">Phase 3: Vegetative Stage (3-8+ weeks)</h4>
-                <p>Goal: Build a robust structure (roots, stems, leaves) to support future buds. Light: 18/6.</p>
-                <ul>
-                    <li><strong>Environment:</strong> Moderate humidity (50-70% RH). Temps 70-85°F. Increase light intensity (300-600 PPFD). Stronger airflow.</li>
-                    <li><strong>Transplanting:</strong> Move from starter cup to final pot when leaves overhang the cup edges. Avoid letting plants get rootbound.</li>
-                    <li><strong>Watering Technique:</strong> Water thoroughly until 10-20% runoff occurs. Allow medium to dry significantly before watering again (lift the pot method). Frequency depends on pot size, plant size, environment.</li>
-                    <li><strong>Feeding:</strong> Increase nutrient strength gradually based on plant response. Focus on Nitrogen (N). Monitor runoff pH and EC/PPM. Flush with plain pH'd water occasionally if runoff EC climbs too high.</li>
-                    <li><strong>Training:</strong> Begin LST or Topping/FIMing early in veg (after 4-5 nodes) to shape the plant. (See Advanced section).</li>
-                </ul>
-
-                <h4 class="text-gray-300">Phase 4: Flowering Stage (7-12+ weeks, strain dependent)</h4>
-                <p>Goal: Develop dense, potent, resinous buds. Triggered by switching lights to 12/12.</p>
-                <ul>
-                    <li><strong>The Transition/Stretch (Weeks 1-3):</strong> Plants often double or triple in height. Manage canopy height with training if needed. Some defoliation (removing large fan leaves blocking bud sites) can be beneficial now.</li>
-                    <li><strong>Environment Shift:</strong> CRITICAL! Lower humidity to 40-50% (even 35-45% in late flower) to prevent bud rot. Maintain temps (68-80°F). Strong airflow is vital around buds.</li>
-                    <li><strong>Nutrient Change:</strong> Switch to bloom nutrients (Lower N, Higher P & K). Some growers add bloom boosters during peak flower. Taper off nutrients (especially Nitrogen) in the last 1-2 weeks (the "flush").</li>
-                    <li><strong>Bud Development:</strong> Pistils appear, calyxes swell, trichomes develop. Patience is key.</li>
-                    <li><strong>Support:</strong> Buds get heavy! Use stakes, yo-yos, or a trellis net (ScrOG) to support branches and prevent snapping.</li>
-                </ul>
-
-                <h3 class="text-brand-blue">Chapter 4: Harvest, Dry, Cure - Preserving Quality</h3>
-                <h4 class="text-gray-300">Harvest Timing (The Trichome Window)</h4>
-                <p>Use a 60x-100x loupe. Examine trichomes on the calyxes (not sugar leaves).</p>
-                <ul><li><strong>Clear:</strong> Immature, low potency.</li><li><strong>Cloudy/Milky:</strong> Peak THC, most desirable for potent high.</li><li><strong>Amber:</strong> THC degrading to CBN (more sedative).</li></ul>
-                <p>Aim for mostly cloudy with a small percentage (10-30%) of amber, depending on desired effect.</p>
-
-                <h4 class="text-gray-300">Harvest Process</h4>
-                <ol>
-                    <li><strong>Pre-Harvest Flush (Optional):</strong> Some growers give only plain pH'd water for the last 7-14 days, believing it improves flavor. Evidence is debated, especially in organic soil.</li>
-                    <li><strong>Dark Period (Optional):</strong> 24-48 hours of complete darkness before chopping is thought by some to increase resin production.</li>
-                    <li><strong>Chop:</strong> Cut whole plant or individual branches.</li>
-                    <li><strong>Trim (Wet vs. Dry):</strong> Remove large fan leaves immediately. You can do a detailed "wet trim" (trimming sugar leaves while plant is fresh) or a "dry trim" (trimming after drying). Dry trimming often preserves more terpenes but is more delicate work.</li>
-                </ol>
-
-                <h4 class="text-gray-300">The Drying Process (Critical for Smoothness)</h4>
-                <p>Goal: Slow, even moisture reduction (~7-14 days).</p>
-                <ul>
-                    <li><strong>Environment:</strong> Dark room/tent. Target **60°F temperature and 60% relative humidity**. Good, gentle, indirect airflow (exhaust fan on low, small circulation fan not pointed at buds).</li>
-                    <li><strong>Method:</strong> Hang branches with space between them. Or use drying racks for individual buds (can flatten buds slightly).</li>
-                    <li><strong>Monitoring:</strong> Buds are ready for curing when smaller stems snap cleanly, but larger stems still bend. Buds should feel dry outside but slightly springy. A wood moisture meter aiming for 10-12% internal moisture is precise but overkill for most.</li>
-                </ul>
-
-                <h4 class="text-gray-300">The Curing Process (Develops Flavor & Potency)</h4>
-                <p>Goal: Allow internal moisture to redistribute, chlorophyll to break down, terpenes to mature (~2 weeks minimum, often 4+ weeks for best results).</p>
-                <ol>
-                    <li><strong>Jarring:</strong> Place trimmed buds into airtight glass jars (Mason jars), filling ~75% full (leave air space). Add a small hygrometer to each jar to monitor humidity inside.</li>
-                    <li><strong>Stabilization & Burping:</strong> Target 58-62% RH inside the jars.
-                        <ul>
-                            <li><strong>First Few Days:</strong> Open jars ("burp") 2-3 times daily for 5-15 minutes to release moisture and gases. If RH > 65%, leave jars open longer or briefly remove buds. If RH < 55%, add a humidity pack (e.g., Boveda 62%) or a tiny piece of fan leaf temporarily.</li>
-                            <li><strong>Following Weeks:</strong> Burp once daily, then every few days as RH stabilizes.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Storage:</strong> Store jars in a cool, dark place. Properly cured cannabis stored this way can last for many months.</li>
-                </ol>
-                <div class="note">
-                    <p><strong>Patience Pays:</strong> Rushing the dry or cure is the easiest way to ruin months of hard work. Slow and controlled is the mantra for achieving top-shelf aroma, flavor, and smooth smoke.</p>
-                </div>
-            </div>
-            <!-- Outdoor Section (Full Content Restored) -->
-            <div id="outdoor" class="content-section hidden">
-                 <h2 class="border-brand-green">☀️ The Complete Outdoor Grow Guide</h2>
-                 <p>Embrace the power of the sun! Outdoor growing connects you with the natural cycles of the plant. While facing the unpredictability of weather and pests, outdoor cultivation can yield enormous plants with complex terpene profiles influenced by the native soil and environment ("terroir").</p>
-                
-                <h3 class="text-brand-green">Chapter 1: Pre-Season Strategy (Winter/Early Spring)</h3>
-                <h4 class="text-gray-300">Site Selection: Sun, Security, and Shelter</h4>
-                <ul>
-                    <li><strong>Maximize Sunlight:</strong> Scout your property thoroughly. Identify spots receiving **at least 6-8 hours of direct, unobstructed sunlight** daily, especially during mid-summer. Morning sun is crucial for drying dew. South-facing locations are often ideal in the northern hemisphere.</li>
-                    <li><strong>Security & Legal Compliance:</strong> Critically important in Ohio. The site must NOT be visible from public areas. A tall (6ft+), solid privacy fence is usually required. Consider natural screening like shrubs or structures. Ensure the area is lockable or otherwise inaccessible to minors.</li>
-                    <li><strong>Water Access:</strong> How will you water? Is a hose reachable? Will you need large water containers or a rain barrel system? Mature plants drink gallons per day in summer heat.</li>
-                    <li><strong>Wind Protection:</strong> While some breeze is good, constant strong winds can damage plants. Consider natural windbreaks (shrubs, structures) or erecting temporary ones if needed.</li>
-                    <li><strong>Drainage:</strong> Avoid low-lying areas prone to waterlogging after heavy rains. Slightly sloped ground or raised beds improve drainage.</li>
-                </ul>
-                
-                <h4 class="text-gray-300">Soil Preparation: The Foundation of Health</h4>
-                <p>Outdoor soil is a living ecosystem. Building healthy soil *before* planting is the key to organic success.</p>
-                <ul>
-                    <li><strong>Soil Testing (Highly Recommended):</strong> Get a soil test kit from a local garden center or the OSU extension office. This reveals your soil's pH and nutrient composition (NPK levels, organic matter content). Knowing your starting point allows for targeted amendments.</li>
-                    <li><strong>Improving Native Soil (In-Ground):</strong>
-                        <ul>
-                            <li><strong>Dig Deep & Wide:</strong> In early spring (or even the previous fall), excavate a large area (minimum 3ft diameter, 2-3ft deep per plant). Loosen the subsoil.</li>
-                            <li><strong>Amend Generously:</strong> Mix the excavated soil roughly 50/50 with high-quality amendments. Good starting recipe per plant hole:
-                                <ul>
-                                    <li>2-3 cubic feet High-Quality Compost (provides microbes and nutrients)</li>
-                                    <li>1 cubic foot Aeration (Perlite, Pumice, Lava Rock, or Rice Hulls)</li>
-                                    <li>1-2 cups Worm Castings (microbial booster, gentle nutrients)</li>
-                                    <li>Organic Nutrient Mix (e.g., Gaia Green All Purpose 4-4-4 or a blend of Bone Meal (P), Blood Meal (N - use sparingly if compost is rich), Kelp Meal (K & micronutrients), Azomite (trace minerals)). Follow amendment package instructions.</li>
-                                </ul>
-                            </li>
-                            <li><strong>Mix & Rest:</strong> Thoroughly mix amendments with native soil back into the hole. Water well and let the soil "cook" or settle for a few weeks before planting.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Container Growing (Fabric Pots):</strong> Ideal for poor native soil or patios/decks.
-                        <ul>
-                            <li><strong>Pot Size Matters:</strong> Go big! 20-gallon minimum, 30-100+ gallons for potentially huge plants. Fabric pots air-prune roots.</li>
-                            <li><strong>Soil Mix:</strong> Use a high-quality organic potting mix designed for large containers, OR build your own "super soil" (many recipes online, often involving compost, peat/coco, aeration, and various organic amendments allowed to compost together for weeks).</li>
-                        </ul>
-                    </li>
-                    <li><strong>Mulching:</strong> Apply a thick layer (3-4 inches) of organic mulch (straw, wood chips, shredded leaves) around the base of your plants *after* planting. Benefits: retains soil moisture, suppresses weeds, regulates soil temperature, slowly breaks down adding organic matter.</li>
-                </ul>
-                 <h4 class="text-gray-300">Strain Selection for Ohio's Climate</h4>
-                <p>Choose genetics suited to Ohio's relatively short growing season and humid late summer.</p>
-                <ul>
-                    <li><strong>Mold Resistance:</strong> Prioritize strains known for good resistance to bud rot (Botrytis) and powdery mildew. Sativa-dominant hybrids often have airier bud structures less prone to mold than dense Indicas.</li>
-                    <li><strong>Finishing Time:</strong> Look for strains with shorter flowering times (typically 8-9 weeks) to ensure they finish before the first hard frost (usually mid-October in much of Ohio). Autoflowers can be a good option as they finish much earlier, avoiding the worst of the fall weather.</li>
-                    <li><strong>Pest Resistance:</strong> Some strains are naturally more resilient to common pests. Check breeder descriptions.</li>
-                </ul>
-
-                <h3 class="text-brand-green">Chapter 2: The Growing Season - Adapting & Nurturing</h3>
-                <h4 class="text-gray-300">Germination & Hardening Off (Late April - Mid May)</h4>
-                <ol>
-                    <li><strong>Start Indoors:</strong> Germinate seeds using the paper towel method (see Indoor Guide) 4-6 weeks before your intended outdoor planting date (after the last frost risk, typically mid-May). Grow seedlings under a simple light indoors.</li>
-                    <li><strong>Hardening Off (Crucial!):</strong> Plants started indoors are not adapted to intense sun, wind, and temperature swings. Gradually acclimate them over 7-14 days:
-                        <ul>
-                            <li>Day 1-2: 1-2 hours in full shade.</li>
-                            <li>Day 3-4: 2-3 hours in partial sun (morning).</li>
-                            <li>Day 5-7: 3-4 hours, including some midday sun.</li>
-                            <li>Gradually increase exposure until they can handle a full day outdoors before transplanting.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Transplanting:</strong> Choose an overcast day or late afternoon. Dig a hole slightly larger than the seedling's container. Gently place the plant, backfill, and water thoroughly.</li>
-                </ol>
-
-                <h4 class="text-gray-300">Vegetative Growth (June - Early August)</h4>
-                <ul>
-                    <li><strong>Watering Wisely:</strong> Outdoor plants need lots of water, especially during hot spells. Water deeply in the morning. Check soil moisture by digging a finger a few inches down. Let the top layer dry slightly between waterings. Container plants dry out much faster than in-ground.</li>
-                    <li><strong>Feeding (If Necessary):</strong> If you built good soil, you may only need plain water for much of veg. Observe plant health. If growth slows or yellowing appears, supplement with a diluted organic liquid fertilizer (like fish emulsion or compost tea) or top-dress with more dry amendments according to soil test recommendations.</li>
-                    <li><strong>Support Structure:</strong> Install stakes, cages, or trellis netting *early* while plants are small. Trying to add support to large, established plants is difficult and risks damage.</li>
-                    <li><strong>Pest & Disease Scouting:</strong> Prevention is key. Regularly inspect leaves (top and bottom) and stems for pests. Remove any affected leaves immediately. Companion planting (marigolds, basil, dill) can help deter some pests. Consider beneficial insect releases (ladybugs, lacewings).</li>
-                </ul>
-
-                <h4 class="text-gray-300">Flowering & Ripening (Mid August - October)</h4>
-                <p>The decreasing daylight hours naturally trigger flowering in photoperiod strains.</p>
-                <ul>
-                    <li><strong>Nutrient Shift:</strong> If supplementing, switch to bloom-focused nutrients (higher P and K). Top-dress with high-phosphorus amendments like bone meal or bloom-specific organic blends.</li>
-                    <li><strong>Humidity & Mold Vigilance:</strong> This is the danger zone, especially in Ohio's humid late summer/early fall.
-                        <ul>
-                            <li><strong>Defoliation:</strong> Selectively remove large, overlapping fan leaves (especially from the plant's interior) to improve airflow and light penetration to lower buds. Don't overdo it.</li>
-                            <li><strong>Morning Dew:</strong> Gently shake plants in the morning after heavy dew or rain to dislodge trapped moisture.</li>
-                            <li><strong>Inspect Daily:</strong> Check *inside* dense colas for any signs of fuzzy grey mold (bud rot). Remove immediately if found.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Pest Patrol (Caterpillars!):</strong> Corn earworms and other caterpillars love burrowing into buds. Look for small holes, frass (poop), or dying sections. Pick them off manually. *Bacillus thuringiensis* (BT) is an organic caterpillar-specific spray safe to use in early-to-mid flower (follow instructions carefully).</li>
-                    <li><strong>Watching the Weather & Trichomes:</strong> Monitor the forecast for frost warnings as October approaches. Simultaneously, check trichome maturity with your loupe. It's a race to achieve peak ripeness before frost or persistent cold, wet weather ruins the crop. Harvest based on trichomes, but be prepared to harvest slightly early if bad weather looms.</li>
-                </ul>
-                 <div class="note">
-                    <p><strong>Harvesting Outdoor Plants:</strong> Follow the same principles as indoor (Trichome check, Dry, Cure), but be extra vigilant about checking for hidden pests or mold during trimming. The drying environment (60F/60RH) is still crucial.</p>
-                </div>
-            </div>
-            <!-- Pests Section (Full Content Restored) -->
-            <div id="pests" class="content-section hidden">
-                 <h2 class="border-brand-red">🐛 Problem Hub: Diagnosis & Solutions</h2>
-                 <p>Encountering issues is part of the learning process. The key is early identification and appropriate action. This hub focuses on common problems faced by Ohio growers.</p>
-
-                 <h3 class="text-brand-red">The IPM Pyramid: A Tiered Approach</h3>
-                <p><strong>Integrated Pest Management (IPM)</strong> prioritizes prevention and least-harmful solutions first.</p>
-                <ol>
-                    <li><strong>Cultural Controls (Foundation):</strong> Start with healthy genetics. Maintain a clean grow space (indoors/outdoors). Ensure optimal environment (temp, humidity, airflow). Proper watering techniques (avoiding over/under watering). Inspect plants regularly. Quarantine new plants/clones.</li>
-                    <li><strong>Physical & Mechanical Controls:</strong> Hand-picking larger pests (caterpillars). Using yellow sticky traps for monitoring/trapping flying insects (gnats, thrips). Installing bug screens on intakes. Using high-pressure water sprays to dislodge aphids/mites (outdoors or before flower indoors). Pruning affected leaves.</li>
-                    <li><strong>Biological Controls (Nature's Army):</strong> Introduce beneficial insects that prey on pests. Highly effective but requires understanding lifecycles.
-                        <ul>
-                            <li><strong>Ladybugs:</strong> Voracious aphid eaters.</li>
-                            <li><strong>Predatory Mites (*Phytoseiulus persimilis*, *Neoseiulus californicus*):</strong> Target spider mites. Different species work best in different temperature/humidity ranges.</li>
-                            <li><strong>Green Lacewing Larvae:</strong> General predators, eat aphids, thrips, mites.</li>
-                            <li><strong>Beneficial Nematodes (*Steinernema feltiae*):</strong> Microscopic soil dwellers that parasitize fungus gnat larvae and thrips pupae. Water into soil.</li>
-                            <li><strong>Praying Mantises:</strong> Large general predators (can sometimes eat beneficials too).</li>
-                        </ul>
-
-                    </li>
-                    <li><strong>Chemical Controls (Last Resort - Organic Focus):</strong> If problems escalate, use targeted, low-impact organic options. **Never spray buds in mid-to-late flower.** Apply sprays during lights-off (indoors) or early morning/late evening (outdoors) to avoid burning leaves. Always test on a small area first.
-                        <ul>
-                            <li><strong>Insecticidal Soap:</strong> Kills soft-bodied insects (aphids, mites, whiteflies) on contact by disrupting cell membranes. Must directly contact pests.</li>
-                            <li><strong>Neem Oil:</strong> Broad-spectrum insecticide, fungicide, and miticide. Disrupts insect feeding and reproduction. Use ONLY in VEG or very early flower due to strong odor/taste persistence.</li>
-                            <li><strong>Horticultural Oils (e.g., SuffOil-X):</strong> Suffocate insects and mites. Effective but can stress plants in high heat/humidity.</li>
-                            <li>***Bacillus thuringiensis* (BT):** Microbial insecticide specifically targeting caterpillars. Must be ingested by the pest. Safe for beneficials.</li>
-                            <li><strong>Spinosad:** Fermentation-derived insecticide effective against thrips, caterpillars, some mites. Can be harmful to bees when wet.</li>
-                            <li><strong>Potassium Bicarbonate / Citric Acid Sprays:** Fungicides that alter leaf surface pH to combat Powdery Mildew.</li>
-                            <li><strong>Hydrogen Peroxide (H2O2):** Diluted solutions (food grade 3%) can help combat algae, some fungal issues, and oxygenate root zones (use cautiously).</li>
-                        </ul>
-                    </li>
-                </ol>
-
-                <h3 class="text-brand-red">Common Pest Identification & Organic Treatment</h3>
-                 <table class="table-auto">
-                    <thead>
-                        <tr><th>Pest</th><th>Appearance</th><th>Damage</th><th>Organic Controls</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>Spider Mites</td><td>Tiny dots (red/yellow/black) under leaves, fine webbing. Thrives in hot, dry conditions.</td><td>Yellow/white stippling on leaves, loss of vigor. Can quickly overwhelm plants.</td><td>Increase RH, predatory mites, insecticidal soap, neem (veg).</td></tr>
-                        <tr><td>Aphids</td><td>Small, pear-shaped (green/black/yellow), cluster on new growth/stems. Secrete sticky honeydew.</td><td>Stunted/twisted new growth, yellowing. Honeydew can lead to sooty mold.</td><td>Strong water spray, ladybugs, lacewings, insecticidal soap, neem (veg).</td></tr>
-                        <tr><td>Fungus Gnats</td><td>Small, dark flies resembling fruit flies, near soil. Larvae are tiny worms in topsoil.</td><td>Adults are annoying; larvae damage roots, especially seedlings, vector diseases.</td><td>Let soil dry, yellow sticky traps, BTI soil drench, beneficial nematodes.</td></tr>
-                        <tr><td>Thrips</td><td>Tiny, slender insects (yellow/black), fast-moving. Often hide in crevices.</td><td>Silvery/bronze spots/streaks on leaves (rasped tissue), distorted new growth. Can vector viruses.</td><td>Sticky traps (blue attracts them), predatory mites (*Amblyseius cucumeris*), lacewings, Spinosad (use cautiously).</td></tr>
-                        <tr><td>Caterpillars (various)</td><td>Worms/larvae, often green or brown.</td><td>Chewed leaves, burrow into buds causing rot from within (budworms).</td><td>Manual removal, BT spray (esp. for budworms, apply preventatively in flower).</td></tr>
-                    </tbody>
-                </table>
-
-                <h3 class="text-brand-red">Common Diseases & Environmental Issues</h3>
-                <table class="table-auto">
-                     <thead>
-                        <tr><th>Issue</th><th>Symptoms</th><th>Cause</th><th>Solution/Prevention</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>Powdery Mildew (PM)</td><td>White, powdery spots on leaves.</td><td>Fungal spores thriving in high humidity, poor airflow, moderate temps.</td><td>Increase airflow drastically, lower RH (<55%), prune dense foliage, potassium bicarbonate spray, clean/sterilize area post-harvest.</td></tr>
-                        <tr><td>Bud Rot (Botrytis)</td><td>Grey/brown fuzzy mold starting *inside* dense buds, leaves within bud yellow/die.</td><td>Fungal spores thriving in high humidity (>60%), stagnant air, cool temps, often enters via caterpillar damage.</td><td>Prevention is key: Lower RH in flower (40-50%), extreme airflow around buds, careful inspection. No cure; remove affected buds + surrounding area immediately and carefully to avoid spreading spores.</td></tr>
-                        <tr><td>Root Rot (Pythium, etc.)</td><td>Drooping, yellowing leaves (mimics under/overwatering), slow growth, slimy/brown roots.</td><td>Overwatering, poor drainage, lack of oxygen in root zone (compaction), high water temps (hydro).</td><td>Improve drainage, allow medium to dry, use fabric pots, ensure good aeration, beneficial microbes (mycorrhizae), H2O2 drench (caution).</td></tr>
-                        <tr><td>Damping Off</td><td>Seedlings suddenly wilt and collapse at the soil line.</td><td>Fungal pathogens in overly wet, cool soil.</td><td>Sterile seedling mix, avoid overwatering, ensure warmth, good airflow, sprinkle cinnamon (antifungal) on soil surface.</td></tr>
-                        <tr><td>Heat Stress</td><td>Leaf edges curl upwards ("tacoing"), tips may brown, bleached spots.</td><td>Lights too close, high ambient temps (>85-90F).</td><td>Increase light distance, improve ventilation/cooling, ensure good watering.</td></tr>
-                        <tr><td>Wind Burn</td><td>Leaves look dry, claw downwards, tips brown/crispy.</td><td>Fans blowing too directly/strongly on plants.</td><td>Redirect fans for indirect airflow, reduce fan speed.</td></tr>
-                    </tbody>
-                </table>
-
-                 <h3 class="text-brand-red">Nutrient Deficiency/Toxicity Guide (Visual Cues)</h3>
-                 <p>Always rule out pH lockout first! Deficiencies often appear on specific parts of the plant depending on whether the nutrient is mobile or immobile.</p>
-                <ul>
-                    <li><strong>Nitrogen (N) Deficiency (Mobile):</strong> General yellowing starting on *lower*, older leaves, progressing upwards. Stunted growth.</li>
-                    <li><strong>Phosphorus (P) Deficiency (Mobile):</strong> Dark green/blueish leaves, purpling stems/veins (can also be genetic), slow/stunted growth, poor flowering. Often seen in cool root zones.</li>
-                    <li><strong>Potassium (K) Deficiency (Mobile):</strong> Yellowing/browning/crisping starting at the *edges* of older leaves, working inwards.</li>
-                    <li><strong>Calcium (Ca) Deficiency (Immobile):</strong> Irregular yellow/brown spots on *new* growth, distorted/stunted new leaves. Common in coco or RO water without Cal-Mag supplement.</li>
-                    <li><strong>Magnesium (Mg) Deficiency (Mobile):</strong> Interveinal chlorosis (yellowing between veins) starting on *lower*, older leaves. Veins remain green. Often needs Cal-Mag supplement with Ca.</li>
-                    <li><strong>Iron (Fe) Deficiency (Immobile):</strong> Interveinal chlorosis on *newest* growth/shoots. Veins remain green. Usually caused by high pH lockout.</li>
-                    <li><strong>Nutrient Burn (Toxicity):</strong> Dark green leaves, tips burnt/brown/crispy ("nute burn"), leaf claws downwards. Caused by overfeeding. Flush with plain pH'd water.</li>
-                </ul>
-
-                 <div class="note">
-                    <p><strong>Diagnosing Issues:</strong> Look at *where* the problem starts (new vs. old growth) and the *pattern* of discoloration. Compare to visual guides online, but always check pH and EC/PPM first before changing nutrients.</p>
-                </div>
-            </div>
-            <!-- Advanced Section (Full Content Restored) -->
-            <div id="advanced" class="content-section hidden">
-                <h2 class="border-brand-purple">👨‍🔬 Advanced Techniques & Deeper Science</h2>
-                <h3 class="text-brand-purple">Optimizing Your Grow Environment</h3>
-                 <h4 class="text-gray-300">VPD Management</h4>
-                <p>Vapor Pressure Deficit (VPD) is the difference between how much water vapor is in the air versus how much it *could* hold at that temperature. It's a key driver of transpiration.</p>
-                <ul>
-                    <li><strong>Low VPD (High Humidity/Low Temp):</strong> Slows transpiration. Risk of mold/mildew.</li>
-                    <li><strong>High VPD (Low Humidity/High Temp):</strong> Increases transpiration. Risk of nutrient burn, leaf curl, wilting if roots can't keep up.</li>
-                    <li><strong>Optimal VPD:</strong> Encourages healthy transpiration, nutrient uptake, and growth. Target ranges (kPa):
-                        <ul>
-                            <li>Seedling/Clone: 0.4 - 0.8</li>
-                            <li>Early Veg: 0.7 - 1.0</li>
-                            <li>Late Veg / Early Flower: 0.8 - 1.2</li>
-                            <li>Mid-Late Flower: 1.0 - 1.5</li>
-                        </ul>
-                    </li>
-                    <li><strong>Control:</strong> Use humidifiers, dehumidifiers, AC, heaters, and ventilation adjustments to maintain target VPD. Requires accurate Temp/RH meter. Use online VPD charts or calculators.</li>
-                </ul>
-                 <h4 class="text-gray-300">CO2 Supplementation</h4>
-                <p>Ambient air has ~400 PPM CO2. In a sealed, high-light indoor environment (PPFD > 1000), plants can use more CO2 to boost photosynthesis and growth significantly (up to 1200-1500 PPM).</p>
-                <ul>
-                    <li><strong>Methods:</strong> CO2 tanks with regulators/timers, CO2 generators (burning propane/natural gas - produces heat/moisture), CO2 bags (passive, less effective).</li>
-                    <li><strong>Requirements:</strong> Only effective in a sealed room with high light, dialed-in environment, and proper monitoring (CO2 controller/meter). Not typically worthwhile for beginner tent grows. Safety precautions are essential with tanks/generators.</li>
-                </ul>
-
-                <h3 class="text-brand-purple">Advanced Plant Training Techniques</h3>
-                <p>Beyond LST and basic topping, these methods further manipulate growth for specific goals.</p>
-                <ul>
-                    <li><strong>FIMing (F*** I Missed):</strong> Similar to topping, but you pinch/cut only ~75% of the new growth tip instead of removing it completely. Can potentially create 4+ new main colas from one cut, but results are less predictable than topping. Less stressful than a full top.</li>
-                    <li><strong>Mainlining / Manifolding:</strong> A structured approach combining topping and LST. You top the plant multiple times at specific nodes and remove lower growth, creating a symmetrical structure with a set number (e.g., 8, 16) of evenly spaced main colas. Requires longer veg time.</li>
-                    <li><strong>Super Cropping (High Stress):</strong> Carefully squeezing and bending stems (without breaking the outer skin) during veg. This damages inner tissues, causing the plant to repair it stronger (creating a "knuckle") and redirecting hormones below the bend. Can be used to control height or strengthen branches. High risk of damage if done improperly.</li>
-                    <li><strong>ScrOG (Screen of Green):</strong> Uses a horizontal net/screen above the plants. Branches are woven through the screen during late veg/early flower stretch to create a flat, even canopy where all bud sites receive direct light. Maximizes yield in limited space.</li>
-                    <li><strong>SOG (Sea of Green):</strong> Focuses on quantity over size. Many small plants are grown close together and flipped to flower when very young. Each plant produces one main cola. Fast turnaround time, efficient use of light. Often done with clones.</li>
-                </ul>
-
-                <h3 class="text-brand-purple">Deeper Dive: Genetics & Cannabinoids/Terpenes</h3>
-                 <h4 class="text-gray-300">Beyond Indica/Sativa</h4>
-                <p>While useful shorthand, the Indica/Sativa classification is often misleading regarding effects. A strain's effects are primarily determined by its specific profile of Cannabinoids and Terpenes.</p>
-                <ul>
-                    <li><strong>Cannabinoids:</strong> Compounds interacting with the body's endocannabinoid system.
-                        <ul>
-                            <li><strong>THC (Δ9-Tetrahydrocannabinol):</strong> Primary psychoactive compound.</li>
-                            <li><strong>CBD (Cannabidiol):</strong> Non-psychoactive, associated with therapeutic effects (anti-inflammatory, anti-anxiety).</li>
-                            <li><strong>CBG (Cannabigerol):</strong> "Mother cannabinoid," precursor to THC/CBD. Gaining interest for potential benefits.</li>
-                            <li><strong>CBN (Cannabinol):</strong> Degradation product of THC, associated with sedative effects.</li>
-                            <li>Minor Cannabinoids (THCV, CBC, etc.): Present in smaller amounts, contribute to nuanced effects.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Terpenes:</strong> Aromatic compounds giving cannabis (and many other plants) its distinct smell and flavor. They also modulate the effects of cannabinoids (the "entourage effect").
-                        <ul>
-                            <li><strong>Myrcene:</strong> Earthy, musky. Found in mangoes. Associated with relaxing effects.</li>
-                            <li><strong>Limonene:</strong> Citrusy. Found in citrus peels. Associated with mood elevation, stress relief.</li>
-                            <li><strong>Pinene:</strong> Piney. Found in pine needles. Associated with alertness, focus.</li>
-                            <li><strong>Caryophyllene:</strong> Peppery, spicy. Found in black pepper. Unique ability to interact with CB2 receptors (potential anti-inflammatory).</li>
-                            <li><strong>Linalool:</strong> Floral, lavender. Associated with calming, anti-anxiety effects.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Breeder Information:</strong> Reputable breeders provide detailed strain information, including lineage, expected flowering time, potential cannabinoid/terpene profiles, and typical growth characteristics. This is invaluable for selecting the right strain for your goals and environment.</li>
+                    <li>**Transport Limit:** You may only transport up to **$\text{2.5}$ ounces of flower** or **$\text{15}$ grams of concentrate** at any given time.</li>
+                    <li>**Secure Transport:** Cannabis must be transported in a **closed, sealed container** and should not be readily accessible to the driver (e.g., stored in the trunk or a locked glove compartment).</li>
+                    <li>**Public Consumption:** **STRICTLY PROHIBITED.** Consumption is illegal in all public places, vehicles, and most multi-unit residential common areas.</li>
                 </ul>
             </div>
-            <!-- Tools Section (Full Content Restored) -->
-            <div id="tools" class="content-section hidden">
-                 <h2 class="border-brand-purple">🛠️ Essential Tools & Products Guide</h2>
-                 <p>Investing in the right tools is the difference between being a proactive grower and a reactive one. Good tools allow you to measure and control your environment, which is the key to preventing problems.</p>
 
-                <h3 class="text-brand-purple">Tier 1: The Foundation - Cannot Grow Without</h3>
-                 <p>These tools address the most critical variables that determine success or failure.</p>
-                <ol>
-                    <li><strong>Quality Digital pH Pen:</strong>
-                        <ul>
-                            <li><strong>Why:</strong> Nutrient lockout (plant inability to absorb nutrients) due to incorrect pH is the #1 problem beginners face. Soil needs 6.0-6.8, Hydro/Coco 5.5-6.5.</li>
-                            <li><strong>Features:</strong> Look for digital readout, temperature compensation, replaceable electrode, 0.1 pH accuracy. Brands like Apera (PH20, PH60) or BlueLab are reliable.</li>
-                            <li><strong>Maintenance:</strong> Requires regular calibration (using pH 4.0 & 7.0 solutions) and proper storage (in storage solution, never distilled water) to remain accurate.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Jeweler's Loupe or Digital Microscope (60x-100x):</strong>
-                        <ul>
-                            <li><strong>Why:</strong> The only accurate way to determine peak harvest time by observing trichome gland heads (clear/cloudy/amber). Pistil color is unreliable.</li>
-                            <li><strong>Options:</strong> Cheap loupes work fine. USB digital microscopes connect to your phone/computer for easier viewing and photos.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Thermo-Hygrometer:</strong>
-                        <ul>
-                            <li><strong>Why:</strong> Measures temperature and relative humidity (RH). Essential for managing VPD and preventing mold/stress.</li>
-                            <li><strong>Features:</strong> Get at least one digital model with Min/Max memory to track fluctuations. Place the sensor at canopy level. Multiple sensors (e.g., one near top, one near bottom) give a fuller picture in larger tents. Smart models (like Govee) connect via WiFi for remote monitoring/alerts.</li>
-                        </ul>
-                    </li>
-                </ol>
+            <!-- INDOOR CEA SECTION --><div id="indoor" class="content-section hidden">
+                <h2 class="border-brand-blue">💡 Indoor CEA: High-Frequency Fertigation (HFF)</h2>
 
-                <h3 class="text-brand-purple">Tier 2: Core Indoor Setup Components</h3>
+                <h3 class="text-brand-blue">Chapter 1: Advanced Substrate Management</h3>
+                <h4 class="text-gray-300">Coco Coir: Buffering and Run-to-Waste (HFF)</h4>
+                <p>Coco coir is the industry-standard choice for $\text{HFF}$. It offers rapid oxygen exchange and excellent water retention but demands precision:</p>
                 <ul>
-                     <li><strong>Grow Tent:</strong> Provides a contained environment, reflective interior maximizes light, contains odor, light-proofs for flowering. Choose size based on plant count/goals (e.g., 2x4, 4x4 ft).</li>
-                     <li><strong>Full-Spectrum LED Light:</strong> The engine. Choose wattage/size appropriate for your tent size (aim for ~30-50 actual watts per sq ft). Dimmability is a key feature.</li>
-                     <li><strong>Inline Fan:</strong> Matched to tent volume for proper air exchange. Consider noise level (AC Infinity T-series are quiet).</li>
-                     <li><strong>Carbon Filter:</strong> Matched to fan CFM for odor control. Replace when it loses effectiveness (typically 12-18 months).</li>
-                     <li><strong>Ducting & Clamps:</strong> To connect fan/filter and vent air. Insulated ducting can reduce noise.</li>
-                     <li><strong>Circulation Fan(s):</strong> Clip-on or small oscillating fans for internal airflow. Crucial for stem strength and mold prevention.</li>
-                     <li><strong>Fabric Pots:</strong> Various sizes (1, 3, 5, 7+ gallon). Promote healthy roots via air pruning.</li>
-                     <li><strong>Quality Nutrients & pH Control Kit:</strong> Choose organic or synthetic based on your preference. Get bottles for Grow, Bloom, and potentially Cal-Mag.</li>
-                     <li><strong>pH Up / pH Down Solutions:</strong> For adjusting water/nutrient solution pH. Use sparingly.</li>
-                     <li><strong>Timers:</strong> Reliable timers for automating the light cycle (essential for flowering). Digital timers are often more precise.</li>
-                     <li><strong>Watering Can / Reservoir & Pump:</strong> For mixing nutrients and watering.</li>
-                     <li><strong>Trays/Saucers:</strong> To catch runoff water under pots.</li>
+                    <li>**Mandatory Buffering:** Always pre-buffer coco with a **Calcium/Magnesium solution** before use. Unbuffered coco will bind $\text{Ca}/\text{Mg}$ from your nutrient solution, guaranteeing deficiencies.</li>
+                    <li>**HFF Protocol:** Feed the plant **$\text{3-6}$ times daily** (depending on light intensity and plant size) using a complete nutrient solution. Each feed should produce $\text{15-30}\%$ runoff. This flushes old, stale water and salts, replenishing the root zone with fresh $\text{EC}$ and oxygen.</li>
+                    <li>**Root Zone EC ($\text{RZEC}$):** Monitoring $\text{RZEC}$ via runoff is critical. Aim for runoff $\text{EC}$ to be no more than $\text{0.2-0.4}$ $\text{mS}/\text{cm}$ higher than your input $\text{EC}$ to confirm effective flushing and proper uptake.</li>
                 </ul>
-                <h3 class="text-brand-purple">Tier 3: Highly Recommended & Advanced Tools</h3>
+
+                <h3 class="text-brand-blue">Chapter 2: Light Physics and DLI Optimization</h3>
+                <h4 class="text-gray-300">Photoperiodicity and End-of-Day (EOD) Treatments</h4>
+                <p>Light intensity ($\text{PPFD}$) and duration ($\text{DLI}$) are the ultimate yield drivers. Use the **Calculators** tab to set your targets.</p>
+                <ul>
+                    <li>**Flowering Trigger:** The switch from $\text{18/6}$ to $\text{12/12}$ initiates flowering. Light leaks during the $\text{12-hour}$ dark period are a major stressor and can trigger **hermaphroditism**. Ensure your space is $100\%$ light-proof.</li>
+                    <li>**Far-Red ($\text{FR}$) EOD Treatment:** By providing $\text{Far-Red}$ light ($\text{700-740nm}$) for $\text{10-15}$ minutes immediately after the main lights turn off, you can accelerate the sleep phase. This shortens the time it takes the plant to initiate flowering (up to $\text{5-7}$ days faster) by resetting the phytochrome clock.</li>
+                    <li>**High-Intensity CO2 Boost:** When $\text{PPFD}$ levels exceed $1000$ $\mu\text{mol}/\text{m}^2/\text{s}$, plants become $\text{CO}_2$ limited. Supplementing the atmosphere to $1200-1500$ $\text{PPM}$ allows the plant to fully utilize the high light intensity, achieving maximum $\text{DLI}$ and corresponding biomass.</li>
+                </ul>
+            </div>
+
+            <!-- OUTDOOR SECTION --><div id="outdoor" class="content-section hidden">
+                 <h2 class="border-brand-green">☀️ Outdoor Cultivation: Terroir and Weather Defense</h2>
+                 <p>Outdoor growing is a partnership with nature. In Ohio, this means mastering soil biology, mitigating high humidity, and defending against the two biggest yield killers: **Botrytis (Bud Rot)** and **Corn Earworm**.</p>
+
+                <h3 class="text-brand-green">Chapter 1: Biologically Active Soil & Feeding</h3>
+                <h4 class="text-gray-300">The Living Soil Ecosystem</h4>
+                <p>True success comes from building a soil web rich in beneficial bacteria and fungi, creating a **Living Soil**. This allows for a $\text{Just-Add-Water}$ approach.</p>
+                <ul>
+                    <li>**Soil Amendments:** Use high-quality compost, worm castings, and slow-release organic inputs ($\text{Bone Meal}$, $\text{Kelp Meal}$, $\text{Oats}$) in the spring.</li>
+                    <li>**Mycorrhizal Fungi:** Inoculate the root zone during transplanting with specific beneficial fungi (e.g., *Glomus intraradices*). They extend the root system's reach, dramatically improving water and nutrient uptake.</li>
+                    <li>**Compost Tea:** Brewed $\text{Aerated Compost Tea}$ ($\text{ACT}$) is used as a soil drench or foliar spray to rapidly populate the soil and leaf surfaces with beneficial microbes, creating a natural barrier against pathogens.</li>
+                </ul>
+
+                <h3 class="text-brand-green">Chapter 2: Mold Mitigation & Pest Defense</h3>
+                <h4 class="text-gray-300">Late-Season Biosecurity in Ohio</h4>
+                <ul>
+                    <li>**Preemptive BT Application:** Start applying *Bacillus thuringiensis* ($\text{BT}$) (specifically subspecies *kurstaki*) as a preventative spray starting in mid-August. $\text{BT}$ is a naturally occurring bacteria that kills caterpillars/budworms when ingested, but is safe for beneficials, humans, and pets. **Weekly application is essential.**</li>
+                    <li>**Targeted Defoliation:** Aggressively remove large, non-essential fan leaves from the plant's interior starting in late $\text{August}$ to improve wind flow and reduce humidity pockets, drastically lowering the risk of $\text{Botrytis}$.</li>
+                    <li>**Emergency Weather Protocol:** If heavy rain or frost is forecasted in September/October, be ready to cover plants with greenhouse plastic or harvest slightly early to preserve the crop.</li>
+                </ul>
+            </div>
+
+            <!-- PROBLEM HUB SECTION --><div id="pests" class="content-section hidden">
+                 <h2 class="border-brand-red">🐛 Problem Hub: Clinical Diagnosis and IPM Tiers</h2>
+                 <p>Master the $\text{IPM}$ $(\text{Integrated Pest Management})$ Pyramid. We move from Prevention ($\text{Tier 1}$) to Biocontrol ($\text{Tier 3}$), reserving Chemical Control ($\text{Tier 4}$) for emergencies.</p>
+
+                 <h3 class="text-brand-red">Tier 1 & 2: Cultural, Physical, and Prevention</h3>
                  <ul>
-                    <li><strong>EC/PPM Meter:</strong> Measures nutrient solution strength. Essential for hydroponics and useful for synthetic nutrients in soil/coco to prevent overfeeding and monitor salt buildup via runoff. Requires calibration.</li>
-                    <li><strong>Wet/Dry Trim Scissors:</strong> Spring-loaded micro-tip scissors make trimming much easier. Keep isopropyl alcohol handy for cleaning resin buildup.</li>
-                    <li><strong>Drying Rack or Hangers:</strong> For the drying process. Mesh racks save space but can flatten buds.</li>
-                    <li><strong>Glass Curing Jars with Hygrometers:</strong> Airtight jars (Mason jars) are standard. Small digital hygrometers inside jars allow precise monitoring of RH during the cure.</li>
-                    <li><strong>Humidity Packs (Boveda/Integra):</strong> Two-way humidity control packs (58% or 62% RH are common for cure/storage) help maintain ideal humidity in curing jars.</li>
-                    <li><strong>Trellis Netting / Stakes / Plant Yo-Yos:</strong> For plant support, especially during flowering as buds get heavy.</li>
-                    <li><strong>Spray Bottles:</strong> For foliar feeding (veg only), pest control applications, or misting seedlings.</li>
-                    <li><strong>Measuring Spoons/Syringes:</strong> For accurately measuring nutrients and pH solutions.</li>
-                     <li><strong>Safety Gear:</strong> Gloves (when handling nutrients/sticky buds), safety glasses (especially under bright LEDs).</li>
+                    <li>**Quarantine:** New plants/clones must be quarantined for $\text{2-3}$ weeks before entering the main grow area.</li>
+                    <li>**Scouting:** Use yellow and blue sticky traps at canopy level and soil level. A magnifying glass or jewelers loupe is required for inspecting the undersides of leaves.</li>
+                    <li>**$\text{Fungus Gnat}$ Protocol:** The presence of small, dark flies at the soil level indicates a severe $\text{Fungus Gnat}$ infestation. Treat with $\text{BTi}$ soil drench (e.g., Mosquito Bits) and let the topsoil dry out completely between waterings.</li>
                  </ul>
-                 <div class="note">
-                    <p><strong>Start Smart:</strong> You don't need everything on day one. Prioritize Tier 1. Get core Tier 2 equipment for your chosen method (indoor/outdoor). Add Tier 3 tools as you gain experience and identify specific needs.</p>
+
+                <h3 class="text-brand-red">Tier 3: Biological Control (Beneficial Insects)</h3>
+                <p>Introducing predators is the most effective and safest method of pest control in an $\text{Indoor CEA}$ environment.</p>
+                <table class="table-auto">
+                    <thead>
+                        <tr><th>Target Pest</th><th>Beneficial Predator</th><th>Application Notes</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Spider Mites</td><td>*Phytoseiulus persimilis* ($\text{P. persimilis}$)</td><td>Highly aggressive, requires $\text{60-70}\% \text{ RH}$ to thrive. Fast kill rate.</td></tr>
+                        <tr><td>Thrips, Whiteflies</td><td>*Amblyseius cucumeris* ($\text{A. cucumeris}$)</td><td>Generalist mite, effective for prevention. Works in lower $\text{RH}$.</td></tr>
+                        <tr><td>Fungus Gnats, Thrips Pupae</td><td>$\text{Hypoaspis Miles}$ (Stratiolaelaps scimitus)</td><td>Soil mites. Excellent soil-level predator; targets larvae and pupae.</td></tr>
+                        <tr><td>Broad/Russet Mites</td><td>Sulfur Burner / Temperature Spike</td><td>Chemical-free elimination through environmental stress. Extremely difficult to treat with predators.</td></tr>
+                    </tbody>
+                </table>
+
+                <h3 class="text-brand-red">Tier 4: Nutrient Pathologies (Mobile vs. Immobile)</h3>
+                <p>Symptoms are classified by their mobility within the plant. Always check $\text{pH}$ first, as **lockout** is the primary cause.</p>
+                <ul>
+                    <li>**Mobile Nutrients ($\text{N, P, K, Mg}$):** Symptoms appear on **older, lower leaves** first (e.g., Nitrogen yellowing). The plant sacrifices old growth to feed new growth.</li>
+                    <li>**Immobile Nutrients ($\text{Ca, Fe, Zn}$):** Symptoms appear on **newest, upper leaves** first (e.g., Calcium tip burn). The plant cannot move these nutrients once deposited.</li>
+                    <li>**Toxicity (Burn):** Excess salt/nutrients ($\text{EC} > 3.0 \text{ mS}/\text{cm}$) causes brown, crispy tips (nute burn) and clawing leaves. **Immediate flush** with plain, $\text{pH}$-adjusted water is required.</li>
+                </ul>
+            </div>
+            
+            <!-- NEW GENETICS LAB SECTION --><div id="genetics-lab" class="content-section hidden">
+                <h2 class="border-brand-purple">🧬 Genetics Lab: Breeding, Chemotypes, and Pheno-Hunting</h2>
+                <p>Advanced cultivators select genetics based on desired chemical output ($\text{Chemotype}$), rather than arbitrary structure ($\text{Indica}/\text{Sativa}$).</p>
+                
+                <h3 class="text-brand-purple">Chapter 1: Cannabinoid and Terpene Genomics</h3>
+                <h4 class="text-gray-300">The Chemotype System</h4>
+                <p>The modern classification system categorizes cannabis by its dominant cannabinoids:</p>
+                <ul>
+                    <li>**Chemotype I:** $\text{THC}$-dominant. High psychoactivity. ($\text{THC}:\text{CBD}$ ratio $\text{> 10}:1$).</li>
+                    <li>**Chemotype II:** Balanced $\text{THC}/\text{CBD}$. Moderate psychoactivity. ($\text{THC}:\text{CBD}$ ratio $\text{10}:1$ to $\text{1}:1$).</li>
+                    <li>**Chemotype III:** $\text{CBD}$-dominant. Non-psychoactive. ($\text{THC}:\text{CBD}$ ratio $\text{< 1}:10$).</li>
+                    <li>**Minor Cannabinoids:** $\text{CBG}$ (Cannabigerol) is the precursor to $\text{THC}$ and $\text{CBD}$. Advanced breeding focuses on "minor" chemotypes (e.g., $\text{THCV}$, $\text{CBC}$) for specific effects.</li>
+                </ul>
+                <h4 class="text-gray-300">The Entourage Effect and Terpene Modulation</h4>
+                <p>Terpenes modulate the effects of cannabinoids. Key terpenes to look for in breeder data:</p>
+                <table class="table-auto">
+                    <thead>
+                        <tr><th>Terpene</th><th>Aroma</th><th>Associated Effect</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Myrcene</td><td>Musk, Clove, Earthy</td><td>Sedative, relaxing ("Couch Lock").</td></tr>
+                        <tr><td>Limonene</td><td>Citrus, Lemon</td><td>Mood elevation, stress relief, focus.</td></tr>
+                        <tr><td>Pinene</td><td>Pine, Woodsy</td><td>Alertness, memory retention (may counter $\text{THC}$ fog).</td></tr>
+                        <tr><td>Caryophyllene</td><td>Pepper, Spice</td><td>The only terpene that acts as a cannabinoid, binding to the $\text{CB}2$ receptor (anti-inflammatory).</td></tr>
+                    </tbody>
+                </table>
+                
+                <h3 class="text-brand-purple">Chapter 2: Pheno-Hunting and Breeding Basics</h3>
+                <p>**Pheno-Hunting** is the process of growing multiple seeds from the same strain ($\text{F}1$ cross) to find the single plant ($\text{Phenotype}$) with the most desirable traits (vigor, yield, flavor, high $\text{THC}$ or $\text{CBD}$).</p>
+                <ul>
+                    <li>**$\text{F}1$ Hybrid:** The first generation cross between two distinct parent strains ($\text{P}1$). Exhibits **hybrid vigor** (rapid growth).</li>
+                    <li>**$\text{F}2$ Generation:** Seeds produced from crossing two $\text{F}1$ siblings or backcrossing an $\text{F}1$ to a parent. This generation shows the most **genetic variation** and is where true pheno-hunting occurs.</li>
+                    <li>**Cloning:** Once a desirable phenotype is found, it must be preserved via cloning (taking unrooted cuttings). This ensures $\text{100}\%$ genetic replication of the "Mother Plant."</li>
+                </ul>
+            </div>
+            
+            <!-- NEW AUTOMATION & IOT SECTION --><div id="automation-iot" class="content-section hidden">
+                <h2 class="border-brand-purple">⚙️ Automation & IoT: The Data-Driven Grow Room</h2>
+                <p>Move beyond manual control. Use microcontrollers and open-source software to build a self-regulating, data-logging $\text{CEA}$ environment, optimizing stability and maximizing resource efficiency.</p>
+                
+                <h3 class="text-brand-purple">Chapter 1: Open-Source Controller Systems</h3>
+                <h4 class="text-gray-300">Hardware & Sensor Selection</h4>
+                <ul>
+                    <li>**Controller:** Use **$\text{Raspberry Pi}$** ($\text{Linux}$ environment) or **$\text{ESP}32$** (microcontroller) for low-level sensor reading and relay control.</li>
+                    <li>**Environmental Sensors:**
+                        <ul>
+                            <li>**Temp/RH:** $\text{BME}280$ or $\text{SHT}31$ (highly accurate, low drift). Required for calculating $\text{VPD}$.</li>
+                            <li>**$\text{CO}_2$:** $\text{MH-Z}19$ or $\text{Senseair S}8$ ($\text{NDIR}$ sensors are required for accuracy).</li>
+                            <li>**Nutrient:** $\text{EC}$ ($\text{mS}/\text{cm}$) and $\text{pH}$ probes (Industrial grade, require calibration and care).</li>
+                        </ul>
+                    </li>
+                    <li>**Actuators:** Solid State Relays ($\text{SSR}$) or power strips controlled by the microcontroller to switch lights, fans, and pumps ($\text{actuators}$) on and off.</li>
+                </ul>
+                
+                <h3 class="text-brand-purple">Chapter 2: Data Logging and $\text{MQTT}$ Protocol</h3>
+                <h4 class="text-gray-300">Data Structure (JSON) for Logging</h4>
+                <p>All sensor readings should be logged in a standardized $\text{JSON}$ format for easy parsing and analysis. This enables $\text{API}$ integration and visualization (e.g., using $\text{Grafana}$ or $\text{Dash})$.</p>
+                <code>
+{
+  "timestamp": "2025-10-27T20:20:00Z",
+  "device_id": "CEA-RPI-001",
+  "environment": {
+    "air_temp_c": 26.1,
+    "rh_percent": 65.5,
+    "vpd_kpa": 1.15,
+    "co2_ppm": 412
+  },
+  "root_zone": {
+    "water_temp_c": 20.5,
+    "ph": 5.95,
+    "ec_ms": 1.88,
+    "rz_ec_runoff": 2.21
+  }
+}
+                </code>
+                <h4 class="text-gray-300">Inter-Component Communication ($\text{MQTT}$)</h4>
+                <p>The $\text{MQTT}$ protocol is the standard for $\text{IoT}$ communication. It is lightweight, efficient, and ensures reliable communication between the $\text{Pi}$, sensors, and a central server (broker).</p>
+                <ul>
+                    <li>**Broker:** A central server (often $\text{Mosquitto}$) where all data is sent.</li>
+                    <li>**Publishers:** Sensors ($\text{temp}$, $\text{pH}$, $\text{EC}$) that publish data to a specific topic (e.g., $\text{growroom/env/temp}$).</li>
+                    <li>**Subscribers:** Controllers or Dashboards that subscribe to topics to read data and trigger actions (e.g., if $\text{growroom/env/temp} > 28^{\circ}\text{C}$, activate the $\text{AC}$ relay).</li>
+                </ul>
+            </div>
+
+            <!-- CALCULATORS SECTION --><div id="calculators" class="content-section hidden">
+                 <h2 class="border-brand-purple">🛠️ Interactive CEA Calculators</h2>
+                 <p>Input your sensor readings and grow data below to instantly derive crucial environmental and nutrient metrics.</p>
+
+                <h3 class="text-brand-purple">VPD Calculator (Vapor Pressure Deficit)</h3>
+                <p>VPD ($\text{kPa}$) is the key metric for optimal transpiration. Input your air temperature and relative humidity to find your current $\text{VPD}$.</p>
+                <div class="calculator-container grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label for="temp-c" class="block text-gray-400">Air Temp $(\text{C})$</label>
+                        <input type="number" id="temp-c" value="26.5" step="0.1" class="calc-input w-full">
+                    </div>
+                    <div>
+                        <label for="rh" class="block text-gray-400">Relative Humidity $(\text{%})$</label>
+                        <input type="number" id="rh" value="65" step="1" class="calc-input w-full">
+                    </div>
+                    <div class="md:col-span-3 mt-4">
+                        <label for="vpd-output" class="block text-gray-400 mb-2">Calculated VPD $(\text{kPa})$</label>
+                        <div id="vpd-output" class="calc-output flex items-center justify-center">1.03 kPa (Ideal for Early Flower)</div>
+                    </div>
+                    <p class="text-xs text-gray-500 md:col-span-3 mt-2">Recommended $\text{VPD}$ Range: Seedling/Clone ($\text{0.4-0.8}$), Veg ($\text{0.8-1.2}$), Flower ($\text{1.2-1.6}$).</p>
+                </div>
+                
+                <h3 class="text-brand-purple">DLI Calculator (Daily Light Integral)</h3>
+                <p>Calculate the total photons received by the canopy in a day. Essential for managing light intensity across different growth stages.</p>
+                <div class="calculator-container grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                    <div>
+                        <label for="ppfd-input" class="block text-gray-400">PPFD $(\mu\text{mol}/\text{m}^2/\text{s})$</label>
+                        <input type="number" id="ppfd-input" value="800" step="10" class="calc-input w-full">
+                    </div>
+                    <div>
+                        <label for="hours-on-input" class="block text-gray-400">Hours ON (H)</label>
+                        <input type="number" id="hours-on-input" value="12" step="1" class="calc-input w-full">
+                    </div>
+                    <div class="md:col-span-3 mt-4">
+                        <label for="dli-output" class="block text-gray-400 mb-2">Calculated DLI $(\text{mol}/\text{m}^2/\text{day})$</label>
+                        <div id="dli-output" class="calc-output flex items-center justify-center">34.56 mol/m²/day (Moderate Flower)</div>
+                    </div>
+                    <p class="text-xs text-gray-500 md:col-span-3 mt-2">DLI Target: Seedlings ($\text{12-18}$), Veg ($\text{20-40}$), Flower ($\text{40-60+}$). Needs $\text{CO}_2$ supplement above $\text{60 mol}/\text{m}^2/\text{day}$.</p>
+                </div>
+
+
+                <h3 class="text-brand-purple">Nutrient Strength Converter (EC to PPM)</h3>
+                <p>Convert Electrical Conductivity ($\text{EC}$) to different Parts Per Million ($\text{PPM}$) scales, or vice versa. Essential for accurate nutrient dosing.</p>
+                <div class="calculator-container grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
+                    <div class="col-span-1 md:col-span-2">
+                        <label for="ec-input" class="block text-gray-400">EC $(\text{mS}/\text{cm})$</label>
+                        <input type="number" id="ec-input" value="1.5" step="0.01" class="calc-input w-full">
+                    </div>
+                    <div class="col-span-1 md:col-span-2">
+                        <label for="ppm-scale" class="block text-gray-400">PPM Scale</label>
+                        <select id="ppm-scale" class="calc-input w-full">
+                            <option value="500">500 Scale (US/Hanna)</option>
+                            <option value="700">700 Scale (European/Truncheon)</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-4 mt-4">
+                        <label for="ppm-output" class="block text-gray-400 mb-2">Calculated PPM</label>
+                        <div id="ppm-output" class="calc-output flex items-center justify-center">750 PPM (500 Scale)</div>
+                    </div>
+                    <p class="text-xs text-gray-500 md:col-span-4 mt-2">Note: $\text{PPM}$ is derived from $\text{EC}$ using a conversion factor ($\text{500}$ or $\text{700}$). $\text{EC}$ is the true measurement.</p>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Search Modal -->
-    <div id="search-modal" class="hidden fixed inset-0 flex items-center justify-center z-50 p-4"> <!-- Styling in CSS -->
-        <div class=""> <!-- Styling in CSS -->
-            <div class="p-6">
+    <!-- Search Modal --><div id="search-modal" class="hidden fixed inset-0 flex items-center justify-center z-50 p-4">
+        <div class="bg-black border-2 border-brand-purple rounded-2xl max-w-2xl w-full mx-auto search-modal-content flex flex-col">
+            <div class="p-6 flex-grow overflow-hidden">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-2xl font-bold text-brand-purple">🧠 Amigo Answers</h2>
-                    <button id="close-modal-btn" class="text-gray-400 hover:text-white text-3xl leading-none">&times;</button>
+                    <h2 class="text-3xl font-bold text-brand-purple">🧠 GROHIO Amigo Answers (Gemini Search)</h2>
+                    <button id="close-modal-btn-top" class="text-gray-400 hover:text-white text-3xl leading-none">&times;</button>
                 </div>
                 <div id="search-results-container" class="search-modal-content overflow-y-auto pr-2">
                     <div id="loading-spinner" class="hidden flex justify-center items-center my-8">
                         <div class="animate-spin rounded-full h-16 w-16 border-b-4 spinner-color"></div>
                     </div>
-                    <div id="search-output" class="prose-custom prose-invert max-w-none"></div>
+                    <div id="search-output" class="prose-custom prose-invert max-w-none text-gray-300"></div>
                 </div>
             </div>
-            <div class="bg-black px-6 py-4 rounded-b-2xl text-right"> <!-- Styling in CSS -->
-                <button id="close-modal-btn-bottom" class="px-6 py-2 text-black font-semibold rounded-lg shadow-md transition">Close</button> <!-- Styling in CSS -->
+            <div class="bg-black px-6 py-4 rounded-b-2xl text-right border-t border-gray-800">
+                <button id="close-modal-btn-bottom" class="px-6 py-2 text-black font-semibold rounded-lg shadow-lg transition">Close Amigo</button>
             </div>
         </div>
     </div>
 
-    <!-- Embedded JavaScript -->
-    <script>
-        // Self-executing function (IIFE) to keep variables local
-        (function() {
-            // --- Logo Data --- Base64 for the original 1000001827.jpg logo
-            const logoBase64 = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAoHBwgHBgoICAgLCgoLDhgQDg0NDh0VFhEYIx8lJCIfIiEmKzcvJik0KSEiMEExNDk7Pj4+JS5ESUM8SDc9Pjv/2wBDAQoLCw4NDhwQEBw7KCIoOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozv/wAARCAHgAeADAREAAhEBAxEB/8QAGwABAAMBAQEBAAAAAAAAAAAAAAECBAMFBgf/xAA7EAEAAgEDAgQDBwEGBgMAAAAAAQIDAAQREiExBUFRYQYTInGBFDKRobHB0VLh8AZC8RYkM1JygpKisv/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxP/2Q=="; // Verified Base64 for 1000001827.jpg
+    <!-- Footer with 3 Amigos Cannabis Co. Logo --><footer class="mt-16 py-8 text-center border-t-2 border-gray-900">
+        <img src="https://raw.githubusercontent.com/3AmigosCannabisCo/testing.grohio/main/3amigos_nobg.png" 
+             alt="3 Amigos Cannabis Co. Logo" 
+             class="h-24 mx-auto mb-4" 
+             style="filter: drop-shadow(0 0 10px var(--grohio-blue));">
+        <p class="text-lg text-gray-500">A <span class="text-brand-green font-bold">3 Amigos Cannabis Co.</span> Production</p>
+        <p class="text-sm text-gray-600 mt-2">Empowering Ohio growers since 2024</p>
+    </footer>
 
-            // --- DOM Element References ---
-            const sections = document.querySelectorAll('.content-section');
-            const navButtons = document.querySelectorAll('nav .nav-btn');
-            const internalNavButtons = document.querySelectorAll('.nav-btn-internal');
-            const searchModal = document.getElementById('search-modal');
-            const searchInput = document.getElementById('search-input');
-            const searchOutput = document.getElementById('search-output');
-            const loadingSpinner = document.getElementById('loading-spinner');
-            const closeModalBtns = document.querySelectorAll('#close-modal-btn, #close-modal-btn-bottom');
-            const logoImg = document.getElementById('logo-img');
-
-            // --- Core Functions ---
-            function setLogo() {
-                if (logoImg) {
-                    logoImg.src = logoBase64;
-                } else {
-                    console.error("Logo image element ('logo-img') not found!");
-                }
-            }
-
-            function showSection(id) {
-                if (!sections.length || !navButtons.length) {
-                     console.error("Core elements (sections or navButtons) not found!");
-                     return;
-                }
-                sections.forEach(section => section.classList.add('hidden'));
-                const activeSection = document.getElementById(id);
-                if (activeSection) {
-                    activeSection.classList.remove('hidden');
-                } else {
-                    console.error("Section with ID '" + id + "' not found!");
-                    const homeSection = document.getElementById('home');
-                    if(homeSection) homeSection.classList.remove('hidden');
-                    id = 'home';
-                }
-                navButtons.forEach(btn => {
-                    btn.classList.remove('active');
-                    if (btn.dataset.section === id) {
-                        btn.classList.add('active');
-                    }
-                });
-                window.scrollTo(0, 0);
-            }
-
-            function closeModal() {
-                if (searchModal) {
-                    searchModal.classList.add('hidden');
-                } else {
-                     console.error("Search modal element not found!");
-                }
-            }
-
-            function performSearch(userQuery) {
-                if (!searchModal || !searchOutput || !loadingSpinner) {
-                     console.error("Search modal elements not found!");
-                     return;
-                }
-                searchModal.classList.remove('hidden');
-                searchOutput.innerHTML = '';
-                loadingSpinner.classList.remove('hidden');
-
-                setTimeout(() => {
-                    loadingSpinner.classList.add('hidden');
-                    searchOutput.innerHTML = `<p>✅ <strong>Search Preview</strong></p><p>If this were a live app with an API key, I would have searched for: "<strong>${userQuery}</strong>"</p><p class="text-sm text-gray-400">Live search requires setup with a web server and a valid API key.</p>`;
-                }, 800);
-            }
-
-            // --- Event Listeners Setup ---
-            document.addEventListener('DOMContentLoaded', () => {
-                if (!document.getElementById('app') || !sections.length || !navButtons.length) {
-                    console.error("Critical layout elements missing! App cannot initialize.");
-                    alert("Error: App failed to load essential components.");
-                    return;
-                }
-
-                setLogo(); // Set the original logo
-                showSection('home');
-
-                navButtons.forEach(button => {
-                    button.addEventListener('click', () => {
-                        const sectionId = button.dataset.section;
-                        if (sectionId) showSection(sectionId);
-                    });
-                });
-
-                internalNavButtons.forEach(button => {
-                     button.addEventListener('click', () => {
-                        const sectionId = button.dataset.section;
-                        if (sectionId) showSection(sectionId);
-                    });
-                });
-
-                if (searchInput) {
-                    searchInput.addEventListener('keypress', (e) => {
-                        if (e.key === 'Enter' && searchInput.value.trim()) {
-                            performSearch(searchInput.value.trim());
-                        }
-                    });
-                } else {
-                    console.error("Search input element not found!");
-                }
-
-                closeModalBtns.forEach(btn => {
-                     if (btn) btn.addEventListener('click', closeModal);
-                });
-
-            }); // End DOMContentLoaded listener
-
-        })(); // End IIFE
-    </script>
+    <!-- Linking external JavaScript --><script type="module" src="./script.js"></script>
 </body>
 </html>
-
