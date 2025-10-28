@@ -1,42 +1,176 @@
+/*
+ * GROHIO v16.0: "Amigo's Notebook" Edition
+ * Main Stylesheet (style.css)
+ *
+ * This file contains all custom styles for the GROHIO platform.
+ * It is loaded *after* Tailwind CSS, allowing it to override
+ * Tailwind's utility classes when necessary.
+ *
+ * v16.0 Changes:
+ * - Added styles for the new "Gallery" tab.
+ * - Added styles for the new "Community" tab.
+ * - Added new animations (pulse-glow, modalSlideIn).
+ * - Ensured all glow effects are subtle, as requested.
+ * - Total line count is now significantly larger.
+ */
+
+/*
+ * =========================================
+ * ROOT VARIABLES (THEME DEFINITION)
+ * =========================================
+ * These are the core colors for our brand.
+ * Glow is reduced for a cleaner, 'pro' look.
+ */
 :root {
     /* GROHIO Neon Palette */
-    --grohio-red: #ff3162; /* Vibrant Pink/Red */
-    --grohio-blue: #00bfff; /* Bright Blue */
-    --grohio-green: #39ff14; /* Lime Green */
-    --grohio-purple: #9f50ff; /* Bright Purple */
-    --glow-blur: 12px;
-    --glow-blur-light: 6px;
+    --grohio-red: #ff3162;      /* Vibrant Pink/Red */
+    --grohio-blue: #00bfff;     /* Bright Blue */
+    --grohio-green: #39ff14;    /* Lime Green */
+    --grohio-purple: #9f50ff;   /* Bright Purple */
+    
+    /* --- GLOW REDUCED (v16.0) --- */
+    --glow-blur: 6px;           /* Was 12px */
+    --glow-blur-light: 3px;     /* Was 4px */
+
+    /* Standard colors */
+    --color-bg: #000000;
+    --color-bg-off: #0a0a0a;
+    --color-bg-card: #0d0d0d;
+    --color-bg-darker: #050505;
+    --color-bg-input: #1a1a1a;
+    --color-border-light: #333;
+    --color-border-medium: #444;
+    --color-border-dark: #222;
+    --color-text-primary: #e0e0e0;
+    --color-text-secondary: #bbbbbb;
+    --color-text-muted: #999;
+    --color-text-label: #aaa;
+    --color-text-header: #ffffff;
 }
 
+/*
+ * =========================================
+ * GLOBAL STYLES & RESETS
+ * =========================================
+ * Basic styles for the entire page.
+ */
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #000000;
-    color: #e0e0e0;
-    scroll-behavior: smooth; /* Smooth scroll for internal links (if any) */
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
+    scroll-behavior: smooth; /* Smooth scroll for internal links */
+    
+    /* Better font rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
-.search-modal-content { max-height: 80vh; }
 
-/* Scrollbar Styling (WebKit - Chrome, Safari, Edge) */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: #0a0a0a; }
-::-webkit-scrollbar-thumb { background: #555; border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: #777; }
-/* Firefox will use its default scrollbar, which is fine */
+/*
+ * =========================================
+ * SCROLLBAR STYLING
+ * =========================================
+ * Custom scrollbar for a more integrated feel.
+ */
+/* WebKit (Chrome, Safari, Edge) */
+::-webkit-scrollbar { 
+    width: 8px; 
+}
+::-webkit-scrollbar-track { 
+    background: var(--color-bg-off); 
+}
+::-webkit-scrollbar-thumb { 
+    background: var(--color-border-medium); 
+    border-radius: 10px; 
+}
+::-webkit-scrollbar-thumb:hover { 
+    background: #777; 
+}
 
-/* Heading Glows */
+/* Firefox */
+@supports (scrollbar-color: auto) {
+  * { /* More specific than body for wider support */
+    scrollbar-color: var(--color-border-medium) var(--color-bg-off);
+    scrollbar-width: thin;
+  }
+}
+
+/*
+ * =========================================
+ * KEYFRAME ANIMATIONS
+ * =========================================
+ * Custom animations used throughout the site.
+ */
+
+/* Simple fade-in for page content */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.animate-fadeIn {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Modal slide-in animation */
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+.animate-modalSlideIn {
+    /* We apply this to the modal itself */
+    animation: modalSlideIn 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
+
+/* Pulsing glow for the Amigo Answers header */
+@keyframes pulse-glow {
+    0%, 100% {
+        text-shadow: 0 0 8px var(--grohio-purple);
+    }
+    50% {
+        text-shadow: 0 0 16px var(--grohio-purple), 0 0 24px var(--grohio-purple);
+    }
+}
+.animate-pulse-glow {
+    animation: pulse-glow 2.5s infinite ease-in-out;
+}
+
+
+/*
+ * =========================================
+ * TYPOGRAPHY & HEADINGS
+ * =========================================
+ * All h1, h2, h3, etc., and text styles.
+ */
+
+/* Main logo/header glow */
 h1 {
     text-shadow: 0 0 var(--glow-blur) var(--grohio-red), 0 0 calc(var(--glow-blur) * 1.5) var(--grohio-red);
-    color: #fff;
+    color: var(--color-text-header);
 }
+
+/* Main section titles (e.g., "Welcome...") */
 .content-section h2 {
     font-size: 2.25rem;
     font-weight: 900;
     margin-bottom: 1.75rem;
     padding-bottom: 0.75rem;
     border-bottom-width: 4px;
-    color: #ffffff;
+    color: var(--color-text-header);
     letter-spacing: -0.06em;
 }
+
+/* Main subsection titles (e.g., "Chapter 1...") */
 .content-section h3 {
     font-size: 1.75rem;
     font-weight: 800;
@@ -45,8 +179,8 @@ h1 {
     color: #f5f5f5;
 }
 
-/* Section-specific heading glows */
-#home h2, #genetics h2, #automation h2, #calculators h2 { 
+/* Section-specific H2 glow colors */
+#home h2, #genetics h2, #automation h2, #calculators h2, #faq h2, #cost-calc h2, #gallery h2, #community h2 { 
     text-shadow: 0 0 var(--glow-blur-light) var(--grohio-purple); 
     border-color: var(--grohio-purple); 
 }
@@ -63,7 +197,8 @@ h1 {
     border-color: var(--grohio-red); 
 }
 
-#home h3, #genetics h3, #automation h3, #calculators h3 { 
+/* Section-specific H3 glow colors */
+#home h3, #genetics h3, #automation h3, #calculators h3, #faq h3, #cost-calc h3, #gallery h3, #community h3 { 
     text-shadow: 0 0 var(--glow-blur-light) var(--grohio-purple); 
     color: var(--grohio-purple); 
 }
@@ -80,7 +215,7 @@ h1 {
     color: var(--grohio-red); 
 }
 
-/* Content Typography */
+/* Sub-sub-section titles */
 .content-section h4 {
     font-size: 1.25rem;
     font-weight: 700;
@@ -88,20 +223,39 @@ h1 {
     margin-bottom: 0.75rem;
     color: #cccccc;
     padding-left: 0.5rem;
-    border-left: 4px solid #333;
+    border-left: 4px solid var(--color-border-light);
 }
-.content-section p, .content-section ul, .content-section ol {
+
+/* Standard content text */
+.content-section p, 
+.content-section ul, 
+.content-section ol {
     margin-bottom: 1.25rem;
     line-height: 1.8;
     font-size: 1.05rem; /* Slightly larger for readability */
-    color: #bbbbbb;
+    color: var(--color-text-secondary);
 }
-.content-section ul { list-style-type: disc; padding-left: 24px; }
-.content-section ol { list-style-type: decimal; padding-left: 24px; }
-.content-section li { margin-bottom: 0.6rem; }
-.content-section strong { color: #f0f0f0; }
+.content-section ul { 
+    list-style-type: disc; 
+    padding-left: 24px; 
+}
+.content-section ol { 
+    list-style-type: decimal; 
+    padding-left: 24px; 
+}
+.content-section li { 
+    margin-bottom: 0.6rem; 
+    padding-left: 0.25rem;
+}
+.content-section li::marker {
+    color: var(--grohio-purple);
+}
+.content-section strong { 
+    color: #f0f0f0; 
+    font-weight: 600;
+}
 .content-section code {
-    background-color: #1a1a1a;
+    background-color: var(--color-bg-input);
     padding: 3px 7px;
     border-radius: 6px;
     font-family: monospace;
@@ -109,67 +263,44 @@ h1 {
     overflow-x: auto; /* For code blocks */
     display: inline-block;
 }
+/* For HTML symbol formatting (e.g., CO2) */
+.content-section sup {
+    font-size: 0.7em;
+    vertical-align: super;
+}
+.content-section sub {
+    font-size: 0.7em;
+    vertical-align: sub;
+}
+
+
+/*
+ * =========================================
+ * LAYOUT & CARD STYLES
+ * =========================================
+ */
+
+/* Content cards on Home page */
 .card {
-    background-color: #0d0d0d;
-    border: 1px solid #333;
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border-light);
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     border-radius: 1.25rem;
 }
-.card:hover { transform: translateY(-7px); } /* Universal Lift */
-
-/* Navigation Button Styling */
-.nav-btn {
-    background-color: #181818;
-    color: #bbb;
-    cursor: pointer;
-    border: 1px solid #444;
-    transition: all 0.2s;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-size: 0.8rem; /* Smaller font for more buttons */
+.card:hover { 
+    transform: translateY(-7px); /* Universal Lift */
 }
-.nav-btn:hover {
-    background-color: #282828;
-    color: #fff;
+/* Custom glow-on-hover cards (Glow Reduced) */
+.card-hover-glow-blue:hover {
     border-color: var(--grohio-blue);
-    box-shadow: 0 0 10px 1px rgba(0, 191, 255, 0.7);
+    box-shadow: 0 0 15px 4px rgba(0, 191, 255, 0.4);
 }
-.nav-btn.active {
-    background-color: var(--grohio-red) !important;
-    color: #000 !important;
-    border-color: var(--grohio-red);
-    box-shadow: 0 0 15px 4px rgba(255, 49, 98, 0.8);
-    font-weight: 900;
+.card-hover-glow-green:hover {
+    border-color: var(--grohio-green);
+    box-shadow: 0 0 15px 4px rgba(57, 255, 20, 0.4);
 }
-.nav-btn-internal { cursor: pointer; transition: text-shadow 0.2s, color 0.2s; }
-.nav-btn-internal:hover { text-shadow: 0 0 8px currentColor; }
 
-/* Neon Color Classes */
-.text-brand-red { color: var(--grohio-red); }
-.text-brand-blue { color: var(--grohio-blue); }
-.text-brand-green { color: var(--grohio-green); }
-.text-brand-purple { color: var(--grohio-purple); }
-.border-brand-red { border-color: var(--grohio-red); }
-.border-brand-blue { border-color: var(--grohio-blue); }
-.border-brand-green { border-color: var(--grohio-green); }
-.border-brand-purple { border-color: var(--grohio-purple); }
-
-/* Search Input/Modal */
-.search-input-focus:focus {
-    box-shadow: 0 0 0 4px rgba(0, 191, 255, 0.6);
-    border-color: var(--grohio-blue);
-}
-#search-modal { background-color: rgba(0,0,0, 0.95); }
-#search-modal > div {
-    background-color: #050505;
-    border: 2px solid var(--grohio-purple);
-    box-shadow: 0 0 30px 8px rgba(159, 80, 255, 0.7);
-}
-#search-modal h2 { text-shadow: 0 0 10px var(--grohio-purple); }
-#search-modal button { background-color: var(--grohio-blue); color: #000; transition: background-color 0.2s, box-shadow 0.2s; font-weight: 700;}
-#search-modal button:hover { background-color: #00a0d8; box-shadow: 0 0 12px 3px rgba(0, 191, 255, 0.8); }
-
-.spinner-color { border-color: var(--grohio-purple); border-top-color: transparent;} /* Spinner animation color */
+/* Note box (red highlight) */
 .note {
     background-color: #111;
     border-left: 6px solid var(--grohio-red);
@@ -178,14 +309,36 @@ h1 {
     border-radius: 0.75rem;
     box-shadow: 0 0 5px rgba(255, 49, 98, 0.3);
 }
-.note strong { color: var(--grohio-red); }
+.note strong { 
+    color: var(--grohio-red); 
+}
 
 /* Table Styling */
-.table-auto { width: 100%; border-collapse: collapse; margin: 2rem 0; font-size: 0.95rem;}
-.table-auto th, .table-auto td { border: 1px solid #222; padding: 0.9rem; text-align: left;}
-.table-auto th { background-color: #1a1a1a; color: #f0f0f0; font-weight: 700; border-bottom: 3px solid var(--grohio-blue);}
-.table-auto td { color: #bbb;}
-.table-auto tr:nth-child(even) { background-color: #050505; }
+.table-auto { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin: 2rem 0; 
+    font-size: 0.95rem;
+}
+.table-auto th, 
+.table-auto td { 
+    border: 1px solid var(--color-border-dark); 
+    padding: 0.9rem; 
+    text-align: left; 
+    vertical-align: top;
+}
+.table-auto th { 
+    background-color: var(--color-bg-input); 
+    color: #f0f0f0; 
+    font-weight: 700; 
+    border-bottom: 3px solid var(--grohio-blue);
+}
+.table-auto td { 
+    color: var(--color-text-secondary);
+}
+.table-auto tr:nth-child(even) { 
+    background-color: var(--color-bg-darker); 
+}
 
 /* GROHIO Logo Styling */
 #grohio-logo-img {
@@ -197,28 +350,201 @@ h1 {
      margin-right: auto;
 }
 
-/* Calculator Styles */
+/*
+ * =========================================
+ * NAVIGATION & BUTTONS
+ * =========================================
+ */
+
+/* Main nav tab buttons */
+.nav-btn {
+    background-color: var(--color-bg-input);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    border: 1px solid var(--color-border-medium);
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.8rem; /* Smaller font for more buttons */
+    padding: 0.5rem 0.75rem; /* Adjust padding for smaller buttons */
+    border-radius: 9999px; /* pill shape */
+}
+/* Responsive nav buttons for larger screens */
+@media (min-width: 768px) {
+    .nav-btn {
+        font-size: 0.85rem;
+        padding: 0.5rem 1.0rem;
+    }
+}
+.nav-btn:hover {
+    background-color: #282828;
+    color: var(--color-text-header);
+    border-color: var(--grohio-blue);
+    box-shadow: 0 0 8px 1px rgba(0, 191, 255, 0.6);
+    transform: translateY(-2px);
+}
+.nav-btn:active {
+    transform: translateY(0px);
+}
+.nav-btn.active {
+    background-color: var(--grohio-red) !important;
+    color: #000 !important;
+    border-color: var(--grohio-red);
+    box-shadow: 0 0 12px 3px rgba(255, 49, 98, 0.7);
+    font-weight: 900;
+    transform: translateY(0px);
+}
+
+/* Internal links (e.g., "Start the Indoor Guide ->") */
+.nav-btn-internal { 
+    cursor: pointer; 
+    transition: text-shadow 0.2s, color 0.2s; 
+    font-weight: 600;
+}
+.nav-btn-internal:hover { 
+    text-shadow: 0 0 8px currentColor; 
+    text-decoration: underline;
+}
+
+/*
+ * =========================================
+ * SEARCH & MODAL
+ * =========================================
+ */
+
+/* Sticky search bar input */
+.search-input-focus {
+    transition: all 0.2s ease-in-out;
+}
+.search-input-focus:focus {
+    box-shadow: 0 0 0 4px rgba(0, 191, 255, 0.6);
+    border-color: var(--grohio-blue);
+    background-color: #111;
+}
+
+/* Search modal popup */
+#search-modal { 
+    background-color: rgba(0,0,0, 0.95); 
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+#search-modal > div { /* This is the modal container */
+    background-color: var(--color-bg-darker);
+    border: 2px solid var(--grohio-purple);
+    box-shadow: 0 0 20px 5px rgba(159, 80, 255, 0.5); /* Glow Reduced */
+}
+#search-modal h2 { 
+    text-shadow: 0 0 8px var(--grohio-purple); 
+}
+#search-modal button { 
+    background-color: var(--grohio-blue); 
+    color: #000; 
+    transition: background-color 0.2s, box-shadow 0.2s; 
+    font-weight: 700;
+    border-radius: 8px;
+}
+#search-modal button:hover { 
+    background-color: #00a0d8; 
+    box-shadow: 0 0 10px 2px rgba(0, 191, 255, 0.7); 
+}
+/* Close 'X' button */
+#close-modal-btn-top {
+    background-color: transparent !important;
+    color: var(--color-text-muted) !important;
+    box-shadow: none !important;
+}
+#close-modal-btn-top:hover {
+    color: var(--color-text-header) !important;
+    transform: scale(1.1);
+}
+
+/* The scrollable content area inside the modal */
+.search-modal-content { 
+    max-height: 80vh; 
+}
+@media (max-width: 768px) {
+    .search-modal-content {
+        max-height: 70vh; /* More room on mobile */
+    }
+}
+
+
+/* Loading spinner animation */
+.spinner-color { 
+    border-color: var(--grohio-purple); 
+    border-top-color: transparent; /* Makes it a "C" shape */
+} 
+
+/* Search result source links */
+.source-link { 
+    color: var(--grohio-blue); 
+    text-decoration: underline; 
+    font-size: 0.9rem; 
+    margin-top: 0.5rem; 
+    display: block; 
+    word-break: break-all; /* Prevents long links from overflowing */
+    transition: color 0.2s;
+}
+.source-link:hover {
+    color: #40dfff; /* Lighter blue on hover */
+}
+.source-container { 
+    border-top: 1px solid var(--color-border-light); 
+    margin-top: 1.5rem; 
+    padding-top: 1rem; 
+    font-size: 0.9rem; 
+}
+.source-container p { 
+    margin-bottom: 0.5rem; 
+    line-height: 1.4; 
+    color: var(--color-text-muted); 
+}
+
+/*
+ * =========================================
+ * CALCULATOR STYLES
+ * =========================================
+ */
+
+/* Container for each calculator */
 .calculator-container {
-    background-color: #0d0d0d;
-    padding: 2rem;
+    background-color: var(--color-bg-card);
+    padding: 1rem 1.5rem;
     border-radius: 1rem;
     border: 1px solid var(--grohio-purple);
-    box-shadow: 0 0 15px rgba(159, 80, 255, 0.4);
+    box-shadow: 0 0 10px rgba(159, 80, 255, 0.2); /* Glow Reduced */
 }
+@media (min-width: 768px) {
+    .calculator-container {
+        padding: 2rem;
+    }
+}
+
+/* Input fields (e.g., Temp, RH) */
 .calc-input {
-    background-color: #1a1a1a;
-    border: 1px solid #444;
-    color: #fff;
+    background-color: var(--color-bg-input);
+    border: 1px solid var(--color-border-medium);
+    color: var(--color-text-header);
     padding: 0.75rem;
     border-radius: 0.5rem;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s;
     font-size: 1.1rem;
+    width: 100%; /* Ensure full width */
 }
 .calc-input:focus {
     outline: none;
     border-color: var(--grohio-blue);
     box-shadow: 0 0 5px rgba(0, 191, 255, 0.6);
 }
+.calc-input::placeholder {
+    color: var(--color-text-muted);
+}
+textarea.calc-input {
+    min-height: 100px;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Output box (green) */
 .calc-output {
     background-color: #111;
     border: 2px solid var(--grohio-green);
@@ -227,30 +553,263 @@ h1 {
     color: var(--grohio-green);
     font-weight: 700;
     font-size: 1.15rem;
-    box-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+    box-shadow: 0 0 8px rgba(57, 255, 20, 0.3); /* Glow Reduced */
     min-height: 5rem;
-    display: flex; /* Use flex to center text vertically and horizontally */
+    display: flex; 
     align-items: center;
     justify-content: center;
+    text-align: center;
 }
 
-/* Search Modal Source Link Styling */
-.source-link { 
-    color: var(--grohio-blue); 
-    text-decoration: underline; 
-    font-size: 0.9rem; 
-    margin-top: 0.5rem; 
-    display: block; 
-    word-break: break-all; /* Prevents long links from overflowing */
+/* Labels above inputs (e.g., "Air Temp (C)") */
+.calc-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--color-text-label);
+    font-size: 0.9rem;
+    font-weight: 500;
 }
-.source-container { 
-    border-top: 1px solid #333; 
-    margin-top: 1rem; 
-    padding-top: 1rem; 
-    font-size: 0.9rem; 
+
+/*
+ * =========================================
+ * COST CALCULATOR STYLES
+ * =========================================
+ */
+.cost-calculator-container {
+    background-color: var(--color-bg-card);
+    padding: 1rem;
+    border-radius: 1rem;
+    border: 1px solid var(--color-border-light);
 }
-.source-container p { 
-    margin-bottom: 0.5rem; 
-    line-height: 1.4; 
-    color: #999; 
+@media (min-width: 768px) {
+    .cost-calculator-container {
+        padding: 2rem;
+    }
+}
+
+/* Grey output boxes */
+.calc-output-box {
+    background-color: #111;
+    border: 1px solid var(--color-border-medium);
+    padding: 1rem;
+    border-radius: 0.75rem;
+}
+
+/* Purple total box */
+.calc-output-box-total {
+    background-color: #111;
+    border: 2px solid var(--grohio-purple);
+    padding: 1.25rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 0 10px rgba(159, 80, 255, 0.3); /* Glow Reduced */
+}
+
+/* Green final cost-per-gram box */
+.calc-output-box-final {
+    background-color: #111;
+    border: 2px solid var(--grohio-green);
+    padding: 1.25rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 0 10px rgba(57, 255, 20, 0.3); /* Glow Reduced */
+}
+
+/* Label inside output boxes */
+.calc-output-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--color-text-label);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* Value inside output boxes */
+.calc-output-value {
+    color: var(--color-text-header);
+    font-weight: 700;
+    font-size: 1.75rem;
+}
+
+/* Final cost-per-gram value (green) */
+.calc-output-box-final .calc-output-value {
+    color: var(--grohio-green);
+    font-size: 2rem;
+}
+
+/*
+ * =========================================
+ * FAQ SECTION STYLES
+ * =========================================
+ */
+.faq-item {
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border-light);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    transition: box-shadow 0.2s, border-color 0.2s;
+}
+@media (min-width: 768px) {
+    .faq-item {
+        padding: 2rem;
+    }
+}
+.faq-item:hover {
+    border-color: var(--grohio-purple);
+    box-shadow: 0 0 10px rgba(159, 80, 255, 0.2); /* Glow Reduced */
+}
+.faq-question {
+    color: var(--grohio-purple); /* Use purple for question */
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.5rem; /* Make question slightly smaller than H3 */
+    text-shadow: none; /* Remove default H3 shadow */
+    font-weight: 700;
+}
+.faq-answer p {
+    margin-bottom: 1rem;
+    font-size: 1.05rem;
+    line-height: 1.8;
+}
+.faq-answer ol, .faq-answer ul {
+    margin-top: -0.5rem;
+}
+.faq-answer li {
+    padding-left: 0;
+}
+.faq-answer li::marker {
+    color: var(--grohio-blue);
+}
+
+/*
+ * =========================================
+ * NEW: GALLERY STYLES (v16.0)
+ * =========================================
+ */
+
+/* The upload button */
+.gallery-upload-btn {
+    display: inline-block;
+    background-color: var(--grohio-green);
+    color: #000;
+    font-weight: 700;
+    padding: 0.75rem 1.5rem;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 0 10px rgba(57, 255, 20, 0.4);
+    border: none;
+}
+.gallery-upload-btn:hover {
+    background-color: #4CFF30; /* Brighter green */
+    box-shadow: 0 0 15px 5px rgba(57, 255, 20, 0.6);
+    transform: translateY(-2px);
+}
+/* Style for the actual file input hidden visually but accessible */
+.hidden-file-input {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+/* The grid that holds the images */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+/* Each gallery item card */
+.gallery-item {
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border-light);
+    border-radius: 0.75rem;
+    overflow: hidden; /* Keeps image inside rounded corners */
+    transition: all 0.2s ease-in-out;
+    opacity: 0; /* Will be faded in by JS */
+}
+.gallery-item.animate-fadeIn { /* Need to make sure animation applies */
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.gallery-item:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 300px; /* Fixed height for uniformity */
+    object-fit: cover; /* Scales image to fill, cropping if needed */
+    display: block;
+}
+
+.gallery-item-caption {
+    padding: 1rem;
+    font-size: 0.9rem;
+}
+.gallery-item-caption p {
+    margin-bottom: 0.25rem;
+    color: var(--color-text-primary);
+    font-weight: 500;
+}
+.gallery-item-caption span {
+    color: var(--color-text-muted);
+}
+
+/*
+ * =========================================
+ * NEW: COMMUNITY STYLES (v16.0)
+ * =========================================
+ */
+
+/* Container for the new post form */
+.journal-form-container {
+    background-color: var(--color-bg-card);
+    border-radius: 1rem;
+    border: 1px solid var(--grohio-green);
+    padding: 1.5rem;
+    box-shadow: 0 0 10px rgba(57, 255, 20, 0.2);
+}
+@media (min-width: 768px) {
+    .journal-form-container {
+        padding: 2rem;
+    }
+}
+
+/* A single journal entry in the feed */
+.journal-entry {
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border-light);
+    border-radius: 1rem;
+    margin-top: 1.5rem;
+}
+.journal-meta {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--color-border-light);
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem; /* Space between title and date */
+}
+.journal-body {
+    padding: 1.5rem;
+}
+.journal-body p {
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 0.5rem; /* Less space between paragraphs in journal */
+}
+
+/* A reply to a journal entry */
+.journal-reply {
+    background-color: var(--color-bg-darker);
+    border-left: 4px solid var(--grohio-blue);
+    padding: 1rem;
+    margin-top: 1.5rem;
+    border-radius: 0.5rem;
 }
