@@ -3,90 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- This title is what appears on the browser tab -->
     <title>GROHIO by 3 Amigos Cannabis Co.: The Ultimate Grow Guide</title>
-    <!-- Load Tailwind CSS -->
+    
+    <!-- Load Tailwind CSS (A utility-first CSS framework for rapid UI development) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Load Google Fonts -->
+    
+    <!-- Load Google Fonts (We use 'Inter' for its clean, modern look) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-    <!-- Load our Custom CSS -->
+    
+    <!-- Load our Custom CSS file (This MUST come after Tailwind to override it) -->
     <link rel="stylesheet" href="./style.css">
 </head>
 <body class="bg-black text-gray-300">
 
     <!-- Main App Container -->
+    <!-- 'max-w-5xl' sets the maximum width, 'mx-auto' centers it, 'p-4 md:p-8' adds padding (more on desktop) -->
     <div id="app" class="max-w-5xl mx-auto p-4 md:p-8">
         
         <!-- Header Section with Both Logos -->
         <header class="text-center mb-10 flex flex-col items-center">
             
             <!-- GROHIO Logo (Stretches Horizontally) -->
+            <!-- This is the main branding. 'w-full' makes it responsive. -->
             <img id="grohio-logo-img" src="https://raw.githubusercontent.com/3AmigosCannabisCo/testing.grohio/main/grohio_nobg.png" 
                  alt="GROHIO by 3 Amigos Cannabis Co. Logo" 
-                 class="w-full h-auto max-w-4xl mb-4" 
-                 style="filter: drop-shadow(0 0 18px var(--grohio-purple));">
+                 class="w-full h-auto max-w-4xl mb-4 animate-fadeIn" 
+                 style="filter: drop-shadow(0 0 8px var(--grohio-purple));"> <!-- Glow Reduced -->
             
             <!-- Hidden H1 and Subtitle for screen readers or future use, logo is primary visual -->
-            <h1 class="text-6xl font-black text-white uppercase tracking-tighter hidden">GROHIO V12.0</h1> 
+            <h1 class="text-6xl font-black text-white uppercase tracking-tighter hidden">GROHIO V16.0</h1> 
             <p class="text-xl text-gray-400 mt-3 hidden">The Ultimate Ohio Grower's Platform by 3 Amigos Cannabis Co.</p> 
             
             <!-- User ID Display (for Firebase) -->
+            <!-- This text will be updated by script.js after Firebase authentication -->
             <p id="user-id-display" class="text-xs text-gray-600 mt-1">Authenticating...</p>
         </header>
 
          <!-- Sticky Search Bar -->
+         <!-- 'sticky top-0 z-20' makes this bar stick to the top of the screen when you scroll -->
         <div class="sticky top-0 z-20 bg-black/90 backdrop-blur-md py-4 mb-8 border-b-2 border-gray-900 shadow-xl">
             <div class="relative">
                 <input type="search" id="search-input" placeholder="Ask GROHIO anything (e.g., 'why are my leaves yellow?')..." class="w-full p-4 pl-12 text-lg border-2 border-gray-700 rounded-full focus:ring-4 focus:ring-brand-blue transition bg-gray-900 text-white placeholder-gray-500 search-input-focus">
                 <div class="absolute inset-y-0 left-0 flex items-center pl-4">
-                    <!-- Search Icon -->
+                    <!-- Search Icon (Inline SVG) -->
                     <svg class="h-6 w-6 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </div>
             </div>
         </div>
 
         <!-- Navigation Tabs -->
+        <!-- 'flex-wrap' allows buttons to wrap onto the next line on small screens -->
         <nav class="flex flex-wrap justify-center gap-2 md:gap-3 mb-12">
+            <!-- Each button has a 'data-section' attribute that our JavaScript uses to show/hide content -->
             <button data-section="home" class="nav-btn active px-4 py-2 rounded-full font-semibold transition">🏠 Home</button>
             <button data-section="legal" class="nav-btn px-4 py-2 rounded-full font-semibold transition">⚖️ Legal</button>
-            <button data-section="indoor" class="nav-btn px-4 py-2 rounded-full font-semibold transition">💡 Indoor Guide</button>
-            <button data-section="outdoor" class="nav-btn px-4 py-2 rounded-full font-semibold transition">☀️ Outdoor Guide</button>
+            <button data-section="indoor" class="nav-btn px-4 py-2 rounded-full font-semibold transition">💡 Indoor</button>
+            <button data-section="outdoor" class="nav-btn px-4 py-2 rounded-full font-semibold transition">☀️ Outdoor</button>
             <button data-section="pests" class="nav-btn px-4 py-2 rounded-full font-semibold transition">🐛 Problem Hub</button>
-            <button data-section="genetics" class="nav-btn px-4 py-2 rounded-full font-semibold transition">🧬 Strains & Genetics</button>
-            <button data-section="automation" class="nav-btn px-4 py-2 rounded-full font-semibold transition">⚙️ Automation Basics</button>
-            <button data-section="calculators" class="nav-btn px-4 py-2 rounded-full font-semibold transition">🛠️ Tools & Calculators</button>
+            <button data-section="genetics" class="nav-btn px-4 py-2 rounded-full font-semibold transition">🧬 Genetics</button>
+            <button data-section="cost-calc" class="nav-btn px-4 py-2 rounded-full font-semibold transition">💲 Cost Calc</button>
+            <button data-section="faq" class="nav-btn px-4 py-2 rounded-full font-semibold transition">❓ FAQ</button>
+            <!-- === NEW TABS === -->
+            <button data-section="gallery" class="nav-btn px-4 py-2 rounded-full font-semibold transition">🖼️ Gallery</button>
+            <button data-section="community" class="nav-btn px-4 py-2 rounded-full font-semibold transition">🤝 Community</button>
+            <!-- === END NEW TABS === -->
+            <button data-section="automation" class="nav-btn px-4 py-2 rounded-full font-semibold transition">⚙️ Automation</button>
+            <button data-section="calculators" class="nav-btn px-4 py-2 rounded-full font-semibold transition">🛠️ Tools</button>
         </nav>
 
         <!-- Main Content Area -->
+        <!-- All content sections are in 'main' and script.js will show the one that is not 'hidden' -->
         <main id="main-content">
             
             <!-- === HOME SECTION === -->
-            <div id="home" class="content-section">
+            <!-- 'animate-fadeIn' is a custom animation from style.css -->
+            <div id="home" class="content-section animate-fadeIn">
                 <h2 class="border-brand-purple">Welcome, Future Ohio Grower!</h2>
                 <p>Welcome to the ultimate guide for growing cannabis at home, made by Ohioans, for Ohioans. We're the 3 Amigos, and we created this platform to take the mystery and confusion out of cultivation. Growing your own cannabis is an incredibly rewarding hobby, and our mission is to give you the knowledge to go from your first seed to your first successful harvest with confidence.</p>
-                <p>This guide is intentionally detailed, but don't let that overwhelm you! We've broken everything down into easy-to-understand sections. Whether you're trying to figure out what light to buy, why your leaves are yellow, or just what's legal, we've got you covered. Use the tabs above to navigate, or just type your question into the search bar.</p>
+                <p>This guide is intentionally detailed, but don't let that overwhelm you! We've broken everything down into easy-to-understand sections. Whether you're trying to figure out what light to buy, why your leaves are yellow, or just what's legal, we've got you covered. Use the tabs above to navigate, or just type your question into the "Amigo Answers" search bar.</p>
                 
                  <div class="note">
-                    <p><strong>Our Philosophy: Keep It Simple, Grow Smart.</strong> You don't need a biology degree to grow great cannabis. You just need to understand the basics: a plant needs light, water, food, and fresh air. This guide is built to teach you those basics and then show you the simple upgrades that make a huge difference. We'll help you avoid common mistakes so you can get right to the fun part.</p>
+                    <p><strong>🌱 Our Philosophy: Keep It Simple, Grow Smart.</strong> You don't need a biology degree to grow great cannabis. You just need to understand the basics: a plant needs light, water, food, and fresh air. This guide is built to teach you those basics and then show you the simple upgrades that make a huge difference. We'll help you avoid common mistakes so you can get right to the fun part.</p>
                 </div>
 
-                <h3 class="text-brand-purple">What a Cannabis Plant *Really* Needs</h3>
+                <h3 class="text-brand-purple">🧠 How to Use This Guide</h3>
+                <p>Think of this as your living textbook. Here's how we recommend you start:</p>
+                <ol>
+                    <li><strong>Start with the <button data-section="legal" class="nav-btn-internal text-brand-blue">⚖️ Legal</button> Tab:</strong> Before you buy a single seed, understand the rules. Knowing the law protects you, your family, and your hobby.</li>
+                    <li><strong>Read the <button data-section="indoor" class="nav-btn-internal text-brand-blue">💡 Indoor</button> or <button data-section="outdoor" class="nav-btn-internal text-brand-green">☀️ Outdoor</button> Guide:</strong> Pick one path to start. We *highly* recommend starting indoors with a tent, as it's easier to control and get great results on your first try. Read that guide from top to bottom.</li>
+                    <li><strong>Visit the <button data-section="faq" class="nav-btn-internal text-brand-purple">❓ FAQ</button> Tab:</strong> We've answered dozens of the most common "newbie" questions. Reading this *before* you start will save you a ton of stress.</li>
+                    <li><strong>Bookmark the <button data-section="pests" class="nav-btn-internal text-brand-red">🐛 Problem Hub</button>:</strong> You *will* have a problem. Your leaves *will* turn yellow. Don't panic. When it happens, come here, look at the pictures, and find your solution.</li>
+                    <li><strong>Use the <button data-section="cost-calc" class="nav-btn-internal text-brand-purple">💲 Cost Calculator</button>:</strong> Run the numbers! See how much you'll save and what your startup budget should be.</li>
+                </ol>
+
+                <h3 class="text-brand-purple">🌳 What a Cannabis Plant *Really* Needs</h3>
                 <p>Before you buy anything, just remember this. Everything you do is to provide these five things:</p>
                 <ol>
-                    <li><strong>Light:</strong> This is the plant's food-making engine. Indoors, this is your grow light. Outdoors, it's the sun. More light (to a point) = bigger plants and bigger buds.</li>
-                    <li><strong>Air:</strong> Plants breathe in Carbon Dioxide ($\text{CO}_2$) and "exhale" Oxygen. They need fresh air and a gentle breeze to stay healthy and strong.</li>
-                    <li><strong>Water:</strong> Plants drink water through their roots to move nutrients around and stay cool. The trick is learning *when* to water (and when *not* to!).</li>
-                    <li><strong>Nutrients:</strong> This is the plant's "food." Just like people, they need a balanced diet, especially Nitrogen ($\text{N}$), Phosphorus ($\text{P}$), and Potassium ($\text{K}$). You can buy this in a bottle or build amazing "living soil" that has it all.</li>
-                    <li><strong>A Stable Environment:</strong> Plants are happiest when their "room" (your tent or garden) isn't too hot, too cold, too wet, or too dry. Keeping things stable is the secret to success.</li>
+                    <li><strong>💡 Light:</strong> This is the plant's food-making engine. Through a process called <strong>photosynthesis</strong>, the plant uses light energy to turn CO<sub>2</sub> (from the air) and Water (from the roots) into sugar (its food!). More light (to a point) = more food = bigger plants and bigger buds.</li>
+                    <li><strong>💨 Air:</strong> Plants breathe in Carbon Dioxide (CO<sub>2</sub>) and "exhale" Oxygen. They need fresh air (which contains CO<sub>2</sub>) and a gentle breeze to stay healthy. The breeze also strengthens their stems and stops mold from growing.</li>
+                    <li><strong>💧 Water:</strong> Plants drink water through their roots. This water acts like a "nutrient highway," moving food all around the plant. The plant also "sweats" this water out through its leaves (transpiration) to stay cool, just like we do.</li>
+                    <li><strong>🍲 Nutrients:</strong> This is the plant's "food" (or more accurately, its "vitamins"). Just like people, they need a balanced diet. The "Big 3" are Nitrogen (N), Phosphorus (P), and Potassium (K). You can buy these vitamins in a bottle or build amazing "living soil" that has them all.</li>
+                    <li><strong>🌡️ A Stable Environment:</strong> Plants are happiest when their "room" (your tent or garden) isn't too hot, too cold, too wet, or too dry. A stable, consistent environment is the *real secret* to success. Wild swings in temp/humidity = a stressed-out plant.</li>
                 </ol>
                 <p>That's it! Every tool, technique, and tip in this guide is just a way to provide those five things better. You can do this!</p>
 
                 <div class="grid md:grid-cols-2 gap-8 mt-10">
-                    <div class="card p-8 shadow-lg border-brand-blue hover:box-shadow: 0 0 20px 5px rgba(0, 191, 255, 0.8);">
+                    <div class="card p-8 shadow-lg card-hover-glow-blue">
                         <h3 class="mt-0 text-brand-blue">💡 Your First Indoor Grow</h3>
                         <p>Want total control? Growing indoors in a tent is the best way to get amazing results year-round. We'll walk you through the perfect beginner setup, from the tent to the light to the fan.</p>
                         <button data-section="indoor" class="mt-5 text-brand-blue font-semibold hover:underline nav-btn-internal">Start the Indoor Guide &rarr;</button>
                     </div>
-                    <div class="card p-8 shadow-lg border-brand-green hover:box-shadow: 0 0 20px 5px rgba(57, 255, 20, 0.8);">
+                    <div class="card p-8 shadow-lg card-hover-glow-green">
                         <h3 class="mt-0 text-brand-green">☀️ Growing with the Sun</h3>
                         <p>Ready to work with Mother Nature? Outdoor growing is cheap, effective, and can lead to *massive* plants. We'll show you how to succeed in Ohio's tricky climate, from picking a spot to fighting off bud rot.</p>
                         <button data-section="outdoor" class="mt-5 text-brand-green font-semibold hover:underline nav-btn-internal">Start the Outdoor Guide &rarr;</button>
@@ -98,42 +126,52 @@
             <div id="legal" class="content-section hidden">
                 <h2 class="border-brand-blue">⚖️ Ohio's Grow Laws: The Simple Version</h2>
                 <div class="note">
-                    <p><strong>CRITICAL LEGAL DISCLAIMER:</strong> We are growers, not lawyers. This is our interpretation of the law for educational purposes ONLY. **This is NOT legal advice.** Laws can change and are interpreted differently. Always read the official Ohio Revised Code ($\text{ORC}$) yourself and consult a qualified lawyer about your specific situation. **Do not risk your freedom. Grow responsibly.**</p>
+                    <p><strong>🛑 CRITICAL LEGAL DISCLAIMER:</strong> We are growers, not lawyers. This is our interpretation of the law for educational purposes ONLY. **This is NOT legal advice.** Laws can change and are interpreted differently. Always read the official Ohio Revised Code (ORC) yourself and consult a qualified lawyer about your specific situation. **Do not risk your freedom. Grow responsibly.**</p>
                 </div>
-                 <h3 class="text-brand-blue">Who, Where, and How Many?</h3>
+                 <h3 class="text-brand-blue">👤 Who, 📍 Where, and 🔢 How Many?</h3>
                 <ul>
-                    <li><strong>Who Can Grow?</strong> Any adult aged 21 or older.</li>
-                    <li><strong>Where Can You Grow?</strong> This is the most important rule: You can ONLY grow at your **primary residence**. This is the place you live, your main home. You cannot grow at a friend's house, a storage unit, your business, or a second property.</li>
-                    <li><strong>How Many Plants?</strong>
+                    <li><strong>👤 Who Can Grow?</strong> Any adult aged 21 or older.</li>
+                    <li><strong>📍 Where Can You Grow?</strong> This is the most important rule: You can ONLY grow at your **primary residence**. This is the place you live, your main home. You cannot grow at a friend's house, a storage unit, your business, or a second property.</li>
+                    <li><strong>🔢 How Many Plants?</strong>
                         <ul>
-                            <li><strong>Per Adult:** An individual ($\text{21+}$) can grow up to **six ($\text{6}$) plants**.</li>
-                            <li><strong>Per Household:** There is a *maximum limit* of **twelve ($\text{12}$) plants per household**, no matter how many adults live there. (Example: If three adults live in a house, they can *still* only grow 12 plants total, not 18).</li>
+                            <li><strong>Per Adult:** An individual (21+) can grow up to **six (6) plants**.</li>
+                            <li><strong>Per Household:** There is a *maximum limit* of **twelve (12) plants per household**, no matter how many adults live there. (Example: If three adults live in a house, they can *still* only grow 12 plants total, not 18).</li>
                             <li><strong>What counts as a "plant"?** The law isn't super specific, but the safest bet is to assume *any* plant with roots that isn't a tiny, unrooted clone or seedling counts toward your limit.</li>
                         </ul>
                     </li>
                 </ul>
-                <h3 class="text-brand-blue">The "Secret and Secure" Rules</h3>
+                <h3 class="text-brand-blue">🔒 The "Secret and Secure" Rules</h3>
                 <p>You can't just put your plants on the front porch. The law is very clear that your grow must be secure and hidden.</p>
                 <ul>
-                    <li><strong>Not Visible to the Public:</strong> Your plants **cannot be visible "using normal unaided vision"** from a public place (like the street or sidewalk). 
+                    <li><strong>🙈 Not Visible to the Public:</strong> Your plants **cannot be visible "using normal unaided vision"** from a public place (like the street or sidewalk). 
                         <ul>
-                            <li>**Indoors:** This is easy. Keep them in a room or tent, away from a window where someone could see in.</li>
+                            <li><strong>Indoors:** This is easy. Keep them in a room or tent, away from a window where someone could see in.</li>
                             <li>**Outdoors:** This is harder. You must have them in a secure area, like a backyard surrounded by a **tall, solid privacy fence** (at least 6 feet is a good standard) that people can't see through. A chain-link fence is *not* enough.</li>
                         </ul>
                     </li>
-                    <li><strong>Secure from Minors:</strong> The grow area MUST be **locked or otherwise secured** to prevent access by anyone under 21. For an indoor tent, a simple lock on the zipper is a good idea. For a room, a lock on the door.</li>
+                    <li><strong>🔞 Secure from Minors:</strong> The grow area MUST be **locked or otherwise secured** to prevent access by anyone under 21. For an indoor tent, a simple lock on the zipper is a good idea. For a room, a lock on the door.</li>
                 </ul>
-                <h3 class="text-brand-blue">How Much Can You Keep? (Possession)</h3>
+                <h3 class="text-brand-blue">📦 How Much Can You Keep? (Possession)</h3>
                 <p>This part is a little confusing, so read carefully. There are two sets of rules:</p>
                 <ol>
-                    <li><strong>IN PUBLIC (Transporting):** When you are outside your home, you are limited to the standard possession limit: **$\text{2.5}$ ounces** of flower (or $\text{15}$ grams of concentrate). When driving, it must be in a sealed container, out of reach (the trunk is best).</li>
-                    <li><strong>AT HOME (From Your Grow):** The $\text{2.5}$ oz limit does *not* apply to the cannabis you grow and keep at your own home. You can legally possess all the flower you harvest from your 6-12 plants, *as long as* it stays at your primary residence and is stored securely away from minors.</li>
+                    <li><strong>🚗 IN PUBLIC (Transporting):** When you are outside your home, you are limited to the standard possession limit: **2.5 ounces** of flower (or 15 grams of concentrate). When driving, it must be in a sealed container, out of reach (the trunk is best).</li>
+                    <li><strong>🏠 AT HOME (From Your Grow):** The 2.5 oz limit does *not* apply to the cannabis you grow and keep at your own home. You can legally possess all the flower you harvest from your 6-12 plants, *as long as* it stays at your primary residence and is stored securely away from minors.</li>
                 </ol>
-                <h3 class="text-brand-blue">The Big "Don'ts" (Seriously, Don't Do This)</h3>
+                <h3 class="text-brand-blue">🚫 The Big "Don'ts" (Seriously, Don't Do This)</h3>
                 <ul>
-                    <li>**DON'T Sell It:** You cannot sell, trade, or barter your homegrown cannabis. Not even to a friend. It is for your personal use ONLY. Selling it is a serious crime.</li>
-                    <li>**DON'T Give It Away (for money):** Gifting is a legal gray area, but any "gift" that involves an exchange of money (e.g., "buy this $50 sticker and get a 'free' gift") is considered selling and is illegal.</li>
-                    <li>**DON'T Grow on Property You Don't Own (without permission):** Landlords can (and likely will) prohibit growing in your lease. HOAs (Homeowners Associations) can also ban it. The state law does not override a private lease or HOA contract.</li>
+                    <li><strong>💸 DON'T Sell It:** You cannot sell, trade, or barter your homegrown cannabis. Not even to a friend. It is for your personal use ONLY. Selling it is a serious crime.</li>
+                    <li><strong>🎁 DON'T Give It Away (for money):** Gifting is a legal gray area, but any "gift" that involves an exchange of money (e.g., "buy this $50 sticker and get a 'free' gift") is considered selling and is illegal.</li>
+                    <li><strong>🏢 DON'T Grow on Property You Don't Own (without permission):** Landlords can (and likely will) prohibit growing in your lease. HOAs (Homeowners Associations) can also ban it. The state law does not override a private lease or HOA contract.</li>
+                </ul>
+                
+                <h3 class="text-brand-blue">Myth vs. Fact</h3>
+                <ul>
+                    <li><strong>Myth:</strong> "I can grow 6 plants in veg and 6 in flower, so I have 12 total."
+                        <br><strong>Fact:</strong> The law likely counts *all* plants. 12 plants *total* is the safest interpretation.</li>
+                    <li><strong>Myth:</strong> "My landlord can't stop me, it's state law."
+                        <br><strong>Fact:</strong> A landlord *absolutely can* prohibit growing in a lease. A lease is a private contract, and violating it can get you evicted.</li>
+                    <li><strong>Myth:</strong> "I can't get in trouble, it's just a fine."
+                        <br><strong>Fact:</strong> Growing *more* than 12 plants, growing *outside* your primary residence, or *selling* it are all still **felonies**. Stick to the rules!</li>
                 </ul>
             </div>
 
@@ -142,159 +180,190 @@
                 <h2 class="border-brand-blue">💡 The Complete Indoor Grow Guide for Beginners</h2>
                 <p>Welcome to the most rewarding way to grow! Indoor cultivation gives you 100% control. You become Mother Nature, providing everything the plant needs. This means you can grow amazing cannabis year-round, safe from Ohio weather and pests. Here's the ultimate beginner's shopping list and guide.</p>
 
-                <h3 class="text-brand-blue">Chapter 1: Your Shopping List (The "Core Four")</h3>
+                <h3 class="text-brand-blue">Chapter 1: 🛍️ Your Shopping List (The "Core Four")</h3>
                 <p>You can get fancy later. To start, you only *need* four key things to create a perfect environment. We recommend a "grow tent kit" which bundles all of this together and saves you money.</p>
                 
                 <h4 class="text-gray-300">1. The Tent (Your "Grow Room")</h4>
                 <ul>
-                    <li><strong>Why you need it:</strong> It contains your entire environment. It has reflective walls to bounce light back onto your plants, it's light-proof to ensure a perfect "night time" for flowering, and it has ports to run your fans.</li>
-                    <li><strong>What to buy:</strong> A **$\text{2x4}$ foot** or **$\text{3x3}$ foot** tent is a perfect start. It fits 2-4 plants comfortably and won't overwhelm your space or electric bill. A $\text{4x4}$ is also very popular if you have the room. (e.g., brands like Vivosun, Mars Hydro, AC Infinity).</li>
+                    <li><strong>Why you need it:</strong> It contains your entire environment. It has reflective walls (mylar) to bounce light back onto your plants, it's light-proof to ensure a perfect "night time" for flowering, and it has ports (holes) to run your fans and cables.</li>
+                    <li><strong>What to buy:</strong> A **2x4 foot** or **3x3 foot** tent is a perfect start. It fits 2-4 plants comfortably and won't overwhelm your space or electric bill. A 4x4 is also very popular if you have the room. (e.g., brands like Vivosun, Mars Hydro, AC Infinity).</li>
+                    <li><strong>Pro-Tip:</strong> Look for a tent with a "viewing window" so you can check on your plants without unzipping the door and letting out all the good air.</li>
                 </ul>
 
-                <h4 class="text-gray-300">2. The Light (The "Sun")</h4>
+                <h4 class="text-gray-300">2. The Light (The "Sun") ☀️</h4>
                 <ul>
                     <li><strong>Why you need it:</strong> This is the *most important* piece of equipment. Your light is the engine for plant growth. A weak light = weak, fluffy buds. A strong light = dense, heavy buds.</li>
-                    <li><strong>What to buy:</strong> Get a **Full-Spectrum LED** light. Don't buy the cheap purple ("blurple") lights; they are old technology. Look for modern "quantum board" or "bar style" LEDs.
+                    <li><strong>What to buy:</strong> Get a **Full-Spectrum LED** light. Do not buy the cheap purple ("blurple") lights; they are old, inefficient technology. Look for modern "quantum board" (flat panel) or "bar style" (like a spider) LEDs.
                         <ul>
-                            <li><strong>For a 2x4 tent:** Aim for a light that draws **$\text{200-300}$ watts** from the wall (e.g., Mars Hydro TSL2000, Spider Farmer SF2000).</li>
-                            <li><strong>For a 3x3 tent:** Aim for a light that draws **$\text{300}$ watts** (e.g., Mars Hydro FC3000, Spider Farmer SE3000).</li>
+                            <li><strong>For a 2x4 tent:** Aim for a light that draws **200-300 watts** from the wall (e.g., Mars Hydro TSL2000, Spider Farmer SF2000).</li>
+                            <li><strong>For a 3x3 tent:** Aim for a light that draws **300 watts** (e.g., Mars Hydro FC3000, Spider Farmer SE3000).</li>
                         </ul>
                     </li>
-                    <li><strong>Key Feature:** Make sure it has a **dimmer knob!** This is crucial for turning the power down for seedlings, saving electricity, and preventing light burn.</li>
+                    <li><strong>🔑 Key Feature:** Make sure it has a **dimmer knob!** This is crucial for turning the power down for seedlings (so you don't burn them), saving electricity, and controlling heat.</li>
+                    <li><strong>What NOT to Buy:</strong> Avoid any light that looks like a regular light bulb or a cheap "blurple" (blue/purple) panel. They are a waste of money and will only disappoint you.</li>
                 </ul>
                 
-                <h4 class="text-gray-300">3. The Ventilation System (The "Lungs & Deodorizer")</h4>
-                <p>This is a two-part system that pulls fresh air in and pushes hot, stinky air out.</p>
+                <h4 class="text-gray-300">3. The Ventilation System (The "Lungs & Deodorizer") 💨</h4>
+                <p>This is a two-part system that pulls fresh air in and pushes hot, stinky air out. You need this. Do not skip it.</p>
                 <ul>
-                    <li><strong>Inline Fan:</strong> This is the engine that pulls air. For a 2x4 or 3x3 tent, a **$\text{4-inch}$ inline fan** is usually enough. A $\text{6-inch}$ fan is more powerful and can run quieter at a lower speed.</li>
-                    <li><strong>Carbon Filter:</strong> This attaches to the fan and is *essential*. Cannabis smells *a lot*. This filter scrubs the air clean before it leaves your tent, so your house doesn't smell.</li>
-                    <li><strong>Ducting:</strong> The silver tube that connects the fan and filter.</li>
+                    <li><strong>🌬️ Inline Fan:</strong> This is the engine that pulls air. For a 2x4 or 3x3 tent, a **4-inch inline fan** is usually enough. A 6-inch fan is more powerful and can run quieter at a lower speed. (AC Infinity fans are the quietest and most popular).</li>
+                    <li><strong>👃 Carbon Filter:</strong> This attaches to the fan and is *essential*. Cannabis smells *a lot* during flowering. This filter scrubs the air clean before it leaves your tent, so your house doesn't smell like a skunk.</li>
+                    <li><strong>🌪️ Ducting:</strong> The silver tube that connects the fan and filter.</li>
                 </ul>
 
-                <h4 class="text-gray-300">4. A Small Clip-On Fan (The "Breeze")</h4>
+                <h4 class="text-gray-300">4. A Small Clip-On Fan (The "Breeze") 🍃</h4>
                 <ul>
-                    <li><strong>Why you need it:</strong> You need a fan *inside* the tent to blow a gentle breeze over your plants. This strengthens their stems and prevents stale, humid air from sitting around the leaves, which can cause mold.</li>
-                    <li><strong>What to buy:</strong> Any 6-inch clip-on fan will do.</li>
+                    <li><strong>Why you need it:</strong> You need a fan *inside* the tent to blow a gentle breeze over your plants. This strengthens their stems (like wind outdoors) and prevents stale, humid air from sitting around the leaves, which can cause mold.</li>
+                    <li><strong>What to buy:</strong> Any 6-inch clip-on fan will do. Aim it *above* or *below* the plants, not directly at them (which can cause "wind burn").</li>
                 </ul>
 
-                <h3 class="text-brand-blue">Chapter 2: Pot, Soil, and Food</h3>
+                <h3 class="text-brand-blue">Chapter 2: 🪴 Pot, 흙 Soil, and 🍲 Food</h3>
                 <h4 class="text-gray-300">Soil vs. Coco: What's Easier?</h4>
                 <ul>
-                    <li><strong>Soil (Easiest):**</strong> We 100% recommend starting with soil. Buy a high-quality bagged potting soil (like **FoxFarm Ocean Forest** or **Build-A-Soil**). This soil is packed with nutrients and will feed your plant for the first 3-4 weeks with just plain water!</li>
-                    <li><strong>Coco Coir (Advanced):**</strong> This is shredded coconut husk. It's a great medium, but it contains *zero* food. You have to add nutrients (food) to *every single watering* from day one. It's less forgiving. Save this for your second grow.</li>
+                    <li><strong>Easiest: Living Soil:** We 100% recommend starting with a high-quality bagged "living soil" (like **Build-A-Soil** or **Coast of Maine**). This soil is pre-amended with all the organic nutrients your plant will ever need. You just add plain water (pH'd) from seed to harvest. It's the simplest, most foolproof way to grow.</li>
+                    <li><strong>Still Easy: "Hot" Soil:** A soil like **FoxFarm Ocean Forest** is "hot" (full of nutrients). It will feed your plant for the first 3-4 weeks with just water. After that, you'll need to start adding bottled nutrients.</li>
+                    <li><strong>Advanced: Coco Coir:** This is shredded coconut husk. It's a great medium, but it contains *zero* food. You have to add nutrients (food) to *every single watering* from day one. It's less forgiving. Save this for your second grow.</li>
                 </ul>
                 
                 <h4 class="text-gray-300">Pots: Fabric vs. Plastic</h4>
                 <ul>
-                    <li><strong>Winner: Fabric Pots.** (e.g., "Smart Pots" or "Vivosun fabric pots").</li>
-                    <li><strong>Why:</strong> They allow roots to "air-prune." When a root hits the fabric side, it stops and sends out *new* roots, creating a dense, healthy root ball. In a plastic pot, the roots just circle the bottom (called "root bound").</li>
-                    <li><strong>What size?** Start seedlings in a Solo cup, then move to a **$\text{5-gallon}$ or $\text{7-gallon}$ fabric pot** for its final home.</li>
+                    <li><strong>🏆 Winner: Fabric Pots.** (e.g., "Smart Pots" or "Vivosun fabric pots").</li>
+                    <li><strong>Why:</strong> They allow roots to "air-prune." When a root hits the fabric side, it stops and sends out *new* roots, creating a dense, healthy root ball. In a plastic pot, the roots just circle the bottom (called "root bound"), which chokes the plant.</li>
+                    <li><strong>What size?** Start seedlings in a Solo cup, then move to a **5-gallon or 7-gallon fabric pot** for its final home. (See FAQ for "Why 5 gallons?").</li>
                 </ul>
 
                 <h4 class="text-gray-300">Nutrients (The "Food")</h4>
                 <ul>
-                    <li><strong>What to buy:</strong> If you use good soil (like Ocean Forest), you only need a "Bloom" nutrient. This is the food for the flowering (budding) stage. A simple two-part system like **FoxFarm "Grow Big" (for veg) and "Tiger Bloom" (for flower)** is a perfect, time-tested beginner's choice.</li>
-                    <li><strong>The Golden Rule:** Always start with **$\text{1/4}$ to $\text{1/2}$** the dose recommended on the bottle! It's *way* easier to fix an underfed plant than a burnt, overfed one.</li>
+                    <li><strong>What are N-P-K?** You'll see numbers like 5-2-3 on a bottle. This is the N-P-K ratio.
+                        <ul>
+                            <li><strong>N (Nitrogen):** Builds <strong>Leaves & Stems</strong>. (Think "Green Growth").</li>
+                            <li><strong>P (Phosphorus):** Builds <strong>Roots & Flowers</strong>. (Think "Buds").</li>
+                            <li><strong>K (Potassium):** Builds <strong>Overall Health</strong>. (Think "Immune System").</li>
+                        </ul>
+                    </li>
+                    <li><strong>What to buy:</strong> If you use Living Soil, you just need plain water! If you use FoxFarm soil, a simple two-part system like **FoxFarm "Grow Big" (for veg) and "Tiger Bloom" (for flower)** is a perfect, time-tested beginner's choice.</li>
+                    <li><strong>📜 The Golden Rule:** Always start with **1/4 to 1/2** the dose recommended on the bottle! It's *way* easier to fix an underfed plant than a burnt, overfed one.</li>
                 </ul>
 
-                <h3 class="text-brand-blue">Chapter 3: Your First Grow (Step-by-Step)</h3>
+                <h3 class="text-brand-blue">Chapter 3: 🌱 Your First Grow (Step-by-Step)</h3>
                 <h4 class="text-gray-300">Phase 1: Germination (Day 1-5)</h4>
                 <p>Your goal is to get the seed's taproot to pop out.</p>
                 <ol>
                     <li>Fold a seed in a damp (not soaking wet) paper towel.</li>
                     <li>Place it in a Ziploc bag or between two plates.</li>
                     <li>Put it somewhere warm and dark (like on top of your fridge).</li>
-                    <li>Check it daily. Once the little white taproot is $\text{1/4}$ inch long, it's ready.</li>
-                    <li>Gently plant it (root down!) about $\text{1/2}$ inch deep in a Solo cup filled with soil.</li>
+                    <li>Check it daily. Once the little white taproot is 1/4 inch long, it's ready.</li>
+                    <li>Gently plant it (root down!) about 1/2 inch deep in a Solo cup filled with soil.</li>
                 </ol>
 
                 <h4 class="text-gray-300">Phase 2: Seedling (Week 1-3)</h4>
-                <p>Your plant is a baby. Be gentle!</p>
+                <p>Your plant is a baby. Be gentle! Its #1 enemy is you (and your watering can).</p>
                 <ul>
-                    <li><strong>Light:** Turn your new LED light on, but **dim it to $\text{25-40}\%$** and hang it $\text{24-30}$ inches away.</li>
-                    <li><strong>Water:** Do NOT soak the pot. Just give a few tablespoons of water in a small ring around the seedling every 2-3 days. Overwatering is the #1 killer of seedlings.</li>
-                    <li><strong>Environment:** Keep a clear plastic dome (like half a water bottle) over the seedling to keep humidity high.</li>
+                    <li><strong>💡 Light:** Turn your new LED light on, but **dim it to 25-40%** and hang it 24-30 inches away. (See FAQ if it stretches and falls over!).</li>
+                    <li><strong>💧 Water:** Do NOT soak the pot. Overwatering is the #1 killer of seedlings. Just give a few tablespoons of water in a small ring around the seedling every 2-3 days.</li>
+                    <li><strong>🌡️ Environment:** Keep a clear plastic dome (like half a water bottle) over the seedling to keep humidity high (around 70-80%).</li>
                 </ul>
 
                 <h4 class="text-gray-300">Phase 3: Vegetative ("Veg") Stage (Week 3-8+)</h4>
                 <p>Your plant is now a teenager, focused on growing big and strong (leaves and branches). Your goal is to build a good "bush."</p>
                 <ul>
-                    <li><strong>Light Cycle:** Set your light timer to **$\text{18}$ hours ON, $\text{6}$ hours OFF**.</li>
-                    <li><strong>Light Intensity:** Gradually increase the dimmer to $\text{50-75}\%$ and lower the light to $\text{18-24}$ inches. Watch the plant for any stress (curling leaves).</li>
-                    <li><strong>Transplanting:** When the leaves reach the edges of your Solo cup, it's time to move it to its final $\text{5-gallon}$ pot.</li>
-                    <li><strong>Watering:** Now you can water fully. Water until the pot is heavy and a little bit runs out the bottom. Then **wait** until the pot feels light again (this could be 3-5 days!). This "wet-dry" cycle is key.</li>
-                    <li><strong>Training:** This is when you can *gently* bend the main stalk over (called "Low-Stress Training" or $\text{LST}$) to encourage the lower branches to grow up, creating a flat, even canopy.</li>
+                    <li><strong>⏰ Light Cycle:** Set your light timer to **18 hours ON, 6 hours OFF**.</li>
+                    <li><strong>💡 Light Intensity:** Gradually increase the dimmer to 50-75% and lower the light to 18-24 inches. Watch the plant for any stress (curling leaves).</li>
+                    <li><strong>🪴 Transplanting:** When the leaves reach the edges of your Solo cup, it's time to move it to its final 5-gallon pot.</li>
+                    <li><strong>💧 Watering:** Now you can water fully. Water until the pot is heavy and a little bit runs out the bottom. Then **wait** until the pot feels light again (this could be 3-5 days!). This "wet-dry" cycle is key.</li>
+                    <li><strong>✂️ Training (Optional but Recommended):**
+                        <ul>
+                            <li><strong>Topping:** Once your plant has 5-6 "nodes" (sets of leaves), cut the very top of the main stalk off. This sounds scary, but it forces the plant to grow *two* main stalks instead of one, making it bushier.</li>
+                            <li><strong>LST (Low-Stress Training):** Gently bend the main stalk over and tie it down. This breaks its "apical dominance" (its desire to grow one main stalk) and encourages all the lower branches to grow up towards the light, creating a flat, even canopy.</li>
+                        </ul>
+                    </li>
                 </ul>
                 
                 <h4 class="text-gray-300">Phase 4: Flowering ("Flower") Stage (Week 8-18+)</h4>
                 <p>This is the magic time when your plant starts making buds. You "tell" the plant to start flowering by changing the light schedule.</p>
                 <ul>
-                    <li><strong>THE FLIP:** Change your light timer to **$\text{12}$ hours ON, $\text{12}$ hours OFF**. This change in "daylight" tricks the plant into thinking winter is coming, so it starts to flower.</li>
-                    <li><strong>CRITICAL:** The $\text{12-hour}$ dark period must be **uninterrupted**. Even a little light leaking in can stress the plant and ruin your harvest. This is why a tent is so great.</li>
-                    <li><strong>Light Intensity:** Now you can crank your light to $\text{100}\%$!</li>
-                    <li><strong>Nutrients:** Switch from "Veg" food to "Bloom" food (less Nitrogen, more Phosphorus and Potassium).</li>
-                    <li><strong>The Stretch (Weeks 1-3 of Flower):** Your plant will double or even triple in size! This is normal.</li>
-                    <li><strong>Bud Building (Weeks 4-10+ of Flower):** Be patient. The plant will grow white "hairs" (pistils) that will slowly swell into dense, frosty buds. This takes 8-12 weeks depending on the strain.</li>
+                    <li><strong>🔄 THE FLIP:** Change your light timer to **12 hours ON, 12 hours OFF**. This change in "daylight" tricks the plant into thinking winter is coming, so it starts to flower. (This step is not needed for Autoflowers, see Genetics tab).</li>
+                    <li><strong>CRITICAL:** The 12-hour dark period must be **uninterrupted**. Even a little light leaking in (from your A/C, a power strip, etc.) can stress the plant, ruin your harvest, or cause it to grow seeds ("herm"). This is why a tent is so great.</li>
+                    <li><strong>💡 Light Intensity:** Now you can crank your light to 100%!</li>
+                    <li><strong>🍲 Nutrients:** Switch from "Veg" food to "Bloom" food (less Nitrogen, more Phosphorus and Potassium).</li>
+                    <li><strong>🏃 The Stretch (Weeks 1-3 of Flower):** Your plant will double or even triple in size! This is normal and why you didn't want to "Veg" for too long.</li>
+                    <li><strong>🌼 Bud Building (Weeks 4-10+ of Flower):** Be patient. The plant will grow white "hairs" (pistils) that will slowly swell into dense, frosty buds. This takes 8-12 weeks depending on the strain.</li>
                 </ul>
                 
-                <h4 class="text-gray-300">Phase 5: Harvest, Dry, and Cure</h4>
-                <p>You're almost there! Don't ruin it by being impatient.</p>
+                <h4 class="text-gray-300">Phase 5: ✂️ Harvest, 🍂 Dry, and 🫙 Cure</h4>
+                <p>You're almost there! Don't ruin months of hard work by being impatient. 90% of the final "quality" (smell, taste, smoothness) comes from this phase.</p>
                 <ul>
-                    <li><strong>Harvest:** You'll know it's ready by looking at the "trichomes" (the frosty crystals) with a cheap jeweler's loupe. You want them to be all "milky" or "cloudy," with just a few turning amber.</li>
-                    <li><strong>Dry (The Most Important Step):** Hang the branches in your tent (with the light *off* and fan *on low*) for **$\text{7-14}$ days**. You want a slow, gentle dry. It's ready when small stems *snap* instead of bend.</li>
-                    <li><strong>Cure:** Cut the buds off the stems and put them in glass mason jars (don't pack them in!). For the next 2-3 weeks, "burp" the jars by opening them for 10-15 minutes once a day. This process dramatically improves the smell, taste, and smoothness of your final product.</li>
+                    <li><strong>Harvest:** You'll know it's ready by looking at the "trichomes" (the frosty crystals) with a cheap 60x jeweler's loupe. You want them to be all "milky" or "cloudy," with just a few (5-10%) turning amber. (See FAQ for more).</li>
+                    <li><strong>Dry (The Most Important Step):** Hang the branches in your tent (with the light *off* and exhaust fan *on low*) for **7-14 days**. You are aiming for a SLOW, GENTLE dry.
+                        <br><strong>Target Environment:</strong> 60 degrees F / 60% Humidity ("60/60").
+                        <br><strong>It's Ready when:** Small stems *snap* instead of bend, but the bigger stems are still a bit flexible.</li>
+                    <li><strong>Cure (The "Aging" Process):** Cut the buds off the stems and put them in glass mason jars (don't pack them in! Fill 75% full). For the next 2-3 weeks, "burp" the jars by opening them for 10-15 minutes once a day. This process releases moisture and breaks down chlorophyll (which tastes harsh, like hay), dramatically improving the smell, taste, and smoothness.</li>
+                    <li><strong>Obscure Tip: Bud Washing:** If you grow outdoors or have pets, you can *wash* your buds! Right after harvest, dunk the branches in a 5-gallon bucket of clean water, then a bucket with a *tiny* bit of lemon juice & baking soda, then a final rinse bucket. It sounds crazy, but it washes off all the dust, hair, and dead bugs without harming the trichomes (which are oil, not water-soluble).</li>
                 </ul>
             </div>
 
             <!-- === OUTDOOR SECTION === -->
             <div id="outdoor" class="content-section hidden">
                  <h2 class="border-brand-green">☀️ The Ohio Outdoor Grower's Guide</h2>
-                 <p>Ready to use the power of the sun? Outdoor growing is fantastic. It's cheap, the yields can be *massive*, and the sun provides a light spectrum that even the best $\text{LEDs}$ can't fully replicate. However, growing in Ohio means you are battling our specific climate: high humidity, summer storms, and fall rain.</p>
+                 <p>Ready to use the power of the sun? Outdoor growing is fantastic. It's cheap, the yields can be *massive*, and the sun provides a light spectrum that even the best LEDs can't fully replicate. However, growing in Ohio means you are battling our specific climate: high humidity, summer storms, and fall rain.</p>
                 
-                <h3 class="text-brand-green">Chapter 1: Planning Your Outdoor Grow</h3>
+                <h3 class="text-brand-green">Chapter 1: 📍 Planning Your Outdoor Grow</h3>
                 <h4 class="text-gray-300">Site Selection: Sun and Security</h4>
                 <ul>
-                    <li><strong>Security First (See Legal Tab):** Your grow MUST be hidden from the public (solid fence) and secure from kids. This is the #1 rule. A visible grow *will* get stolen or reported.</li>
-                    <li><strong>Find the Sun:** This is the most important factor. Your plants need **at least 6-8 hours of *direct, non-stop* sunlight** per day. The more, the better. Scout your yard for a whole day. Watch where the sun hits and for how long. Morning sun is especially good, as it helps dry the dew off the leaves and prevent mold.</li>
-                    <li><strong>Water Access:** A $\text{7-foot}$ plant drinks *gallons* of water every hot day. Make sure you have a hose nearby or are prepared to haul a *lot* of water.</li>
-                    <li><strong>Breeze:** Good airflow is your best friend. A spot with a gentle, consistent breeze will help fight humidity and keep mold away. Avoid corners of your yard where air gets trapped.</li>
+                    <li><strong>🔒 Security First (See Legal Tab):** Your grow MUST be hidden from the public (solid fence) and secure from kids. This is the #1 rule. A visible grow *will* get stolen or reported.</li>
+                    <li><strong>☀️ Find the Sun:** This is the most important factor. Your plants need **at least 6-8 hours of *direct, non-stop* sunlight** per day. The more, the better. Scout your yard for a whole day. Watch where the sun hits and for how long. Morning sun is especially good, as it helps dry the dew off the leaves and prevent mold.</li>
+                    <li><strong>💧 Water Access:** A 7-foot plant drinks *gallons* of water every hot day. Make sure you have a hose nearby or are prepared to haul a *lot* of water.</li>
+                    <li><strong>🌬️ Breeze:** Good airflow is your best friend. A spot with a gentle, consistent breeze will help fight humidity and keep mold away. Avoid corners of your yard where air gets trapped.</li>
                 </ul>
                 
-                <h4 class="text-gray-300">When to Start: The Ohio Calendar</h4>
+                <h4 class="text-gray-300">🗓️ When to Start: The Ohio Calendar</h4>
                 <ul>
                     <li><strong>Germinate Indoors (April 15th - May 1st):** Start your seeds inside under a simple, cheap light. This gives them a 4-6 week head start, making them strong before they go outside.</li>
                     <li><strong>Plant Outside (May 20th - June 1st):** Do NOT plant outside until after Ohio's last frost date. A good rule of thumb is "after Memorial Day weekend." A late frost *will* kill your seedlings.</li>
+                    <li><strong>"Hardening Off":** You can't just move a plant from indoors to outdoors. The direct sun will burn it. For a week, "harden it off" by putting it outside in the shade for a few hours, then bringing it in. Each day, give it a little more direct sun until it's tough enough to live outside.</li>
                     <li><strong>Veg Stage (June - Early August):** Your plants will grow like crazy with the long summer days.</li>
                     <li><strong>Flower Stage (Mid-August - October):** As the days get shorter, your plants will naturally start to flower.</li>
                     <li><strong>Harvest (Late Sept - Mid-October):** This is the race! You need to harvest before the first *hard frost* (which kills plants) or the cold, rainy weather of late October (which causes bud rot).</li>
                 </ul>
 
-                <h3 class="text-brand-green">Chapter 2: Soil Prep: In-Ground vs. Pots</h3>
+                <h3 class="text-brand-green">Chapter 2: 🪴 Soil Prep: In-Ground vs. Pots</h3>
                 <h4 class="text-gray-300">Growing in Pots (Easier Control)</h4>
                 <ul>
                     <li><strong>Why:** This is a great way to start. You can control the exact soil you use (e.g., FoxFarm Ocean Forest) and you can move the pots around to follow the sun or protect them from a bad storm.</li>
-                    <li><strong>Pot Size:** Go BIG. A $\text{10-gallon}$ fabric pot is a good *minimum*. A $\text{20-gallon}$ or even $\text{50-gallon}$ pot will grow a true monster. Remember, fabric pots are better than plastic!</li>
+                    <li><strong>Pot Size:** Go BIG. A 10-gallon fabric pot is a good *minimum*. A 20-gallon or even 50-gallon pot will grow a true monster. Remember, fabric pots are better than plastic!</li>
                     <li><strong>Downside:** You will have to water *constantly*, maybe even twice a day in the heat of July/August, because the pots dry out fast.</li>
                 </ul>
                 
-                <h4 class="text-gray-300">Growing In-Ground (Bigger Plants)</h4>
+                <h4 class="text-gray-300">Growing In-Ground (Bigger Plants, Less Work)</h4>
                 <ul>
                     <li><strong>Why:** Planting directly in the earth lets the roots spread out, leading to massive plants with less daily watering.</li>
-                    <li><strong>The Work:** Don't just dig a small hole. Your native Ohio clay soil is probably too dense. In the spring (or even the fall before), dig a *huge* hole (at least $\text{3 feet}$ wide and $\text{2-3}$ feet deep).</li>
+                    <li><strong>The Work:** Don't just dig a small hole. Your native Ohio clay soil is probably too dense. In the spring (or even the fall before), dig a *huge* hole (at least 3 feet wide and 2-3 feet deep).</li>
                     <li><strong>Amending:** Mix the soil you dug out with equal parts of good compost, peat moss, and aeration (like perlite or rice hulls). This "amended" soil gives the roots a perfect place to live.</li>
                 </ul>
+                
+                <h4 class="text-gray-300">Obscure Tip: Companion Planting 🐞</h4>
+                <p>Don't just plant cannabis. Plant a garden around it! These plants help hide the smell and attract "good bugs" (like ladybugs) that eat the "bad bugs" (like aphids).</p>
+                <ul>
+                    <li><strong>Marigolds:** A classic. They are tough and are said to repel many common pests.</li>
+                    <li><strong>Dill & Basil:** Attract ladybugs and other predators. Plus, you get to eat them!</li>
+                    <li><strong>Lavender:** Has a strong, pleasant smell that can help mask the cannabis aroma.</li>
+                </ul>
 
-                <h3 class="text-brand-green">Chapter 3: The Ohio Grower's #1 Enemy: Bud Rot</h3>
-                <p>You can do everything right and still lose your whole harvest to **Bud Rot (Botrytis)** in the last two weeks. This is a grey, fuzzy mold that starts *inside* your biggest, densest buds and rots them from the inside out. It's caused by high humidity and lack of airflow—sound familiar, Ohio?</p>
-
-                <h4 class="text-gray-300">How to Prevent Bud Rot</h4>
+                <h3 class="text-brand-green">Chapter 3: 🍂 The Ohio Grower's Enemies</h3>
+                <h4 class="text-gray-300">Enemy #1: Bud Rot (Botrytis)</h4>
+                <p>You can do everything right and still lose your whole harvest to **Bud Rot** in the last two weeks. This is a grey, fuzzy mold that starts *inside* your biggest, densest buds and rots them from the inside out. It's caused by high humidity and lack of airflow—sound familiar, Ohio?</p>
                 <ol>
                     <li><strong>Choose the Right Strain:** Look for "mold-resistant" strains. Sativas or Sativa-dominant hybrids often have lighter, airier buds that are less prone to rot than dense, heavy Indicas.</li>
-                    <li><strong>Good Airflow:** This is your best defense. Keep your plants spaced out, not crowded together.</li>
-                    <li><strong>Defoliation (Plucking Leaves):** As your plants get bushy, strategically pluck off some of the big, overlapping fan leaves, especially from the center of the plant. This opens up "windows" for air to blow through and light to get in.</li>
+                    <li><strong>Defoliation (Plucking Leaves):** As your plants get bushy, strategically pluck off some of the big, overlapping fan leaves, especially from the center of the plant. This opens up "windows" for air to blow through.</li>
                     <li><strong>The "Morning Shake":** After a heavy rain or a dewy morning, go out and *gently* shake your branches. This knocks off the standing water that mold loves.</li>
                     <li><strong>Scout Daily:** In September and October, inspect your biggest buds every single day. Gently pull them open a tiny bit. If you see *any* grey or brown fuzz, cut that entire bud off *immediately*.</li>
                 </ol>
+                
+                <h4 class="text-gray-300">Enemy #2: Powdery Mildew (PM)</h4>
+                <p>This looks like white flour or baby powder dusted on your big fan leaves. It's another fungus that loves high humidity. While not as deadly as bud rot, it's a sign of poor airflow. You can treat it by spraying with a mix of water and milk (yes, milk!) or a potassium bicarbonate solution.</p>
+                
+                <h4 class="text-gray-300">Enemy #3: Critters (Deer, Groundhogs) 🦌</h4>
+                <p>Deer *love* to eat young cannabis plants. A tall, sturdy fence is your only real protection. A simple chicken-wire cage around your plant when it's young can also work wonders.</p>
             </div>
 
             <!-- === PESTS (PROBLEM HUB) SECTION === -->
@@ -303,76 +372,92 @@
                  <p>Don't panic! Every grower runs into problems. The key is to catch them early. This hub will help you diagnose the most common issues you'll face.</p>
 
                  <div class="note">
-                    <p><strong>THE GOLDEN RULE: CHECK YOUR pH FIRST!</strong> 90% of the time, a new grower's "nutrient problem" is actually a **pH problem**. Cannabis plants can only "eat" their food if the water's $\text{pH}$ is in the right range. If the $\text{pH}$ is wrong, the nutrients are "locked out," and the plant starves—even if the food is in the soil!
+                    <p><strong>🛑 THE GOLDEN RULE: CHECK YOUR pH FIRST!</strong> 90% of the time, a new grower's "nutrient problem" is actually a **pH problem**. Cannabis plants can only "eat" their food if the water's pH is in the right range. If the pH is wrong, the nutrients are "locked out," and the plant starves—even if the food is in the soil!
                     <br><strong>Target pH Range:</strong>
                     <br> - **Soil:** 6.0 - 6.8
                     <br> - **Coco/Hydro:** 5.5 - 6.5
-                    <br>Always $\text{pH}$ your water *after* adding nutrients. Get a decent digital $\text{pH}$ pen; it's the best diagnostic tool you can own.</p>
+                    <br>Always pH your water *after* adding nutrients. Get a decent digital pH pen; it's the best diagnostic tool you can own.</p>
                 </div>
 
-                <h3 class="text-brand-red">Common "Bad Bugs" (Pests)</h3>
+                <h3 class="text-brand-red">🐜 Common "Bad Bugs" (Pests)</h3>
                  <table class="table-auto">
                     <thead>
                         <tr><th>Pest</th><th>What It Looks Like</th><th>Damage You'll See</th><th>How to Fix It (Simple)</th></tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td><strong>Spider Mites</strong></td>
+                            <td><strong>🕷️ Spider Mites</strong></td>
                             <td>Tiny, tiny (like a spec of dust) red or black dots on the *underside* of leaves. You'll see fine, spider-like webbing on the buds and leaves.</td>
                             <td>Tiny white or yellow "speckles" all over the leaves. The plant looks dusty, dry, and sick. They multiply *fast* in hot, dry rooms.</td>
                             <td>Raise humidity. Wipe leaves with a damp cloth. Spray with an organic insecticidal soap or neem oil (NEVER spray neem oil on flowering buds).</td>
                         </tr>
                         <tr>
-                            <td><strong>Fungus Gnats</strong></td>
+                            <td><strong>🦟 Fungus Gnats</strong></td>
                             <td>Small, black flies that look like tiny mosquitoes or fruit flies. They crawl on your soil and fly around your tent.</td>
                             <td>The adults are just annoying. The *larvae* (which live in the top inch of wet soil) eat your plant's tiny roots, stunting its growth.</td>
                             <td>Let your soil *dry out* completely between waterings. This kills the larvae. Place yellow sticky traps on the soil to catch the adults.</td>
                         </tr>
                         <tr>
-                            <td><strong>Aphids</strong></td>
+                            <td><strong>🦠 Aphids</strong></td>
                             <td>Small, pear-shaped bugs (green, black, or yellow). They cluster on the *stems* and undersides of new leaves.</td>
                             <td>New growth looks twisted or stunted. They leave behind a sticky, clear "honeydew" (poop) that can attract ants or grow sooty mold.</td>
                             <td>A strong spray of water can knock them off. Wipe them off by hand. Insecticidal soap works well. Ladybugs (good bugs!) love to eat them.</td>
                         </tr>
                         <tr>
-                            <td><strong>Caterpillars (Budworms)</strong></td>
+                            <td><strong>🐛 Caterpillars (Budworms)</strong></td>
                             <td>(Outdoor only) Small green or brown caterpillars.</td>
                             <td>You'll see small black dots (poop) on your buds. They burrow *inside* the bud, eat it from the inside, and cause it to rot and die.</td>
-                            <td>Inspect buds daily and pick them off by hand. Spray preventatively with **BT** (*Bacillus thuringiensis*), an organic, caterpillar-safe bacteria.</td>
+                            <td>Inspect buds daily and pick them off by hand. Spray preventatively with **BT** (<em>Bacillus thuringiensis</em>), an organic, caterpillar-safe bacteria.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>🪰 Thrips</strong></td>
+                            <td>Tiny, fast-moving, slender insects (yellow or black). Look like tiny grains of rice on the leaves.</td>
+                            <td>You'll see "silvery" or shiny, dry patches on your leaves. They scrape the leaf surface, leaving ugly, silvery scars.</td>
+                            <td>Blue sticky traps work well. Spinosad (an organic spray) is very effective. Predatory mites (good bugs) also hunt them.</td>
                         </tr>
                     </tbody>
                 </table>
 
-                <h3 class="text-brand-red">Common Nutrient & Water Issues</h3>
+                <h3 class="text-brand-red">🍂 Common Nutrient & Water Issues</h3>
+                <p>The most important clue is *where* the problem is showing up. Plants can "move" some nutrients (Mobile) but can't move others (Immobile).</p>
+                <ul>
+                    <li><strong>Mobile Nutrients (N, P, K, Mg):** If the problem is at the **BOTTOM** (old leaves), it's a *mobile* nutrient. The plant is stealing food from its old leaves to feed its new ones.</li>
+                    <li><strong>Immobile Nutrients (Ca, Fe, S):** If the problem is at the **TOP** (new leaves), it's an *immobile* nutrient. The plant can't move it from old leaves, so the new growth starves first.</li>
+                </ul>
                  <table class="table-auto">
                      <thead>
-                        <tr><th>Symptom</th><th>What It Looks Like</th><th>What It Probably Means</th></tr>
+                        <tr><th>Symptom</th><th>What It Looks Like</th><th>What It Probably Means (after checking pH!)</th></tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td><strong>Overwatering</strong></td>
+                            <td><strong>💧 Overwatering</strong></td>
                             <td>Leaves are dark green, droopy, and feel "heavy" or "fat" with water. The whole plant looks sad and limp. Pot is always heavy.</td>
                             <td>You are watering too often! The roots are drowning and can't get oxygen. **Let the pot dry out!** Wait until it's light to lift.</td>
                         </tr>
                         <tr>
-                            <td><strong>Underwatering</strong></td>
+                            <td><strong>🏜️ Underwatering</strong></td>
                             <td>Leaves are droopy, thin, and feel "papery" and dry. The whole plant looks lifeless. Pot is light as a feather.</td>
                             <td>You waited too long! Give it a good, deep watering, and it will (usually) perk back up in a few hours.</td>
                         </tr>
                         <tr>
-                            <td><strong>Nutrient Burn</strong></td>
+                            <td><strong>🔥 Nutrient Burn</strong></td>
                             <td>The very *tips* of the leaves turn yellow, then brown and crispy. It often starts on the newest, upper leaves.</td>
-                            <td>You're feeding it too much! Your "food" is too strong. **Fix:** Flush the soil with plain, $\text{pH}$'d water, then give it a *weaker* nutrient dose next time.</td>
+                            <td>You're feeding it too much! Your "food" is too strong. **Fix:** Flush the soil with plain, pH'd water, then give it a *weaker* nutrient dose next time.</td>
                         </tr>
                         <tr>
-                            <td><strong>Nitrogen Deficiency</strong></td>
-                            <td>The *oldest, lowest* leaves on the plant start to turn pale green, then yellow, then fall off. The problem moves *up* the plant.</td>
-                            <td>Your plant is hungry for "Veg" food (Nitrogen). This is common in early flower. Give it a dose of veg nutrients to green it back up. (If $\text{pH}$ is OK!)</td>
+                            <td><strong>💛 Nitrogen (N) Deficiency</strong></td>
+                            <td>(Mobile) The *oldest, lowest* leaves on the plant start to turn pale green, then yellow, then fall off. The problem moves *up* the plant.</td>
+                            <td>Your plant is hungry for "Veg" food (Nitrogen). This is common in early flower. Give it a dose of veg nutrients to green it back up.</td>
                         </tr>
                          <tr>
-                            <td><strong>Cal-Mag Deficiency</strong></td>
-                            <td>Rusty brown spots or irregular yellow blotches appearing on *new and middle* leaves. Common when using filtered/RO water or in coco.</td>
-                            <td>Your plant is hungry for Calcium and Magnesium. This is a very common micro-nutrient issue. Add a "Cal-Mag" supplement to your water. (If $\text{pH}$ is OK!)</td>
+                            <td><strong>🦴 Cal-Mag Deficiency</strong></td>
+                            <td>(Immobile-ish) Rusty brown spots or irregular yellow blotches appearing on *new and middle* leaves. Leaf edges may curl.</td>
+                            <td>Your plant is hungry for Calcium and Magnesium. This is very common when using filtered/RO water or in coco. Add a "Cal-Mag" supplement.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>💜 Phosphorus (P) Deficiency</strong></td>
+                            <td>(Mobile) Stems turn dark purple, and leaves may look dark green or "dead." Growth is very slow.</td>
+                            <td>Your plant is hungry for "Bloom" food (Phosphorus). This is rare, and often caused by the soil being too *cold*, which locks out P.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -383,23 +468,30 @@
                 <h2 class="border-brand-purple">🧬 Strains & Genetics: Picking Your Perfect Plant</h2>
                 <p>Walking into a seed store (or website) is overwhelming. You'll see hundreds of strains with crazy names. What's the difference? This section will help you understand what to look for, so you pick a plant that's right for you *and* right for your grow room.</p>
                 
-                <h3 class="text-brand-purple">Autoflower vs. Photoperiod: The Most Important Choice</h3>
+                <h3 class="text-brand-purple">🌱 Autoflower vs. Photoperiod: The Most Important Choice</h3>
                 <p>This is the first and most important decision you'll make. It determines *how* your plant knows when to flower (make buds).</p>
                 
-                <h4 class="text-gray-300">Photoperiod Strains (The "Traditional" Way)</h4>
+                <h4 class="text-gray-300">Photoperiod Strains (The "Traditional" Way) 📸</h4>
                 <ul>
-                    <li><strong>How they work:** These plants (the "normal" kind) will keep growing leaves and branches ("Veg") for as long as you give them $\text{18+}$ hours of light per day.</li>
-                    <li><strong>The "Flip":** You *force* them to flower by changing your light timer to **$\text{12}$ hours on, $\text{12}$ hours off**. This "flip" to a shorter day tricks them into thinking winter is coming.</li>
+                    <li><strong>How they work:** These plants (the "normal" kind) will keep growing leaves and branches ("Veg") for as long as you give them 18+ hours of light per day.</li>
+                    <li><strong>The "Flip":** You *force* them to flower by changing your light timer to **12 hours on, 12 hours off**. This "flip" to a shorter day tricks them into thinking winter is coming.</li>
                     <li><strong>Pros:** You have total control. You can keep it in "Veg" for 3 weeks or 3 months to make it as big as you want. You can also take "clones" (cuttings) from it.</li>
-                    <li><strong>Cons:** You *must* have a light-proof tent. Light leaks during the $\text{12-hour}$ dark period can stress them out and ruin your harvest.</li>
+                    <li><strong>Cons:** You *must* have a light-proof tent. Light leaks during the 12-hour dark period can stress them out and ruin your harvest.</li>
                 </ul>
                 
-                <h4 class="text-gray-300">Autoflower Strains (The "Beginner-Friendly" Way)</h4>
+                <h4 class="text-gray-300">Autoflower Strains (The "Beginner-Friendly" Way) 🚘</h4>
                 <ul>
                     <li><strong>How they work:** These plants are special. They have a built-in genetic timer. They don't care about the light schedule. They will automatically start flowering on their own after about 3-5 weeks, no matter what.</li>
-                    <li><strong>Light Cycle:** You just set your timer to **$\text{18/6}$ or $\text{20/4}$** for the *entire grow*, from seed to harvest. No "flip" needed!</li>
-                    <li><strong>Pros:** Super simple for beginners. No need to worry about light leaks. They usually finish very fast (often $\text{10-12}$ weeks from seed). Great for outdoor growers who want a quick summer harvest.</li>
+                    <li><strong>Light Cycle:** You just set your timer to **18/6 or 20/4** for the *entire grow*, from seed to harvest. No "flip" needed!</li>
+                    <li><strong>Pros:** Super simple for beginners. No need to worry about light leaks. They usually finish very fast (often 10-12 weeks from seed). Great for outdoor growers who want a quick summer harvest.</li>
                     <li><strong>Cons:** You can't control when they flower, so you can't make them bigger. They are very sensitive to stress in the first few weeks (like overwatering or transplanting). You can't take clones.</li>
+                </ul>
+                
+                <h3 class="text-brand-purple">♀️ Feminized vs. Regular Seeds: The *Other* Big Choice</h3>
+                <p>Cannabis plants can be male or female. Only **female plants** produce the buds you want to smoke. Male plants only produce pollen sacs (to make seeds).</p>
+                <ul>
+                    <li><strong>Regular Seeds:** These are all-natural. You'll have a 50/50 chance of getting a male or a female plant. This is great for *breeders* who *want* pollen to make new strains.</li>
+                    <li><strong>Feminized Seeds:** These are seeds that have been specially bred to be **99.9% female**. For a new grower who just wants to grow buds, **this is what you want to buy.** It takes all the guesswork out and ensures every plant you grow will produce flower.</li>
                 </ul>
                 
                 <h3 class="text-brand-purple">Indica vs. Sativa vs. Hybrid: What's the Deal?</h3>
@@ -410,97 +502,525 @@
                     <li><strong>Hybrid:** A mix of both.</li>
                 </ul>
                 <div class="note">
-                    <p><strong>The Modern Truth:** These terms are mostly just for marketing now. Almost *every* strain you buy is a complex "Hybrid." The terms are still useful for describing the plant's *shape* (Indicas are bushy, Sativas are tall), but they are *not* a reliable way to predict the *effect*. So what does predict the effect?</p>
+                    <p><strong>👃 The Modern Truth:** These terms are mostly just for marketing now. Almost *every* strain you buy is a complex "Hybrid." The terms are still useful for describing the plant's *shape* (Indicas are bushy, Sativas are tall), but they are *not* a reliable way to predict the *effect*. So what does predict the effect? **Follow your nose!**</p>
                 </div>
                 
-                <h3 class="text-brand-purple">What Really Matters: Cannabinoids & Terpenes</h3>
+                <h3 class="text-brand-purple">🧪 What Really Matters: Cannabinoids & Terpenes</h3>
                 <h4 class="text-gray-300">Cannabinoids (The "Effect")</h4>
                 <p>These are the main active chemicals in the plant. The two you need to know are:</p>
                 <ul>
-                    <li><strong>THC:** This is the one that produces the psychoactive "high." A strain listed at $\text{25}\%$ $\text{THC}$ is very strong.</li>
+                    <li><strong>THC:** This is the one that produces the psychoactive "high." A strain listed at 25% THC is very strong.</li>
                     <li><strong>CBD:** This one is non-psychoactive (it doesn't get you "high"). It's known for its calming, anti-anxiety, and anti-inflammatory properties.</li>
-                    <li><strong>Balanced Strains:** Many modern strains have both $\text{THC}$ and $\text{CBD}$ (like a $\text{1:1}$ ratio), which many people love for a balanced, less-intense effect.</li>
+                    <li><strong>Balanced Strains:** Many modern strains have both THC and CBD (like a 1:1 ratio), which many people love for a balanced, less-intense effect.</li>
                 </ul>
                 
-                <h4 class="text-gray-300">Terpenes (The "Smell" and "Flavor")</h4>
-                <p>Terpenes are the essential oils in cannabis (and also in things like lemons, pine trees, and lavender). They are what make a plant smell like gas, fruit, or pine. We are now learning that terpenes also *guide* the high. This is called the "entourage effect."</sP>
-                <p>A strain with $\text{20}\%$ $\text{THC}$ and a "Limonene" terpene (lemony smell) might feel uplifting, while a strain with $\text{20}\%$ $\text{THC}$ and a "Myrcene" terpene (musky smell) might feel sleepy. This is why "smell" is often the best way to pick a strain you'll like!</p>
+                <h4 class="text-gray-300">Terpenes (The "Smell" and "Flavor") 🍋🌲</h4>
+                <p>Terpenes are the essential oils in cannabis (and also in things like lemons, pine trees, and lavender). They are what make a plant smell like gas, fruit, or pine. We are now learning that terpenes also *guide* the high. This is called the "entourage effect."</p>
+                <p>A strain with 20% THC and a "Limonene" terpene (lemony smell) might feel uplifting, while a strain with 20% THC and a "Myrcene" terpene (musky smell) might feel sleepy. This is why "smell" is often the best way to pick a strain you'll like!</p>
             </div>
+
+            <!-- === NEW: COST CALCULATOR SECTION === -->
+            <div id="cost-calc" class="content-section hidden">
+                <h2 class="border-brand-purple">💲 Grow Cost & Savings Calculator</h2>
+                <p>Is growing your own cannabis *really* cheaper? Let's run the numbers. This calculator helps you figure out your total investment and, most importantly, your **cost per gram**. This is for personal calculation, as selling is illegal.</p>
+                
+                <div class="note">
+                    <p><strong>Note on "Profit":</strong> Since selling home-grown cannabis is **strictly illegal in Ohio**, there is no "profit." The real value is in knowing exactly what's in your product and calculating the money you *save* compared to dispensary prices. This calculator helps you find your "cost-to-produce" and your total savings.</p>
+                </div>
+
+                <div class="cost-calculator-container grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <!-- Inputs Column -->
+                    <div class="space-y-4">
+                        <h3 class="text-brand-purple mt-0">Step 1: 💸 One-Time Setup Costs</h3>
+                        <p class="text-sm text-gray-400 -mt-4 mb-4">Enter what you paid for your reusable gear. This is your "investment."</p>
+                        <div>
+                            <label for="cost-onetime-tent" class="calc-label">Tent, Fan, Filter ($)</label>
+                            <input type="number" id="cost-onetime-tent" value="250" class="calc-input w-full">
+                        </div>
+                        <div>
+                            <label for="cost-onetime-light" class="calc-label">Grow Light ($)</label>
+                            <input type="number" id="cost-onetime-light" value="300" class="calc-input w-full">
+                        </div>
+                        <div>
+                            <label for="cost-onetime-other" class="calc-label">Pots, Timers, pH Pen, etc. ($)</label>
+                            <input type="number" id="cost-onetime-other" value="100" class="calc-input w-full">
+                        </div>
+
+                        <h3 class="text-brand-purple">Step 2: ♻️ Recurring Costs (Per Grow)</h3>
+                        <p class="text-sm text-gray-400 -mt-4 mb-4">Enter your costs for one full grow cycle (about 3-4 months).</p>
+                        <div>
+                            <label for="cost-recurring-seeds" class="calc-label">Seeds / Clones ($)</label>
+                            <input type="number" id="cost-recurring-seeds" value="50" class="calc-input w-full">
+                        </div>
+                        <div>
+                            <label for="cost-recurring-soil" class="calc-label">Soil / Coco ($)</label>
+                            <input type="number" id="cost-recurring-soil" value="40" class="calc-input w-full">
+                        </div>
+                        <div>
+                            <label for="cost-recurring-nutrients" class="calc-label">Nutrients / Supplements ($)</label>
+                            <input type="number" id="cost-recurring-nutrients" value="60" class="calc-input w-full">
+                        </div>
+
+                        <h3 class="text-brand-purple">Step 3: ⚡ Electricity Cost (Per Grow)</h3>
+                        <div>
+                            <label for="cost-light-watts" class="calc-label">Light Wattage (from wall)</label>
+                            <input type="number" id="cost-light-watts" value="300" class="calc-input w-full">
+                        </div>
+                        <div>
+                            <label for="cost-kwh-rate" class="calc-label">Your Electric Rate (cents per kWh)</label>
+                            <input type="number" id="cost-kwh-rate" value="15" step="0.1" class="calc-input w-full">
+                        </div>
+                        <div>
+                            <label for="cost-total-days" class="calc-label">Total Grow Days (Veg + Flower)</label>
+                            <input type="number" id="cost-total-days" value="110" class="calc-input w-full">
+                        </div>
+                         <p class="text-xs text-gray-500 -mt-2">Estimate assumes 4 weeks Veg (18/6) + 12 weeks Flower (12/12), plus 15% for fans.</p>
+
+                        <h3 class="text-brand-purple">Step 4: ⚖️ Your Harvest & Savings</h3>
+                        <div>
+                            <label for="cost-yield-grams" class="calc-label">Estimated Yield (in Grams)</label>
+                            <input type="number" id="cost-yield-grams" value="250" class="calc-input w-full">
+                        </div>
+                        <div>
+                            <label for="cost-dispensary-price" class="calc-label">Avg. Dispensary Price ($ per gram)</label>
+                            <input type="number" id="cost-dispensary-price" value="10" step="0.5" class="calc-input w-full">
+                        </div>
+                        <p class="text-xs text-gray-500 -mt-2">A good beginner goal is 0.75 - 1 gram per watt of light (e.g., 300W light ≈ 225-300g).</p>
+                    </div>
+                    
+                    <!-- Outputs Column -->
+                    <div class="space-y-4">
+                        <h3 class="text-brand-green mt-0">📊 Your Estimated Cost Breakdown</h3>
+                        
+                        <div class="calc-output-box">
+                            <span class="calc-output-label">Total One-Time Setup Cost</span>
+                            <div id="output-onetime-cost" class="calc-output-value">$650.00</div>
+                        </div>
+
+                        <div class="calc-output-box">
+                            <span class="calc-output-label">Est. Electricity Cost (This Grow)</span>
+                            <div id="output-electric-cost" class="calc-output-value">$81.97</div>
+                        </div>
+                        
+                        <div class="calc-output-box">
+                            <span class="calc-output-label">Total Recurring Cost (This Grow)</span>
+                            <div id="output-recurring-cost" class="calc-output-value">$231.97</div>
+                        </div>
+
+                        <div class="calc-output-box-total">
+                            <span class="calc-output-label">TOTAL COST (Setup + First Grow)</span>
+                            <div id="output-total-cost" class="calc-output-value">$881.97</div>
+                        </div>
+                        
+                        <h3 class="text-brand-green mt-6">💰 Your "Profit" (Savings)</h3>
+                        
+                        <div class="calc-output-box">
+                            <span class="calc-output-label">Total Harvest Value (at Dispensary)</span>
+                            <div id="output-harvest-value" class="calc-output-value">$2,500.00</div>
+                        </div>
+
+                        <div class="calc-output-box-final" style="border-color: var(--grohio-blue); box-shadow: 0 0 10px rgba(0, 191, 255, 0.4);">
+                            <span class="calc-output-label" style="color: var(--grohio-blue);">TOTAL SAVINGS (This Grow)</span>
+                            <div id="output-total-savings" class="calc-output-value" style="color: var(--grohio-blue);">$2,268.03</div>
+                        </div>
+
+                        <div class="calc-output-box-final">
+                            <span class="calc-output-label">Your Cost Per Gram (First Grow)</span>
+                            <div id="output-cost-per-gram" class="calc-output-value">$3.53 / gram</div>
+                        </div>
+                        
+                        <div class="calc-output-box-final">
+                            <span class="calc-output-label">Your Recurring Cost Per Gram</span>
+                            <div id="output-cost-per-gram-future" class="calc-output-value">$0.93 / gram</div>
+                            <p class="text-xs text-gray-400 mt-2 text-center">(This is your cost after the setup is paid for!)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- === NEW: FAQ SECTION (EXPANDED) === -->
+            <div id="faq" class="content-section hidden">
+                <h2 class="border-brand-purple">❓ Frequently Asked Questions (FAQ)</h2>
+                <p>Here are some of the most common questions we hear from new and intermediate growers. Don't be afraid to ask—we all started here!</p>
+
+                <div class="faq-container space-y-6">
+                    
+                    <div class="faq-item">
+                        <h3 class="faq-question">"How often should I water my plant?"</h3>
+                        <div class="faq-answer">
+                            <p>This is the #1 question, and the answer is: **"When the plant needs it, not on a schedule."**</p>
+                            <p>The biggest mistake new growers make is watering a little bit every day. This keeps the soil soggy, drowns the roots (roots need oxygen!), and invites pests like fungus gnats. Cannabis plants *love* a "wet-dry" cycle.</p>
+                            <ol>
+                                <li><strong>Water Thoroughly:** Water your plant until the soil is fully saturated and you see about 10-20% of the water run out the bottom of the pot. This is called "runoff."</li>
+                                <li><strong>Wait:** Now, do *not* water it again until the pot is significantly lighter.</li>
+                                <li><strong>The "Lift Test":** This is the best way. After you water, pick up the pot. Feel how heavy it is. Now, wait 2, 3, or even 5 days. Keep picking it up. When it feels *much lighter* (like the water is almost all gone), it's time to water again.</li>
+                            </ol>
+                            <p>In a big 5-gallon pot, a mature plant might only need water every 3-5 days. A seedling in a Solo cup might need a little every 2 days. Let the pot's weight be your guide, not the calendar.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <h3 class="faq-question">"My seedling stretched and fell over! Is it dead?"</h3>
+                        <div class="faq-answer">
+                            <p>It's not dead! This is a classic beginner problem. It means your grow light is **too far away** or **not strong enough** (if you're using a cheap Amazon light or a windowsill).</p>
+                            <p>The seedling is "stretching" itself thin, trying to get closer to the light it needs to survive. This makes it weak and floppy.</p>
+                            <ul>
+                                <li><strong>The Fix:** Gently prop the seedling up with a toothpick or a bent paperclip. Then, **lower your grow light** several inches. If your light has a dimmer, you can also turn the intensity up.</li>
+                                <li><strong>The Pro-Tip:** When you eventually transplant it from its starter cup to its final pot, you can bury most of that "stretched" stem right under the soil. It will turn into roots and make the plant stronger!</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <h3 class="faq-question">"Why a 5-gallon pot? Can I use a 3-gallon?"</h3>
+                        <div class="faq-answer">
+                            <p>You *can* use a 3-gallon pot, but for a beginner, a 5-gallon (or 7-gallon) fabric pot is *much* more forgiving. The #1 rule of thumb is: **Bigger Roots = Bigger Fruits.**</p>
+                            <ul>
+                                <li><strong>More Room for Error:** A 5-gallon pot holds more soil, which means it holds more water and nutrients. If you forget to water for a day, the plant will be fine. If you accidentally add slightly too much food, the large amount of soil helps "buffer" it and prevent nutrient burn.</li>
+                                <li><strong>Less Work:** A 3-gallon pot will dry out *much* faster, meaning you have to water more often, sometimes every 1-2 days in late flower. A 5-gallon pot gives you a bigger window.</li>
+                            </ul>
+                            <p>We recommend 5-gallon fabric pots as the perfect balance of size, ease of use, and yield potential for an indoor tent.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3 class="faq-question">"What's the difference between 'Veg' and 'Bloom' nutrients?"</h3>
+                        <div class="faq-answer">
+                            <p>Think of it like food for a person. "Veg" is food for a "growing teenager," and "Bloom" is food for an "adult athlete."</p>
+                            <ul>
+                                <li><strong>Veg Nutrients (High Nitrogen):** Nitrogen (the "N" in N-P-K) is the main ingredient for building leaves, stems, and branches. During the vegetative stage (18/6 light), your plant is a teenager focused on getting big, so you feed it high-Nitrogen "veg" food.</li>
+                                <li><strong>Bloom Nutrients (High P & K):** Phosphorus (P) and Potassium (K) are the main ingredients for building flowers (buds). When you "flip" your lights to 12/12, your plant's job changes. It's now an athlete focused on producing heavy buds. You switch to "bloom" food, which has less N and more P and K.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <h3 class="faq-question">"Can I just grow a plant in my closet or on my windowsill?"</h3>
+                        <div class="faq-answer">
+                            <p><strong>Windowsill: Almost certainly no.</strong> A window in Ohio simply does not provide enough *direct, intense sunlight* for a cannabis plant to produce anything more than a few tiny, wispy buds. It will stretch, look sad, and be a waste of your time.</p>
+                            <p><strong>Closet: Yes, but...** You can, but you are basically just building a "grow tent" inside your closet. You will still need:</p>
+                            <ol>
+                                <li><strong>A Grow Light:** This is not optional. A simple light bulb won't work.</li>
+                                <li><strong>A Fan (Ventilation):** A closet is a small, sealed box. It will get hot and humid *fast*. You will need an exhaust fan (like the ones for a tent) to pull the hot air out, and another fan to move air around inside.</li>
+                                <li><strong>Light Proofing:** You have to make the closet *perfectly* dark for the 12/12 flower cycle. This means sealing all the cracks around the door.</li>
+                            </ol>
+                            <p>Honestly, it's *much* easier and safer to just buy a 2x4 tent and put it *in* the closet. It's designed for exactly this!</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <h3 class="faq-question">"What are those 'trichomes' and why do I need a loupe?"</h3>
+                        <div class="faq-answer">
+                            <p>The "trichomes" are the tiny, sticky, crystal "frost" that covers your buds. They look like microscopic mushrooms. This is where the plant makes almost all of its THC, CBD, and terpenes!</p> 
+                            <p>Harvesting is all about timing, and you can't guess the timing by looking at the "hairs" (pistils), which can turn brown weeks before the plant is actually ready. The *only* way to know for sure is to look at the *color* of these trichomes with a 60x jeweler's loupe (a $10 magnifying glass).</p>
+                            <ul>
+                                <li><strong>💎 Clear Trichomes:** Mean "Not Ready." The plant is still producing THC. (Effect: Racy, anxious).</li>
+                                <li><strong>☁️ Cloudy / Milky Trichomes:** Mean "Peak Potency." This is the sweet spot! This is when THC is at its highest. This is when most people harvest for a strong, uplifting, "head" high.</li>
+                                <li><strong>🍯 Amber / Brown Trichomes:** Mean "Past Peak." The THC is now degrading into a different chemical (CBN), which is known for making you feel sleepy and sedated.</li>
+                            </ul>
+                            <p>You want to harvest when *all* the trichomes are cloudy, and you see just the first few (maybe 5-10%) turning amber. This gives you the best, most potent, and balanced effect.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <h3 class="faq-question">"My plant has seeds! What did I do wrong?"</h3>
+                        <div class="faq-answer">
+                            <p>This is called a "hermie" (hermaphrodite). It means your female plant got stressed out and grew *male* parts (pollen sacs) in a last-ditch effort to reproduce. This pollen then pollinated itself, and now it's spending its energy making seeds instead of making potent buds.</p>
+                            <p><strong>Common Causes of Stress:</strong></p>
+                            <ul>
+                                <li><strong>Light Leaks:** The #1 cause! A bit of light hitting it during its 12-hour dark period.</li>
+                                <li><strong>Heat Stress:** Massive temperature swings or super-hot days.</li>
+                                <li><strong>Physical Stress:** Breaking a branch late in flower.</li>
+                                <li><strong>Bad Genetics:** Sometimes, it's just in the seed's DNA to do this.</li>
+                            </ul>
+                            <p><strong>What to do:** If you see little yellow "bananas" or "balls" growing among your buds, spray them with plain water (to kill the pollen) and *carefully* pick them off with tweezers. If it's only a few, you can finish the grow. If the whole plant is covered, it's usually best to remove it to save your other plants from getting pollinated.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3 class="faq-question">"What is 'flushing' and do I really need to do it?"</h3>
+                        <div class="faq-answer">
+                            <p>"Flushing" is the old-school idea of giving your plant *only* plain, pH'd water for the last 1-2 weeks before harvest. The theory was this would "flush" out all the extra nutrients (salts) from the soil and the plant, leading to a smoother, cleaner smoke.</p>
+                            <p><strong>The Modern Truth:** This is highly debated and mostly unnecessary, *especially* if you are growing in living soil.</p>
+                            <ul>
+                                <li><strong>If using Living Soil:** DO NOT FLUSH. You are just starving the microbes that are *feeding* your plant. You let the plant use up the soil's nutrients naturally.</li>
+                                <li><strong>If using Bottled Nutrients:** A 1-2 week flush probably doesn't *hurt*, but many blind taste-tests have shown it makes *no difference* in the final taste or smoothness. The harsh, "hay" taste people hate comes from *improper drying and curing* (i.e., chlorophyll), not from nutrients.</li>
+                            </ul>
+                            <p><strong>Our Advice:** Don't stress about it. Focus on a good, slow dry and a patient cure. That is what creates a top-shelf product.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <h3 class="faq-question">"Why do my dried buds smell like hay or cut grass?"</h3>
+                        <div class="faq-answer">
+                            <p>This is the most common sign of **drying too fast!** When you dry your buds too quickly (e.g., in a hot room with a fan blowing right on them), you lock in the **chlorophyll** (the "green" stuff in leaves). This chlorophyll is what tastes harsh and smells like hay.</p>
+                            <p>The **"Cure"** (putting buds in jars) is the process of *slowly* breaking down this chlorophyll. If you dry too fast, the chlorophyll gets trapped forever and the cure can't save it.</p>
+                            <p><strong>The Fix:** Your next grow, aim for the "60/60" rule: a slow, 10-14 day dry at **60&deg;F and 60% Humidity**. This is the single biggest difference between "hay" and "top-shelf."</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <h3 class="faq-question">"How do I control the smell *inside* my house?"</h3>
+                        <div class="faq-answer">
+                            <p>The only real answer is a **carbon filter and an exhaust fan**. (See the Indoor Guide, Chapter 1).</p>
+                            <ul>
+                                <li>A carbon filter attaches to your exhaust fan and *scrubs* the air, chemically removing all the smell *before* it gets vented out of the tent.</li>
+                                <li>You must also create **"negative pressure."** This just means your exhaust fan is pulling *more* air *out* than your intake fans are pulling *in*. This causes the tent walls to suck in slightly, and it guarantees that *no* smelly air can escape the tent through zipper holes or seams. All air *must* go through the filter first.</li>
+                            </ul>
+                            <p>Ona Gels or air fresheners only *mask* the smell. A carbon filter *eliminates* it.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <h3 class="faq-question">"My leaves are curling up at the edges ('taco-ing' or 'canoeing'). What's wrong?"</h3>
+                        <div class="faq-answer">
+                            <p>This is a classic sign of **heat stress**. Your plant is "taco-ing" its leaves to try and protect itself from the intense light and heat, reducing its surface area.</p>
+                            <ul>
+                                <li><strong>The Fix:**
+                                    <ol>
+                                        <li><strong>Check your light distance:** Your light is probably too close. Raise it up a few inches.</li>
+                                        <li><strong>Check your temperature:** Is your tent getting over 85&deg;F (29&deg;C)? If so, you need to turn up your exhaust fan to pull more hot air out.</li>
+                                    </ol>
+                                </li>
+                                <li>If your leaves are "clawing" *down* (like a talon) and are dark green, that is a *different* problem: **Nitrogen Toxicity** (you are feeding it too much).</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <h3 class="faq-question">"What is 'living soil' vs 'salt' nutrients?"</h3>
+                        <div class="faq-answer">
+                            <p>This is a big topic! It's two different ways of feeding your plant.</p>
+                            <ul>
+                                <li><strong>Salt-Based Nutrients (e.g., FoxFarm bottles):** This is like feeding your plant with an IV drip. The nutrients are simple chemical salts (like "Blue food") that are instantly available to the plant. It's fast, precise, and gives you total control. The downside is it's easy to "burn" your plant by giving too much, and you have to pH your water *perfectly* every time.</li>
+                                <li><strong>Organic / Living Soil (e.g., Build-A-Soil):** This is like giving your plant a personal chef. The "soil" isn't just dirt; it's a living ecosystem of billions of "good bugs" (microbes and fungi). You feed *the soil* with organic things (like kelp, compost, worm castings), and the microbes *digest* that food and "serve" it to the plant roots in a perfect, natural form. It's almost impossible to "burn" your plant, and many growers (us included!) believe it creates the best-tasting, smoothest product. It's the "just add water" method.</li>
+                            </ul>
+                            <p>For a beginner, **Living Soil is often easier** because you remove the #1 point of failure: mixing and pH'ing nutrients.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <h3 class="faq-question">"What is 'Topping' vs 'FIM'ing'?"</h3>
+                        <div class="faq-answer">
+                            <p>Both are "high-stress training" (HST) techniques done in the "Veg" stage to break the plant's natural desire to grow like a Christmas tree (one big main stalk, or "cola"). The goal is to create a flat, bushy canopy with *many* colas.</p>
+                            <ul>
+                                <li><strong>Topping:** You wait for the plant to have 5-6 nodes (sets of leaves). You take clean scissors and **cut the very top of the plant off** (the newest shoot). This forces the plant to split, and the two branches just below your cut will grow into *two new main colas*.</li>
+                                <li><strong>FIM ("F***, I Missed"):** This is a "sloppy" topping. Instead of cutting the whole top shoot off, you *pinch* off about 80% of the very tip. If you do it right, you damage the main shoot enough that it splits into *four* new main colas instead of two. It's a bit harder to get right, but can be very effective.</li>
+                            </ul>
+                            <p>For beginners, **Topping is easier and more predictable.** "Top" your plant once or twice during veg, and you'll turn one main bud site into 4 or 8.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            
+            <!-- === NEW: GALLERY SECTION === -->
+            <div id="gallery" class="content-section hidden">
+                <h2 class="border-brand-purple">🖼️ Amigo's Grow Gallery</h2>
+                <p>Welcome to the community gallery! This is the place to show off your hard work, see what other Ohioans are growing, and get inspired. You offered to share your own media, and this is the perfect place for it!</p>
+                <p>This uploader is fully interactive. Click the button, choose an image from your phone or computer, and it will be added to the gallery (don't worry, it's only on your local device!).</p>
+
+                <!-- File Upload Button -->
+                <div class="my-6">
+                    <label for="image-upload-btn" class="gallery-upload-btn">
+                        Upload Your Grow
+                    </label>
+                    <input type="file" id="image-upload-btn" accept="image/png, image/jpeg" class="hidden">
+                    <p id="gallery-message" class="text-sm text-gray-500 mt-2 hidden"></p>
+                </div>
+                
+                <!-- Gallery Grid -->
+                <div id="gallery-grid" class="gallery-grid">
+                    
+                    <!-- Placeholder Images (what the user's uploads will look like) -->
+                    <div class="gallery-item">
+                        <img src="https://placehold.co/600x600/1a1a1a/9f50ff?text=Your+Grow\nHere" alt="Placeholder image for user upload">
+                        <div class="gallery-item-caption">
+                            <p>Your beautiful plant!</p>
+                            <span class="text-xs text-gray-400">Uploaded by: You</span>
+                        </div>
+                    </div>
+
+                    <div class="gallery-item">
+                        <img src="https://placehold.co/600x800/1a1a1a/39ff14?text=Your+Bud\nClose-up" alt="Placeholder image for user upload">
+                        <div class="gallery-item-caption">
+                            <p>Look at those trichomes!</p>
+                            <span class="text-xs text-gray-400">Uploaded by: You</span>
+                        </div>
+                    </div>
+                    
+                    <div class="gallery-item">
+                        <img src="https://placehold.co/600x600/1a1a1a/00bfff?text=Your+Tent\nSetup" alt="Placeholder image for user upload">
+                        <div class="gallery-item-caption">
+                            <p>My clean 2x4 setup.</p>
+                            <span class="text-xs text-gray-400">Uploaded by: You</span>
+                        </div>
+                    </div>
+                    
+                    <!-- More placeholders -->
+                    <div class="gallery-item">
+                        <img src="https://placehold.co/600x800/1a1a1a/ff3162?text=Outdoor\nMonster" alt="Placeholder image for user upload">
+                        <div class="gallery-item-caption">
+                            <p>Ohio outdoor harvest!</p>
+                            <span class="text-xs text-gray-400">Uploaded by: You</span>
+                        </div>
+                    </div>
+                    
+                    <div class="gallery-item">
+                        <img src="https://placehold.co/600x600/1a1a1a/ffffff?text=Your+Image" alt="Placeholder image for user upload">
+                        <div class="gallery-item-caption">
+                            <p>Add your media!</p>
+                            <span class="text-xs text-gray-400">Uploaded by: You</span>
+                        </div>
+                    </div>
+                    
+                    <div class="gallery-item">
+                        <img src="https://placehold.co/600x800/1a1a1a/999999?text=Your+Image" alt="Placeholder image for user upload">
+                        <div class="gallery-item-caption">
+                            <p>Add your media!</p>
+                            <span class="text-xs text-gray-400">Uploaded by: You</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            
+            <!-- === NEW: COMMUNITY SECTION === -->
+            <div id="community" class="content-section hidden">
+                <h2 class="border-brand-purple">🤝 Community Journals (Concept)</h2>
+                <p>This is the future of GROHIO! This tab shows the potential of the Firebase system you have running. We can build a private, secure space for Ohio growers to share their grow journals, ask questions, and learn from each other. Your User ID (at the top of the page) would be your signature.</p>
+                
+                <div class="note">
+                    <p><strong>This is a front-end concept.</strong> Clicking "Submit" won't post to a database yet, but the interactive gallery and this page show the power we can build. This is how we create the ultimate, mind-blowing grow app!</p>
+                </div>
+                
+                <!-- Journal Post Form -->
+                <div class="journal-form-container">
+                    <h3 class="text-brand-green mt-0">Start a New Journal Entry</h3>
+                    <form id="journal-form">
+                        <label for="journal-title" class="calc-label">Entry Title (e.g., "Week 3 Veg - Topped!")</label>
+                        <input type="text" id="journal-title" class="calc-input w-full mb-4" placeholder="What's new in the tent?">
+                        
+                        <label for="journal-body" class="calc-label">Your Notes</label>
+                        <textarea id="journal-body" rows="5" class="calc-input w-full mb-4" placeholder="Watered today with 1/2 strength nutes. pH was 6.5. Noticed some small lower leaves yellowing..."></textarea>
+                        
+                        <div class="flex justify-between items-center">
+                            <button type="submit" id="journal-submit-btn" class="gallery-upload-btn">Submit Entry (Concept)</button>
+                            <p id="journal-submit-message" class="text-brand-green hidden">Post Submitted!</p>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Mock-up of Journal Entries -->
+                <div class="mt-12">
+                    <h3 class="text-brand-blue">Community Journal Feed (Mock-up)</h3>
+                    
+                    <!-- Journal Entry 1 -->
+                    <div class="journal-entry">
+                        <div class="journal-meta">
+                            <span class="text-brand-green font-bold">Grower's Journal: Week 8 Flower</span>
+                            <span class="text-xs text-gray-500">Posted by: User...a4f2 (2 hours ago)</span>
+                        </div>
+                        <div class="journal-body">
+                            <p>Just checked trichomes with the loupe! Mostly cloudy with about 5% amber. I think I'm going to start my flush this week and plan for harvest in 7-10 days. The smell from this 3BOG strain is *insane*, pure citrus. My tent temp is stable at 75°F and RH is down to 45%. No sign of bud rot!</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Journal Entry 2 -->
+                    <div class="journal-entry">
+                        <div class="journal-meta">
+                            <span class="text-brand-green font-bold">Help! Fungus Gnats!</span>
+                            <span class="text-xs text-gray-500">Posted by: User...9b1c (8 hours ago)</span>
+                        </div>
+                        <div class="journal-body">
+                            <p>I think I overwatered my seedlings. Now I have those tiny black flies everywhere. I read the Problem Hub and I'm letting my soil dry out completely. Just ordered some yellow sticky traps. Has anyone had luck with "Mosquito Bits"?</p>
+                            
+                            <div class="journal-reply">
+                                <p class="text-sm"><strong class="text-brand-blue">Reply from Amigo:</strong> You got this! Letting it dry out is the #1 fix. Mosquito Bits (BTi) work perfectly. Just soak them in your *next* watering. The sticky traps will catch the adults. You'll beat 'em in a week!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                
+            </div>
+
             
             <!-- === AUTOMATION BASICS SECTION === -->
             <div id="automation" class="content-section hidden">
                 <h2 class="border-brand-purple">⚙️ Automation Basics: Making Your Life Easier</h2>
-                <p>You don't need a fancy computer to grow weed. But a few simple pieces of automation can take 90% of the daily work off your plate and make your plants *much* happier by keeping their environment stable.</p>
+                <p>You don't need a fancy computer to grow weed. But a few simple pieces of automation can take 90% of the daily work off your plate and make your plants *much* happier by keeping their environment stable. Remember, **stability is the secret to happy plants!**</p>
                 
-                <h3 class="text-brand-purple">Level 1: The Non-Negotiable Tool</h3>
-                <h4 class="text-gray-300">The Simple Outlet Timer</h4>
+                <h3 class="text-brand-purple">Level 1: The Non-Negotiable Tool ($10)</h3>
+                <h4 class="text-gray-300">⏰ The Simple Outlet Timer</h4>
                 <p>This is the single most important piece of automation, and it costs $10. You **must** have one for your grow light.</p>
                 <ul>
-                    <li><strong>Why:** Your light schedule (like $\text{18/6}$ for veg or $\text{12/12}$ for flower) needs to be *exact*. Forgetting to turn your light on or off can stress your plants, and in flower, it can even cause them to stop budding or grow seeds (herm).</li>
+                    <li><strong>Why:** Your light schedule (like 18/6 for veg or 12/12 for flower) needs to be *exact*. Forgetting to turn your light on or off can stress your plants, and in flower, it can even cause them to stop budding or grow seeds ("herm").</li>
                     <li><strong>What to buy:** A simple digital outlet timer from any hardware store. Plug your light into it, set the "ON" and "OFF" times, and you're done.</li>
                 </ul>
                 
-                <h3 class="text-brand-purple">Level 2: The "Set It and Forget It" Upgrade</h3>
-                <h4 class="text-gray-300">Temperature and Humidity Controllers</h4>
-                <p>This is the best $50-$70 you will ever spend on your grow. These are smart power strips that turn your fans or humidifiers on and off for you.</p>
+                <h3 class="text-brand-purple">Level 2: The "Set It and Forget It" Upgrade ($50-70)</h3>
+                <h4 class="text-gray-300">🌡️ Temperature and Humidity Controllers</h4>
+                <p>This is the best $50-$70 you will ever spend on your grow. These are "smart" power strips that turn your fans or humidifiers on and off for you.</p>
                 <ul>
-                    <li><strong>How they work:** You plug your exhaust fan into a "Temperature Controller" (like an Inkbird). You set the controller to "$\text{78}^{\circ}\text{F}$." If the tent gets hotter than $\text{78}^{\circ}\text{F}$, the controller automatically turns your fan on. When it cools down, it turns it back off.</li>
-                    <li><strong>The Same for Humidity:** You plug a dehumidifier (or a humidifier) into a "Humidity Controller." You set it to "$\text{55}\%$." It will automatically keep your room's humidity right at that level.</li>
+                    <li><strong>How they work:** You plug your exhaust fan into a "Temperature Controller" (like an Inkbird). You set the controller to **78&deg;F**. If the tent gets hotter than 78&deg;F, the controller automatically turns your fan on. When it cools down, it turns it back off.</li>
+                    <li><strong>The Same for Humidity:** You plug a dehumidifier (or a humidifier) into a "Humidity Controller." You set it to **55%**. It will automatically keep your room's humidity right at that level.</li>
                 </ul>
                  <div class="note">
-                    <p><strong>This is the secret to a stable environment!</strong> Instead of your fan running 24/7, it only runs when it *needs* to. This saves power and, more importantly, keeps your temperature and humidity from swinging wildly, which your plants will love.</p>
+                    <p><strong>This is the secret to a stable environment!</strong> Instead of your fan running 24/7 (which can make your tent too cold or too dry), it *only* runs when it *needs* to. This saves power and, more importantly, keeps your temperature and humidity from swinging wildly, which your plants will love.</p>
                 </div>
                 
-                <h3 class="text-brand-purple">Level 3: Automated Watering</h3>
+                <h3 class="text-brand-purple">Level 3: Automated Watering ($70+)</h3>
                 <p>This is for when you want to go on vacation or are just tired of watering every day (especially if you use Coco).</p>
                 <ul>
                     <li><strong>How it works:** You get a large water reservoir (like a big plastic tote), a small water pump, some tubing, and an outlet timer.</li>
                     <li><strong>Drip System:** You run the tubing to your plants with "drip emitters." You set the outlet timer to turn the pump on for 5 minutes, 3 times a day.</li>
-                    <li><strong>The Result:** Your plants get a small, consistent amount of water and food throughout the day, which they love. This is the basic idea behind "High-Frequency Fertigation" or $\text{HFF}$, but you can build a simple version at home for cheap.</li>
+                    <li><strong>The Result:** Your plants get a small, consistent amount of water and food throughout the day, which they love. This is the basic idea behind "High-Frequency Fertigation" or HFF, but you can build a simple version at home for cheap.</li>
                 </ul>
 
-                <h3 class="text-brand-purple">Level 4: The "Hobbyist" Level (Not Necessary)</h3>
-                <p>You may see people online building crazy setups with $\text{Raspberry Pi}$ computers, $\text{Arduino}$ controllers, and custom dashboards. This is super fun if you're a tech nerd (like us!), but it is **$\text{100}\%$ not necessary** to grow amazing cannabis. A $10 timer and a $50 Inkbird controller will get you 99% of the way there.</p>
+                <h3 class="text-brand-purple">Level 4: The "Hobbyist" Level (Not Necessary) 🤓</h3>
+                <p>You may see people online building crazy setups with Raspberry Pi computers, Arduino controllers, and custom dashboards. This is super fun if you're a tech nerd (like us!), but it is **100% not necessary** to grow amazing cannabis. A $10 timer and a $50 Inkbird controller will get you 99% of the way there.</p>
             </div>
 
-            <!-- === CALCULATORS SECTION === -->
+            <!-- === CALCULATORS (TOOLS) SECTION === -->
             <div id="calculators" class="content-section hidden">
-                 <h2 class="border-brand-purple">🛠️ Tools & Simple Calculators</h2>
+                 <h2 class="border-brand-purple">🛠️ Interactive Grow Tools</h2>
                  <p>Don't guess, *know*. These simple tools help you measure the most important parts of your grow. We've included calculators here to take the guesswork out of the three most confusing measurements.</p>
                 
                  <div class="note">
                     <p><strong>Your Must-Have Measurement Tools:</strong>
-                    <br>1. **A $\text{pH}$ Pen:** To measure the $\text{pH}$ of your water (see Problem Hub).
-                    <br>2. **A $\text{TDS}/\text{EC}$ Pen:** To measure how "strong" your nutrient water is.
-                    <br>3. **A Thermo-Hygrometer:** A simple $10 device that shows the Temperature ($\text{Temp}$) and Relative Humidity ($\text{RH}$) in your tent.
-                    </Vp>
+                    <br>1. <strong>🧪 A pH Pen:</strong> To measure the pH of your water (see Problem Hub).
+                    <br>2. <strong>⚡ A TDS/EC Pen:</strong> To measure how "strong" your nutrient water is.
+                    <br>3. <strong>🌡️ A Thermo-Hygrometer:</strong> A simple $10 device that shows the Temperature (Temp) and Relative Humidity (RH) in your tent.
+                    </p>
                 </div>
 
                 <h3 class="text-brand-purple">VPD Calculator (Vapor Pressure Deficit)</h3>
                 <p>This sounds super-scientific, but it's simple. It's just a measurement of **how "thirsty" the air is**. It combines temperature and humidity into one number that tells you if your plant can "sweat" (transpire) easily.</p>
-                <p>If the $\text{VPD}$ is too low (air is too wet), your plant can't sweat and might get mold. If the $\text{VPD}$ is too high (air is too dry), your plant sweats too fast and gets stressed. You're just looking for the "green zone."</p>
+                <p>If the VPD is too low (air is too wet), your plant can't sweat and might get mold. If the VPD is too high (air is too dry), your plant sweats too fast and gets stressed. You're just looking for the "green zone."</p>
                 <div class="calculator-container grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                        <label for="temp-c" class="block text-gray-400">Air Temp $(\text{C})$</label>
+                        <label for="temp-c" class="block text-gray-400">Air Temp (&deg;C)</label>
                         <input type="number" id="temp-c" value="26.5" step="0.1" class="calc-input w-full">
                     </div>
                     <div>
-                        <label for="rh" class="block text-gray-400">Relative Humidity $(\text{%})$</label>
+                        <label for="rh" class="block text-gray-400">Relative Humidity (%)</label>
                         <input type="number" id="rh" value="65" step="1" class="calc-input w-full">
                     </div>
                     <div class="md:col-span-3 mt-4">
-                        <label for="vpd-output" class="block text-gray-400 mb-2">Calculated "Air Thirst" (VPD in $\text{kPa}$)</label>
+                        <label for="vpd-output" class="block text-gray-400 mb-2">Calculated "Air Thirst" (VPD in kPa)</label>
                         <div id="vpd-output" class="calc-output flex items-center justify-center">1.03 kPa (Ideal for Early Flower)</div>
                     </div>
-                    <p class="text-xs text-gray-500 md:col-span-3 mt-2"><strong>Good Ranges:</strong> Seedlings ($\text{0.4-0.8}$), Veg ($\text{0.8-1.2}$), Flower ($\text{1.2-1.6}$).</p>
+                    <p class="text-xs text-gray-500 md:col-span-3 mt-2"><strong>Good Ranges:</strong> Seedlings (0.4-0.8), Veg (0.8-1.2), Flower (1.2-1.6).</p>
                 </div>
                 
                 <h3 class="text-brand-purple">DLI Calculator (Daily Light Integral)</h3>
-                <p>This measures the **total amount of light** your plant gets all day. $\text{PPFD}$ (which you see on light reviews) is how *intense* the light is. $\text{DLI}$ is that intensity *added up* over all the hours the light is on.</p>
-                <p>Think of it like water: $\text{PPFD}$ is how *fast* the water is flowing. $\text{DLI}$ is the *total gallons* in the bucket at the end of the day. This is the number that *really* determines your yield.</p>
+                <p>This measures the **total amount of light** your plant gets all day. PPFD (which you see on light reviews) is how *intense* the light is. DLI is that intensity *added up* over all the hours the light is on.</p>
+                <p>Think of it like water: PPFD is how *fast* the water is flowing. DLI is the *total gallons* in the bucket at the end of the day. This is the number that *really* determines your yield.</p>
                 <div class="calculator-container grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
                     <div>
-                        <label for="ppfd-input" class="block text-gray-400">Light Intensity (PPFD)</label>
+                        <label for="ppfd-input" class="block text-gray-400">Light Intensity (PPFD, &mu;mol/m²/s)</label>
                         <input type="number" id="ppfd-input" value="800" step="10" class="calc-input w-full">
                     </div>
                     <div>
@@ -511,16 +1031,16 @@
                         <label for="dli-output" class="block text-gray-400 mb-2">Calculated Total Daily Light (DLI)</label>
                         <div id="dli-output" class="calc-output flex items-center justify-center">34.56 mol/m²/day (Good for Flower)</div>
                     </div>
-                    <p class="text-xs text-gray-500 md:col-span-3 mt-2"><strong>Good Ranges:</strong> Seedlings ($\text{12-18}$), Veg ($\text{20-40}$), Flower ($\text{40-60}$).</Vp>
+                    <p class="text-xs text-gray-500 md:col-span-3 mt-2"><strong>Good Ranges:</strong> Seedlings (12-18), Veg (20-40), Flower (40-60).</p>
                 </div>
 
 
                 <h3 class="text-brand-purple">Nutrient Strength Converter (EC to PPM)</h3>
-                <p>This tool helps you measure how "strong" your nutrient water is. Your $\text{TDS}/\text{EC}$ pen gives you a number, but different companies use different scales. It's confusing!</p>
-                <p>An $\text{EC}$ of **$\text{1.5}$** is the same as **$\text{750 PPM}$** (on the $\text{500}$ scale) and **$\text{1050 PPM}$** (on the $\text{700}$ scale). This calculator just does that simple math for you, so you can follow feeding charts correctly.</p>
+                <p>This tool helps you measure how "strong" your nutrient water is. Your TDS/EC pen gives you a number, but different companies use different scales. It's confusing!</p>
+                <p>An EC of **1.5** is the same as **750 PPM** (on the 500 scale) and **1050 PPM** (on the 700 scale). This calculator just does that simple math for you, so you can follow feeding charts correctly.</p>
                 <div class="calculator-container grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
                     <div class="col-span-1 md:col-span-2">
-                        <label for="ec-input" class="block text-gray-400">EC $(\text{mS}/\text{cm})$</label>
+                        <label for="ec-input" class="block text-gray-400">EC (mS/cm)</label>
                         <input type="number" id="ec-input" value="1.5" step="0.01" class="calc-input w-full">
                     </div>
                     <div class="col-span-1 md:col-span-2">
@@ -534,33 +1054,36 @@
                         <label for="ppm-output" class="block text-gray-400 mb-2">Calculated PPM</label>
                         <div id="ppm-output" class="calc-output flex items-center justify-center">750 PPM (500 Scale)</div>
                     </div>
-                    <p class="text-xs text-gray-500 md:col-span-4 mt-2">Tip: Most American nutrient bottles use the $\text{500}$ scale.</p>
+                    <p class="text-xs text-gray-500 md:col-span-4 mt-2">Tip: Most American nutrient bottles (like FoxFarm) use the 500 scale.</p>
                 </div>
             </div>
         </main>
     </div>
 
     <!-- Search Modal (Pop-up) -->
-    <div id="search-modal" class="hidden fixed inset-0 flex items-center justify-center z-50 p-4">
+    <!-- This is hidden by default and shown by script.js -->
+    <div id="search-modal" class="hidden fixed inset-0 flex items-center justify-center z-50 p-4 animate-modalSlideIn">
+        <!-- Modal Container -->
         <div class="bg-black border-2 border-brand-purple rounded-2xl max-w-2xl w-full mx-auto search-modal-content flex flex-col">
             <!-- Modal Header -->
-            <div class="p-6 flex-grow overflow-hidden">
+            <div class="p-6 flex-grow-0">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-3xl font-bold text-brand-purple">🧠 GROHIO Amigo Answers</h2>
+                    <h2 id="amigo-answer-header" class="text-3xl font-bold text-brand-purple">🧠 GROHIO Amigo Answers</h2>
                     <button id="close-modal-btn-top" class="text-gray-400 hover:text-white text-3xl leading-none">&times;</button>
                 </div>
-                <!-- Modal Content (Scrollable) -->
-                <div id="search-results-container" class="search-modal-content overflow-y-auto pr-2">
-                    <!-- Loading Spinner -->
-                    <div id="loading-spinner" class="hidden flex justify-center items-center my-8">
-                        <div class="animate-spin rounded-full h-16 w-16 border-b-4 spinner-color"></div>
-                    </div>
-                    <!-- Search Output Content -->
-                    <div id="search-output" class="prose-custom prose-invert max-w-none text-gray-300"></div>
+            </div>
+            <!-- Modal Content (Scrollable) -->
+            <!-- 'overflow-y-auto' makes this part scrollable if content is too tall -->
+            <div id="search-results-container" class="p-6 pt-0 flex-grow overflow-y-auto">
+                <!-- Loading Spinner -->
+                <div id="loading-spinner" class="hidden flex justify-center items-center my-8">
+                    <div class="animate-spin rounded-full h-16 w-16 border-b-4 spinner-color"></div>
                 </div>
+                <!-- Search Output Content (Populated by script.js) -->
+                <div id="search-output" class="prose-custom prose-invert max-w-none text-gray-300"></div>
             </div>
             <!-- Modal Footer -->
-            <div class="bg-black px-6 py-4 rounded-b-2xl text-right border-t border-gray-800">
+            <div class="bg-black px-6 py-4 rounded-b-2xl text-right border-t border-gray-800 flex-grow-0">
                 <button id="close-modal-btn-bottom" class="px-6 py-2 text-black font-semibold rounded-lg shadow-lg transition">Close Amigo</button>
             </div>
         </div>
@@ -572,12 +1095,12 @@
         <img src="https://raw.githubusercontent.com/3AmigosCannabisCo/testing.grohio/main/3amigos_nobg.png" 
              alt="3 Amigos Cannabis Co. Logo" 
              class="h-24 mx-auto mb-4" 
-             style="filter: drop-shadow(0 0 10px var(--grohio-blue));">
+             style="filter: drop-shadow(0 0 4px var(--grohio-blue));"> <!-- Glow Reduced -->
         <p class="text-lg text-gray-500">A <span class="text-brand-green font-bold">3 Amigos Cannabis Co.</span> Production</p>
         <p class="text-sm text-gray-600 mt-2">Empowering Ohio growers since 2024</p>
     </footer>
 
-    <!-- Load our JavaScript (as a module) -->
+    <!-- Load our JavaScript (as a module, which allows 'import' statements) -->
     <script type="module" src="./script.js"></script>
 </body>
 </html>
