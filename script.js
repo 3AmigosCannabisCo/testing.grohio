@@ -95,11 +95,12 @@ import { getFirestore, setLogLevel } from "https://www.gstatic.com/firebasejs/11
 
     // --- Gemini API Implementation (Amigo Answers) ---
 
-    const AMIGO_SYSTEM_PROMPT = "You are Amigo, a world-class cannabis cultivation expert and AI assistant for GROHIO growers. Your responses must be ultra-detailed, scientific, and grounded in the provided search results. Provide a professional, university-level answer, formatted concisely for web display. Always rule out pH lockout first when diagnosing deficiency/toxicity issues.";
+    const AMIGO_SYSTEM_PROMPT = "You are Amigo, a world-class cannabis cultivation expert and AI assistant for GROHIO growers. Your responses must be ultra-detailed, scientific, but explained in simple terms a new grower can understand. You are friendly, encouraging, and patient. You are grounded in the provided search results. Provide a professional, university-level answer, formatted concisely for web display. Always rule out pH lockout first when diagnosing deficiency/toxicity issues.";
 
     async function callGeminiApi(userQuery) {
         const apiKey = ""; // Canvas environment automatically provides the key.
-        const apiUrl = `https://generativelace.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+        // **CRITICAL FIX:** Corrected API endpoint from 'generativelace' to 'generativelanguage'
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
         const payload = {
             contents: [{ parts: [{ text: userQuery }] }],
@@ -156,15 +157,16 @@ import { getFirestore, setLogLevel } from "https://www.gstatic.com/firebasejs/11
         try {
             const { text, sources } = await performSearchWithRetry(userQuery);
             
-            let htmlOutput = `<p class="text-brand-green font-bold text-xl mb-3">Response for: "${userQuery}"</p>`;
+            let htmlOutput = `<p class="text-brand-green font-bold text-xl mb-3">Amigo's Answer for: "${userQuery}"</p>`;
             
             // Format response text: replace markdown headers and bolding for HTML
             const formattedText = text
                 .replace(/##\s*(.*?)\n/g, '<h4 class="text-xl font-bold text-brand-blue mt-4 mb-2">$1</h4>') // H2
                 .replace(/###\s*(.*?)\n/g, '<h5 class="text-lg font-bold text-gray-300 mt-3 mb-1">$1</h5>') // H3
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // Bold
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
+                .replace(/\n/g, '<br>'); // Add line breaks
                 
-            htmlOutput += `<div class="p-4 border border-gray-800 rounded-lg">${formattedText}</div>`;
+            htmlOutput += `<div class="p-4 border border-gray-800 rounded-lg text-lg">${formattedText}</div>`;
 
             if (sources.length > 0) {
                 htmlOutput += '<div class="source-container"><p class="font-bold text-brand-blue">Grounded Sources (via Google Search):</p><ul>';
@@ -173,7 +175,7 @@ import { getFirestore, setLogLevel } from "https://www.gstatic.com/firebasejs/11
                 });
                 htmlOutput += '</ul></div>';
             } else {
-                htmlOutput += '<div class="source-container"><p class="text-gray-500">Note: Response was generated without external web grounding. Information may not be current.</p></div>';
+                htmlOutput += '<div class="source-container"><p class="text-gray-500">Note: Response was generated from my internal knowledge. For the latest info, try a more specific search.</p></div>';
             }
 
             searchOutput.innerHTML = htmlOutput;
@@ -277,8 +279,7 @@ import { getFirestore, setLogLevel } from "https://www.gstatic.com/firebasejs/11
             return;
         }
 
-        // PPM = EC * ScaleFactor (EC is in mS/cm, but meters often read in µS/cm)
-        // Assuming input is mS/cm as labeled.
+        // PPM = EC * ScaleFactor (EC is in mS/cm)
         const PPM = EC * scale;
 
         ppmOutput.textContent = `${PPM.toFixed(0)} PPM (${scale} Scale)`;
@@ -337,6 +338,7 @@ import { getFirestore, setLogLevel } from "https://www.gstatic.com/firebasejs/11
             searchInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter' && searchInput.value.trim()) {
                     performSearch(searchInput.value.trim());
+                    e.preventDefault(); // Prevent form submission (if any)
                 }
             });
         }
