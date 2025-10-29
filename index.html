@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Verification - GROHIO</title>
+    <!-- Load Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Google Fonts --><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* GROHIO Neon Palette */
+            --grohio-red: #ff3162;      /* Vibrant Pink/Red */
+            --grohio-blue: #00bfff;     /* Bright Blue */
+            --grohio-green: #39ff14;    /* Lime Green */
+            --grohio-purple: #9f50ff;   /* Bright Purple */
+            --color-bg: #000000;
+            --color-bg-modal: #0a0a0a;
+            --color-border-light: #333;
+            --color-text-primary: #e0e0e0;
+            --color-text-header: #ffffff;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* Modal styling */
+        .age-gate-modal {
+            background-color: var(--color-bg-modal);
+            border: 2px solid var(--grohio-purple);
+            box-shadow: 0 0 25px 5px rgba(159, 80, 255, 0.5); /* Purple Glow */
+            border-radius: 1.5rem; /* More rounded */
+            padding: 2.5rem;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        /* Logo styling */
+        .logo-top img { /* Apply consistent max-height to both */
+            max-height: 80px; /* Adjusted to be proportionate */
+            margin-bottom: 1.5rem;
+        }
+        #grohio-logo-gate {
+             filter: drop-shadow(0 0 8px var(--grohio-purple));
+        }
+
+        /* Button Styling */
+        .age-gate-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px; /* Pill shape */
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            border: none;
+            margin: 0 0.5rem;
+        }
+
+        .btn-yes {
+            background-color: var(--grohio-green);
+            color: #000;
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.4);
+        }
+        .btn-yes:hover {
+            background-color: #4CFF30; /* Brighter green */
+            box-shadow: 0 0 15px 5px rgba(57, 255, 20, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .btn-no {
+            background-color: var(--grohio-red);
+            color: #000;
+            box-shadow: 0 0 10px rgba(255, 49, 98, 0.4);
+        }
+        .btn-no:hover {
+            background-color: #ff507c; /* Brighter red */
+            box-shadow: 0 0 15px 5px rgba(255, 49, 98, 0.6);
+            transform: translateY(-2px);
+        }
+
+        /* Modal text */
+        .modal-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--color-text-header);
+            margin-bottom: 2rem;
+        }
+        
+        .company-credit-name {
+            filter: drop-shadow(0 0 4px var(--grohio-blue));
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="age-gate-modal">
+        <!-- GROHIO Logo (Top) --><div class="logo-top flex justify-center items-center">
+             <img id="grohio-logo-gate" src="https://raw.githubusercontent.com/3AmigosCannabisCo/testing.grohio/main/grohio_nobg.png" alt="GROHIO Logo">
+        </div>
+        
+        <!-- Question --><h2 class="modal-title">Are You At Least 21 Years Old?</h2>
+
+        <!-- Buttons --><div class="mt-8">
+            <button id="btn-yes" class="age-gate-btn btn-yes">Yes</button>
+            <button id="btn-no" class="age-gate-btn btn-no">No</button>
+        </div>
+
+        <!-- "Brought to you by" Text Credit --><div class="mt-8 text-center">
+            <p class="text-sm text-gray-500">Brought to you by</p>
+            <p classs="text-md font-semibold text-gray-400 company-credit-name">3 Amigos Cannabis Co.</p>
+        </div>
+    </div>
+
+    <script>
+        // Self-executing function to keep variables local
+        (function() {
+            'useSrict';
+
+            // Get button elements
+            const yesButton = document.getElementById('btn-yes');
+            const noButton = document.getElementById('btn-no');
+
+            // --- Define redirection URLs ---
+            // User specified absolute URL for the main app
+            const appUrl = 'http://3amigoscannabisco.github.io/testing.grohio'; 
+            // NOTE: For local testing, you might want to change this to './index.html'
+            
+            const exitUrl = 'https://www.funbrain.com';
+
+            // --- Add Event Listeners ---
+            if (yesButton) {
+                yesButton.addEventListener('click', () => {
+                    // Redirect to the main app page
+                    window.location.href = appUrl; 
+                });
+            }
+
+            if (noButton) {
+                noButton.addEventListener('click', () => {
+                    // Redirect to the exit URL
+                    window.location.href = exitUrl;
+                });
+            }
+
+        })(); // End IIFE
+    </script>
+
+</body>
+</html>
