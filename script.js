@@ -1,3 +1,16 @@
+Got it. Here is the complete, updated code for your script.js file.
+
+The changes are:
+
+Three new functions (saveGalleryToStorage, loadGalleryFromStorage, addGalleryItem) are added around line 732.
+
+The handleImageUpload function (now around line 800) is updated to use the new helpers.
+
+A new line, loadGalleryFromStorage();, is added to the onDOMLoaded function (around line 969).
+
+Updated script.js (Full Code)
+JavaScript
+
 /**
  * GROHIO v16.0: "Amigo's Notebook" Edition
  * Main Application Logic (script.js)
@@ -16,21 +29,13 @@
  * 6. [REMOVED] Gemini API Implementation
  * 7. Firebase Setup & Authentication
  * 8. Calculator Logic (VPD, DLI, PPM, Cost)
- * 9. NEW: Interactive Gallery Logic
+ * 9. NEW: Interactive Gallery Logic (Now with localStorage)
  * 10. NEW: Community Journal Logic (Concept)
  * 11. Initialization (Event Listeners)
  *
- * v16.0 Changes:
- * - CRITICAL FIX: Corrected Gemini API URL (was 'generativelace').
- * - ADDED: New tab listeners and DOM elements for Gallery & Community.
- * - ADDED: `handleImageUpload` function using FileReader to create
- * a Base64-encoded image and add it to the gallery grid.
- * - ADDED: Event listener for the "journal-submit-btn" to show
- * the potential of a live-wired 'addDoc' to Firestore.
- * - VERIFIED: All calculator logic, including "Savings", is sound.
- *
  * v17.0 (Local) Changes:
  * - REMOVED: All Gemini API, search modal, and search bar code for security.
+ * - ADDED: Gallery persistence using localStorage.
  */
 
 //
@@ -528,6 +533,80 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
     //
     
     /**
+     * @description Saves the current gallery images (as Base64 URLs) to localStorage.
+     */
+    function saveGalleryToStorage() {
+        if (!galleryGrid) return;
+        
+        const images = [];
+        // Find all images in the grid *except* the placeholder
+        const items = galleryGrid.querySelectorAll('.gallery-item:not(.placeholder)');
+        
+        // We save in reverse order so they load in the correct (newest first) order
+        const itemsArray = Array.from(items).reverse();
+
+        itemsArray.forEach(item => {
+            const img = item.querySelector('img');
+            const caption = item.querySelector('.gallery-item-caption p');
+            if (img && caption) {
+                images.push({
+                    src: img.src,
+                    name: caption.textContent
+                });
+            }
+        });
+        
+        // Save the array as a JSON string
+        localStorage.setItem('grohioGallery', JSON.stringify(images));
+    }
+
+    /**
+     * @description Loads images from localStorage and populates the gallery.
+     */
+    function loadGalleryFromStorage() {
+        if (!galleryGrid) return;
+        
+        const storedImages = JSON.parse(localStorage.getItem('grohioGallery') || '[]');
+        
+        if (storedImages.length > 0) {
+            // Remove the placeholder if we are loading saved images
+            const placeholder = galleryGrid.querySelector('.placeholder');
+            if (placeholder) {
+                placeholder.remove();
+            }
+            
+            storedImages.forEach(imgData => {
+                // Create and add the gallery item
+                addGalleryItem(imgData.src, imgData.name, "Loaded from memory");
+            });
+        }
+    }
+    
+    /**
+     * @description Helper function to create and prepend a new gallery item.
+     * @param {string} imageDataUrl - The Base64 image src.
+     * @param {string} fileName - The name of the file.
+     * @param {string} uploadTime - Text to display for upload time.
+     */
+    function addGalleryItem(imageDataUrl, fileName, uploadTime) {
+        if (!galleryGrid) return;
+
+        const galleryItem = document.createElement('div');
+        galleryItem.className = 'gallery-item animate-fadeIn'; // Add animation
+        
+        galleryItem.innerHTML = `
+            <img src="${imageDataUrl}" alt="User uploaded grow photo: ${fileName}">
+            <div class="gallery-item-caption">
+                <p>${fileName}</p>
+                <span class="text-xs text-gray-400">${uploadTime}</span>
+            </div>
+        `;
+        
+        // Add the new item to the top of the grid
+        galleryGrid.prepend(galleryItem);
+    }
+
+    /**
      * @description Handles the file input change event for the gallery.
      * Reads the selected file as a Base64 Data URL and adds it to the gallery.
      * @param {Event} event - The 'change' event from the file input.
@@ -562,25 +641,22 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
         reader.onload = function(e) {
             const imageDataUrl = e.target.result; // This is the Base64 string
             
-            // Create the new gallery item
-            const galleryItem = document.createElement('div');
-            galleryItem.className = 'gallery-item animate-fadeIn'; // Add animation
+            // 1. Use the new helper function
+            addGalleryItem(imageDataUrl, file.name, "Uploaded by: You (Local)");
             
-            galleryItem.innerHTML = `
-                <img src="${imageDataUrl}" alt="User uploaded grow photo">
-                <div class="gallery-item-caption">
-                    <p>${file.name}</p>
-                    <span class="text-xs text-gray-400">Uploaded by: You (Local)</span>
-                </div>
-            `;
+            // 2. Save the new state to localStorage
+            saveGalleryToStorage();
             
-            // Add the new item to the top of the grid
-            galleryGrid.prepend(galleryItem);
-            
-            // Show success message
+            // 3. Show success message
             galleryMessage.textContent = 'Success! Your image has been added to the local gallery.';
             galleryMessage.classList.remove('hidden', 'text-brand-red');
             galleryMessage.classList.add('text-brand-green');
+
+            // 4. Remove the placeholder if it exists
+            const placeholder = galleryGrid.querySelector('.placeholder');
+            if (placeholder) {
+                placeholder.remove();
+            }
         };
         
         // This event fires if there's an error
@@ -713,6 +789,9 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
     function onDOMLoaded() {
         // Initialize Firebase for user authentication
         initFirebase();
+        
+        // *** NEW: Load gallery from storage ***
+        loadGalleryFromStorage();
         
         // Run all calculators once on load to populate them
         // with the default values from the HTML.
