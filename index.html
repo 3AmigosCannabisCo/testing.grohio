@@ -108,7 +108,7 @@
 </head>
 <body>
 
-    <audio id="confirm-audio" preload="auto" src="https://raw.githubusercontent.com/3AmigosCannabisCo/testing.grohio/main/itsdolph.m4a"></audio>
+    <audio id="confirm-audio" preload="auto" src="https://www.soundjay.com/buttons/beep-07a.mp3"></audio>
 
     <div class="age-gate-modal">
         <div class="logo-top flex justify-center items-center">
@@ -150,33 +150,23 @@
                     noButton.disabled = true;
                     yesButton.textContent = 'Entering...';
 
-                    // Set the session storage flag (do this immediately)
+                    // Set the session storage flag
                     sessionStorage.setItem('isVerified', 'true');
                     
                     if (audio) {
-                        // When the audio finishes playing, redirect.
-                        audio.addEventListener('ended', () => {
-                            window.location.href = appUrl;
+                        // Try to play the audio
+                        audio.play().catch(error => {
+                            // If it fails, just log the error. The timer will still redirect.
+                            console.warn("Audio playback failed:", error);
                         });
-                        
-                        // Play the audio
-                        // We use a promise to catch errors if the browser blocks auto-play
-                        const playPromise = audio.play();
-                        
-                        if (playPromise !== undefined) {
-                            playPromise.catch(error => {
-                                // Audio playback failed (e.g., browser policy)
-                                // Log the error and redirect immediately
-                                console.warn("Audio playback failed:", error);
-                                window.location.href = appUrl;
-                            });
-                        }
-
-                    } else {
-                        // If audio element isn't found, just redirect immediately.
-                        console.warn('Audio element not found. Redirecting immediately.');
-                        window.location.href = appUrl;
                     }
+
+                    // --- Use a timer ---
+                    // Wait 3 seconds (3000 milliseconds) for the clip to play,
+                    // then redirect no matter what.
+                    setTimeout(() => {
+                        window.location.href = appUrl;
+                    }, 3000); // 3 seconds
                 });
             }
 
