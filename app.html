@@ -43,17 +43,18 @@
             <p id="user-id-display" class="text-xs text-gray-600 mt-1">Authenticating...</p>
         </header>
 
+        <!-- UPDATED: Tab order follows a logical progression: Home -> Legal -> Environment/Setup -> Problem/Refinement -> Tools/Community -->
         <nav class="flex flex-wrap justify-center gap-2 md:gap-3 mb-12">
             <button data-section="home" class="nav-btn active px-4 py-2 rounded-full font-semibold transition">🏠 Home</button>
             <button data-section="legal" class="nav-btn px-4 py-2 rounded-full font-semibold transition">⚖️ Legal</button>
             <button data-section="indoor" class="nav-btn px-4 py-2 rounded-full font-semibold transition">💡 Indoor Guide</button>
             <button data-section="outdoor" class="nav-btn px-4 py-2 rounded-full font-semibold transition">☀️ Outdoor Guide</button>
-            <button data-section="pests" class="nav-btn px-4 py-2 rounded-full font-semibold transition">🐛 Problem Hub</button>
             <button data-section="genetics" class="nav-btn px-4 py-2 rounded-full font-semibold transition">🧬 Strains & Genetics</button>
+            <button data-section="automation" class="nav-btn px-4 py-2 rounded-full font-semibold transition">⚙️ Automation</button>
+            <button data-section="pests" class="nav-btn px-4 py-2 rounded-full font-semibold transition">🐛 Problem Hub</button>
+            <button data-section="calculators" class="nav-btn px-4 py-2 rounded-full font-semibold transition">🛠️ Tools</button>
             <button data-section="cost-calc" class="nav-btn px-4 py-2 rounded-full font-semibold transition">💲 Cost Calculator</button>
             <button data-section="faq" class="nav-btn px-4 py-2 rounded-full font-semibold transition">❓ FAQ</button>
-            <button data-section="automation" class="nav-btn px-4 py-2 rounded-full font-semibold transition">⚙️ Automation</button>
-            <button data-section="calculators" class="nav-btn px-4 py-2 rounded-full font-semibold transition">🛠️ Tools</button>
             <button data-section="gallery" class="nav-btn px-4 py-2 rounded-full font-semibold transition">🖼️ Gallery</button>
             <button data-section="community" class="nav-btn px-4 py-2 rounded-full font-semibold transition">📓 Community</button>
         </nav>
@@ -81,15 +82,17 @@
                 <p>That's it! Every tool, technique, and tip in this guide is just a way to provide those five things better. You can do this!</p>
 
                 <div class="grid md:grid-cols-2 gap-8 mt-10">
+                    <!-- CHANGED: This now points to the Legal section first -->
                     <div class="card card-hover-glow-blue p-8 shadow-lg">
-                        <h3 class="mt-0 text-brand-blue">💡 Your First Indoor Grow</h3>
-                        <p>Want total control? Growing indoors in a tent is the best way to get amazing results year-round. We'll walk you through the perfect beginner setup, from the tent to the light to the fan.</p>
-                        <button data-section="indoor" class="mt-5 text-brand-blue font-semibold hover:underline nav-btn-internal">Start the Indoor Guide &rarr;</button>
+                        <h3 class="mt-0 text-brand-blue">⚖️ Start Here: Know the Law</h3>
+                        <p>Before you buy anything, you MUST understand Ohio's rules on plant count, security, and possession. Protecting yourself is the first step of the grow journey.</p>
+                        <button data-section="legal" class="mt-5 text-brand-blue font-semibold hover:underline nav-btn-internal">View Ohio Grow Laws &rarr;</button>
                     </div>
+                    <!-- CHANGED: This now points to the Indoor Guide next -->
                     <div class="card card-hover-glow-green p-8 shadow-lg">
-                        <h3 class="mt-0 text-brand-green">☀️ Growing with the Sun</h3>
-                        <p>Ready to work with Mother Nature? Outdoor growing is cheap, effective, and can lead to *massive* plants. We'll show you how to succeed in Ohio's tricky climate, from picking a spot to fighting off bud rot.</p>
-                        <button data-section="outdoor" class="mt-5 text-brand-green font-semibold hover:underline nav-btn-internal">Start the Outdoor Guide &rarr;</button>
+                        <h3 class="mt-0 text-brand-green">💡 Next Up: Your First Indoor Setup</h3>
+                        <p>Once you know the rules, it's time to build your grow room. Start with our step-by-step guide on lights, tents, fans, and humidity control.</p>
+                        <button data-section="indoor" class="mt-5 text-brand-green font-semibold hover:underline nav-btn-internal">Start the Indoor Guide &rarr;</button>
                     </div>
                 </div>
             </div>
@@ -852,6 +855,8 @@
                         <p id="journal-submit-message" class="text-sm text-center mt-4 hidden"></p>
                     </form>
                 </div>
+                
+                <h3 class="text-brand-purple mt-12">Community Feed (Examples)</h3>
                 
                 <div class="journal-entry">
                     <div class="journal-meta">
