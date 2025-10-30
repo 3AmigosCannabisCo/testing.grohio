@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Age Verification - GROHIO</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display.swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
             /* GROHIO Neon Palette */
@@ -136,6 +136,7 @@
             // Get button elements
             const yesButton = document.getElementById('btn-yes');
             const noButton = document.getElementById('btn-no');
+            // *** THIS IS THE FIX: Using the correct ID ***
             const audio = document.getElementById('confirm-audio');
 
             const appUrl = './app.html'; 
@@ -153,21 +154,38 @@
                     // Set the session storage flag
                     sessionStorage.setItem('isVerified', 'true');
                     
-                    // --- THIS IS THE FIX ---
-                    // 1. We "fire and forget" the play command IMMEDIATELY.
-                    // This links it to the user's click and satisfies the browser.
                     if (audio) {
-                        audio.play().catch(error => {
-                            // If it fails, just log it. The timer will still work.
-                            console.warn("Audio playback failed (browser policy?):", error);
-                        });
-                    }
+                        // audio.play() returns a "Promise"
+                        const playPromise = audio.play();
 
-                    // 2. We start the 3-second redirect timer IMMEDIATELY.
-                    // The sound will play *during* this 3-second wait.
-                    setTimeout(() => {
+                        if (playPromise !== undefined) {
+                            playPromise.then(() => {
+                                // --- SUCCESS ---
+                                // Audio has successfully started playing!
+                                // Now we wait 3 seconds for it to finish.
+                                setTimeout(() => {
+                                    window.location.href = appUrl;
+                                }, 3000); // 3 seconds
+                            })
+                            .catch(error => {
+                                // --- FAILURE ---
+                                // Audio playback failed.
+                                console.error("Audio playback failed:", error);
+                                // Redirect immediately so the user isn't stuck.
+                                window.location.href = appUrl;
+                            });
+                        } else {
+                            // Fallback for older browsers
+                            setTimeout(() => {
+                                window.location.href = appUrl;
+                            }, 3000);
+                        }
+                    } else {
+                        // --- FALLBACK ---
+                        // Audio element not found, redirect immediately.
+                        console.warn('Audio element not found. Redirecting immediately.');
                         window.location.href = appUrl;
-                    }, 3000); // 3 seconds
+                    }
                 });
             }
 
