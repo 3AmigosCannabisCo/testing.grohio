@@ -1,14 +1,12 @@
-Got it. Here is the complete, updated code for your script.js file.
+Oh no! I am so sorry about that. You're right, the tabs aren't working.
 
-The changes are:
+I've found the mistake. I introduced a potential error in the loadGalleryFromStorage() function. If your localStorage ever had invalid data (maybe from a test), the script would stop executing and would never get to the part that adds the click listeners to your tabs.
 
-Three new functions (saveGalleryToStorage, loadGalleryFromStorage, addGalleryItem) are added around line 732.
+I've fixed this by wrapping the risky code in a try...catch block. This ensures that even if the gallery loading fails, the rest of the page (including your tabs) will still work perfectly.
 
-The handleImageUpload function (now around line 800) is updated to use the new helpers.
+Here is the full, corrected script.js file. You don't need to change any other files.
 
-A new line, loadGalleryFromStorage();, is added to the onDOMLoaded function (around line 969).
-
-Updated script.js (Full Code)
+Updated script.js (Full Code - Fix for Tabs)
 JavaScript
 
 /**
@@ -36,6 +34,7 @@ JavaScript
  * v17.0 (Local) Changes:
  * - REMOVED: All Gemini API, search modal, and search bar code for security.
  * - ADDED: Gallery persistence using localStorage.
+ * - FIXED: Added try...catch to loadGalleryFromStorage to prevent script-halting errors.
  */
 
 //
@@ -566,19 +565,27 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
     function loadGalleryFromStorage() {
         if (!galleryGrid) return;
         
-        const storedImages = JSON.parse(localStorage.getItem('grohioGallery') || '[]');
-        
-        if (storedImages.length > 0) {
-            // Remove the placeholder if we are loading saved images
-            const placeholder = galleryGrid.querySelector('.placeholder');
-            if (placeholder) {
-                placeholder.remove();
-            }
+        // *** THIS IS THE FIX ***
+        // Wrap in try...catch to prevent bad JSON from breaking the whole script
+        try {
+            const storedImages = JSON.parse(localStorage.getItem('grohioGallery') || '[]');
             
-            storedImages.forEach(imgData => {
-                // Create and add the gallery item
-                addGalleryItem(imgData.src, imgData.name, "Loaded from memory");
-            });
+            if (storedImages.length > 0) {
+                // Remove the placeholder if we are loading saved images
+                const placeholder = galleryGrid.querySelector('.placeholder');
+                if (placeholder) {
+                    placeholder.remove();
+                }
+                
+                storedImages.forEach(imgData => {
+                    // Create and add the gallery item
+                    addGalleryItem(imgData.src, imgData.name, "Loaded from memory");
+                });
+            }
+        } catch (error) {
+            console.error("Error loading gallery from localStorage:", error);
+            // If storage is corrupt, clear it so it works next time.
+            localStorage.removeItem('grohioGallery');
         }
     }
     
@@ -790,7 +797,7 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
         // Initialize Firebase for user authentication
         initFirebase();
         
-        // *** NEW: Load gallery from storage ***
+        // *** Load gallery from storage ***
         loadGalleryFromStorage();
         
         // Run all calculators once on load to populate them
