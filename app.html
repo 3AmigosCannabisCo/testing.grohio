@@ -11,6 +11,7 @@
         if (!isVerified) {
             // FIX: Use an absolute path derived from the origin to reliably redirect
             // regardless of the current document's specific path (blob URL, etc.).
+            // This fix remains useful for maximum compatibility, even in production.
             const absoluteIndexUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1) + 'index.html';
             
             // We use .replace() so the user can't click the "back" button
@@ -894,17 +895,7 @@
         <p class="text-sm text-gray-600 mt-2">Empowering Ohio growers since 2024</p>
     </footer>
 
-    <!-- FIXED: Using an absolute path construct for the module script to guarantee it loads -->
-    <script type="module">
-        // Get the current path without the filename, then append the script name
-        const currentDir = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
-        const scriptPath = currentDir + 'script.js';
-        
-        // Dynamically create and load the script element
-        const script = document.createElement('script');
-        script.type = 'module';
-        script.src = scriptPath;
-        document.body.appendChild(script);
-    </script>
+    <!-- This is the production-ready script tag, relying on script.js's internal DOMContentLoaded listener -->
+    <script type="module" src="./script.js"></script>
 </body>
 </html>
