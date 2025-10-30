@@ -12,6 +12,9 @@
  * - Added new animations (pulse-glow, modalSlideIn).
  * - Ensured all glow effects are subtle, as requested.
  * - Total line count is now significantly larger.
+ *
+ * v17.0 (Local) Changes:
+ * - REMOVED: All search modal and search bar styles.
  */
 
 /*
@@ -408,97 +411,9 @@ h1 {
 
 /*
  * =========================================
- * SEARCH & MODAL
+ * [REMOVED] SEARCH & MODAL
  * =========================================
  */
-
-/* Sticky search bar input */
-.search-input-focus {
-    transition: all 0.2s ease-in-out;
-}
-.search-input-focus:focus {
-    box-shadow: 0 0 0 4px rgba(0, 191, 255, 0.6);
-    border-color: var(--grohio-blue);
-    background-color: #111;
-}
-
-/* Search modal popup */
-#search-modal { 
-    background-color: rgba(0,0,0, 0.95); 
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-}
-#search-modal > div { /* This is the modal container */
-    background-color: var(--color-bg-darker);
-    border: 2px solid var(--grohio-purple);
-    box-shadow: 0 0 20px 5px rgba(159, 80, 255, 0.5); /* Glow Reduced */
-}
-#search-modal h2 { 
-    text-shadow: 0 0 8px var(--grohio-purple); 
-}
-#search-modal button { 
-    background-color: var(--grohio-blue); 
-    color: #000; 
-    transition: background-color 0.2s, box-shadow 0.2s; 
-    font-weight: 700;
-    border-radius: 8px;
-}
-#search-modal button:hover { 
-    background-color: #00a0d8; 
-    box-shadow: 0 0 10px 2px rgba(0, 191, 255, 0.7); 
-}
-/* Close 'X' button */
-#close-modal-btn-top {
-    background-color: transparent !important;
-    color: var(--color-text-muted) !important;
-    box-shadow: none !important;
-}
-#close-modal-btn-top:hover {
-    color: var(--color-text-header) !important;
-    transform: scale(1.1);
-}
-
-/* The scrollable content area inside the modal */
-.search-modal-content { 
-    max-height: 80vh; 
-}
-@media (max-width: 768px) {
-    .search-modal-content {
-        max-height: 70vh; /* More room on mobile */
-    }
-}
-
-
-/* Loading spinner animation */
-.spinner-color { 
-    border-color: var(--grohio-purple); 
-    border-top-color: transparent; /* Makes it a "C" shape */
-} 
-
-/* Search result source links */
-.source-link { 
-    color: var(--grohio-blue); 
-    text-decoration: underline; 
-    font-size: 0.9rem; 
-    margin-top: 0.5rem; 
-    display: block; 
-    word-break: break-all; /* Prevents long links from overflowing */
-    transition: color 0.2s;
-}
-.source-link:hover {
-    color: #40dfff; /* Lighter blue on hover */
-}
-.source-container { 
-    border-top: 1px solid var(--color-border-light); 
-    margin-top: 1.5rem; 
-    padding-top: 1rem; 
-    font-size: 0.9rem; 
-}
-.source-container p { 
-    margin-bottom: 0.5rem; 
-    line-height: 1.4; 
-    color: var(--color-text-muted); 
-}
 
 /*
  * =========================================
