@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Age Verification - GROHIO</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display.swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
             /* GROHIO Neon Palette */
@@ -136,7 +136,7 @@
             // Get button elements
             const yesButton = document.getElementById('btn-yes');
             const noButton = document.getElementById('btn-no');
-            const audio = document.getElementById('confirm-audio');
+            const audio = document.getElementById('confirm-.mp3'); // Corrected ID
 
             const appUrl = './app.html'; 
             const exitUrl = 'https://www.funbrain.com';
@@ -145,7 +145,7 @@
             if (yesButton) {
                 yesButton.addEventListener('click', () => {
                     
-                    // --- Disable buttons and play sound ---
+                    // --- Disable buttons ---
                     yesButton.disabled = true;
                     noButton.disabled = true;
                     yesButton.textContent = 'Entering...';
@@ -154,19 +154,32 @@
                     sessionStorage.setItem('isVerified', 'true');
                     
                     if (audio) {
-                        // Try to play the audio
-                        audio.play().catch(error => {
-                            // If it fails, just log the error. The timer will still redirect.
-                            console.warn("Audio playback failed:", error);
-                        });
-                    }
+                        // audio.play() returns a "Promise"
+                        const playPromise = audio.play();
 
-                    // --- Use a timer ---
-                    // Wait 3 seconds (3000 milliseconds) for the clip to play,
-                    // then redirect no matter what.
-                    setTimeout(() => {
+                        if (playPromise !== undefined) {
+                            playPromise.then(() => {
+                                // --- SUCCESS ---
+                                // Audio has successfully started playing!
+                                // Now we start the 3-second timer.
+                                setTimeout(() => {
+                                    window.location.href = appUrl;
+                                }, 3000); // 3 seconds
+                            })
+                            .catch(error => {
+                                // --- FAILURE ---
+                                // Audio playback failed.
+                                console.warn("Audio playback failed:", error);
+                                // Redirect immediately so the user isn't stuck.
+                                window.location.href = appUrl;
+                            });
+                        }
+                    } else {
+                        // --- FALLBACK ---
+                        // Audio element not found, redirect immediately.
+                        console.warn('Audio element not found. Redirecting immediately.');
                         window.location.href = appUrl;
-                    }, 3000); // 3 seconds
+                    }
                 });
             }
 
