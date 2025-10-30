@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Age Verification - GROHIO</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display.swap" rel="stylesheet">
     <style>
         :root {
             /* GROHIO Neon Palette */
@@ -136,8 +136,7 @@
             // Get button elements
             const yesButton = document.getElementById('btn-yes');
             const noButton = document.getElementById('btn-no');
-            // *** THIS IS THE FIX: Using the correct ID ***
-            const audio = document.getElementById('confirm-audio');
+            const audio = document.getElementById('confirm-audio'); // Correct ID
 
             const appUrl = './app.html'; 
             const exitUrl = 'https://www.funbrain.com';
@@ -149,19 +148,16 @@
                     // --- Disable buttons ---
                     yesButton.disabled = true;
                     noButton.disabled = true;
-                    yesButton.textContent = 'Entering...';
-
-                    // Set the session storage flag
+                    yesButton.textContent = 'Testing...'; // New text
                     sessionStorage.setItem('isVerified', 'true');
                     
                     if (audio) {
-                        // audio.play() returns a "Promise"
                         const playPromise = audio.play();
 
                         if (playPromise !== undefined) {
                             playPromise.then(() => {
                                 // --- SUCCESS ---
-                                // Audio has successfully started playing!
+                                yesButton.textContent = 'Success!'; // New text
                                 // Now we wait 3 seconds for it to finish.
                                 setTimeout(() => {
                                     window.location.href = appUrl;
@@ -169,22 +165,19 @@
                             })
                             .catch(error => {
                                 // --- FAILURE ---
-                                // Audio playback failed.
-                                console.error("Audio playback failed:", error);
-                                // Redirect immediately so the user isn't stuck.
-                                window.location.href = appUrl;
+                                console.error("--- AUDIO PLAYBACK FAILED ---");
+                                console.error(error);
+                                
+                                // **DON'T REDIRECT. SHOW THE ERROR.**
+                                yesButton.textContent = 'Audio Failed! Check Console.';
+                                yesButton.style.backgroundColor = 'var(--grohio-red)';
+                                noButton.disabled = false; // Re-enable "No" button
                             });
-                        } else {
-                            // Fallback for older browsers
-                            setTimeout(() => {
-                                window.location.href = appUrl;
-                            }, 3000);
                         }
                     } else {
-                        // --- FALLBACK ---
-                        // Audio element not found, redirect immediately.
-                        console.warn('Audio element not found. Redirecting immediately.');
-                        window.location.href = appUrl;
+                        console.error('Audio element not found!');
+                        yesButton.textContent = 'Audio Not Found!';
+                        yesButton.style.backgroundColor = 'var(--grohio-red)';
                     }
                 });
             }
