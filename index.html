@@ -142,15 +142,20 @@
             const noButton = document.getElementById('btn-no');
             const audio = document.getElementById('confirm-audio'); // Correct ID
 
-            // FIX: Changed from relative path './app.html' to a dynamically
-            // constructed absolute path. This resolves the 'invalid URL'
-            // SyntaxError that can occur in certain sandboxed environments
-            // or when the base URL isn't what's expected.
-            // This logic correctly finds the current directory path,
-            // whether the URL ends with '/' or '/index.html'.
-            const currentPath = window.location.pathname.endsWith('index.html') 
-                ? window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1)
-                : window.location.pathname;
+            // FIX: This logic is now more robust to handle all path cases
+            // (e.g., /testing.grohio, /testing.grohio/, /testing.grohio/index.html)
+            // to prevent the "invalid URL" SyntaxError.
+            let currentPath = window.location.pathname; 
+
+            // 1. If it ends with a file (like index.html), get the parent directory
+            if (currentPath.endsWith('/index.html')) {
+                currentPath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1); // e.g., /testing.grohio/
+            }
+            // 2. If it does NOT end with a slash (e.g., /testing.grohio), add one
+            else if (!currentPath.endsWith('/')) {
+                currentPath = currentPath + '/'; // e.g., /testing.grohio -> /testing.grohio/
+            }
+            // 3. If it already ends with a slash (e.g., /testing.grohio/), it's perfect.
             
             const appUrl = window.location.origin + currentPath + 'app.html';
             const exitUrl = 'https://www.funbrain.com';
