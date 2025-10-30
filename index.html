@@ -108,6 +108,8 @@
 </head>
 <body>
 
+    <audio id="confirm-audio" preload="auto" src="https://raw.githubusercontent.com/3AmigosCannabisCo/testing.grohio/main/itsdolph.mp3"></audio>
+
     <div class="age-gate-modal">
         <div class="logo-top flex justify-center items-center">
              <img id="grohio-logo-gate" src="https://raw.githubusercontent.com/3AmigosCannabisCo/testing.grohio/main/grohio_nobg.png" alt="GROHIO Logo">
@@ -134,7 +136,7 @@
             // Get button elements
             const yesButton = document.getElementById('btn-yes');
             const noButton = document.getElementById('btn-no');
-            // *** AUDIO CONST IS REMOVED ***
+            const audio = document.getElementById('confirm-audio');
 
             const appUrl = './app.html'; 
             const exitUrl = 'https://www.funbrain.com';
@@ -143,7 +145,7 @@
             if (yesButton) {
                 yesButton.addEventListener('click', () => {
                     
-                    // --- Disable buttons ---
+                    // --- Disable buttons and play sound ---
                     yesButton.disabled = true;
                     noButton.disabled = true;
                     yesButton.textContent = 'Entering...';
@@ -151,10 +153,17 @@
                     // Set the session storage flag
                     sessionStorage.setItem('isVerified', 'true');
                     
-                    // *** ALL AUDIO.PLAY() LOGIC IS REMOVED ***
+                    if (audio) {
+                        // Try to play the audio
+                        audio.play().catch(error => {
+                            // If it fails, just log the error. The timer will still redirect.
+                            console.warn("Audio playback failed:", error);
+                        });
+                    }
 
                     // --- Use a timer ---
-                    // Wait 3 seconds (3000 milliseconds), then redirect.
+                    // Wait 3 seconds (3000 milliseconds) for the clip to play,
+                    // then redirect no matter what.
                     setTimeout(() => {
                         window.location.href = appUrl;
                     }, 3000); // 3 seconds
