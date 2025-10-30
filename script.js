@@ -13,7 +13,7 @@
  * 3. Global Constants & DOM References (now with Gallery/Community)
  * 4. Core Utility Functions (exponentialBackoff)
  * 5. Navigation & UI Control (showSection, closeModal)
- * 6. Gemini API Implementation (Amigo Answers)
+ * 6. [REMOVED] Gemini API Implementation
  * 7. Firebase Setup & Authentication
  * 8. Calculator Logic (VPD, DLI, PPM, Cost)
  * 9. NEW: Interactive Gallery Logic
@@ -28,6 +28,9 @@
  * - ADDED: Event listener for the "journal-submit-btn" to show
  * the potential of a live-wired 'addDoc' to Firestore.
  * - VERIFIED: All calculator logic, including "Savings", is sound.
+ *
+ * v17.0 (Local) Changes:
+ * - REMOVED: All Gemini API, search modal, and search bar code for security.
  */
 
 //
@@ -70,23 +73,7 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
     /** @type {NodeListOf<HTMLButtonElement>} */
     const internalNavButtons = document.querySelectorAll('.nav-btn-internal');
     
-    /** @type {HTMLElement} */
-    const searchModal = document.getElementById('search-modal');
-    
-    /** @type {HTMLInputElement} */
-    const searchInput = document.getElementById('search-input');
-    
-    /** @type {HTMLElement} */
-    const searchOutput = document.getElementById('search-output');
-
-    /** @type {HTMLElement} */
-    const amigoHeader = document.getElementById('amigo-answer-header');
-    
-    /** @type {HTMLElement} */
-    const loadingSpinner = document.getElementById('loading-spinner');
-    
-    /** @type {NodeListOf<HTMLButtonElement>} */
-    const closeModalBtns = document.querySelectorAll('#close-modal-btn-top, #close-modal-btn-bottom');
+    // [REMOVED] Search Modal & Input Elements
     
     /** @type {HTMLElement} */
     const userIdDisplay = document.getElementById('user-id-display');
@@ -267,173 +254,13 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
         window.scrollTo(0, 0); 
     }
 
-    /**
-     * @description Hides the search modal and clears the search input field.
-     */
-    function closeModal() {
-        if (searchModal) {
-            searchModal.classList.add('hidden');
-            if(amigoHeader) amigoHeader.classList.remove('animate-pulse-glow');
-        }
-        if (searchInput) {
-            searchInput.value = ''; // Clear input on close
-        }
-    }
-
+    // [REMOVED] closeModal function
+    
     //
     // =========================================
-    // GEMINI API IMPLEMENTATION (AMIGO ANSWERS)
+    // [REMOVED] GEMINI API IMPLEMENTATION
     // =========================================
-    // This is the core of our "Amigo Answers" search.
     //
-
-    /**
-     * @description The system prompt guides the AI's persona and response rules.
-     * This is sent with every API call to ensure the AI acts as "Amigo."
-     */
-    const AMIGO_SYSTEM_PROMPT = `You are "Amigo," a world-class cannabis cultivation expert and AI assistant for the GROHIO platform. 
-    Your responses must be ultra-detailed, scientific, but explained in simple, encouraging terms a new grower can understand.
-    You are friendly, encouraging, and patient.
-    You MUST use the provided Google Search results (grounding) to formulate your answer.
-    Your goal is to provide a professional, university-level answer, formatted clearly with paragraphs and bullet points for web display.
-    Always rule out pH lockout first when diagnosing any nutrient deficiency or toxicity issue.
-    Structure your response using Markdown (e.g., ## for headers, ** for bold, * for bullets).`;
-
-    /**
-     * @description The core async function that makes the `fetch` call to the Google Gemini API.
-     * @param {string} userQuery - The question typed in by the user.
-     * @returns {Promise<{text: string, sources: Array<{uri: string, title: string}>}>} An object containing the AI's text response and an array of sources.
-     * @throws Will throw an error if the network request fails or the API returns an error.
-     */
-    async function callGeminiApi(userQuery) {
-        // The API key is left as "" and is provided by the Canvas environment.
-        const apiKey = ""; 
-        
-        // **CRITICAL FIX (v16.0):** Corrected API endpoint.
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-
-        /**
-         * @description The payload sent to the Gemini API.
-         * - `contents`: The user's prompt.
-         * - `tools`: Enables Google Search grounding.
-         * - `systemInstruction`: Injects our "Amigo" persona.
-         */
-        const payload = {
-            contents: [{ parts: [{ text: userQuery }] }],
-            tools: [{ "google_search": {} }], // This enables Google Search!
-            systemInstruction: { parts: [{ text: AMIGO_SYSTEM_PROMPT }] },
-        };
-
-        // Make the network request
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-
-        // Handle bad responses (e.g., 400, 500)
-        if (!response.ok) {
-            const errorBody = await response.json();
-            throw new Error(`API Error: ${response.status} ${response.statusText}. Detail: ${errorBody?.error?.message || 'Unknown error'}`);
-        }
-
-        // Parse the successful JSON response
-        const result = await response.json();
-        
-        // Navigate the complex JSON to find the AI's response
-        const candidate = result.candidates?.[0];
-
-        if (!candidate || !candidate.content?.parts?.[0]?.text) {
-            // This happens if the API response is empty or malformed
-            throw new Error("Invalid response structure from API.");
-        }
-
-        // 1. Get the AI's text response
-        const text = candidate.content.parts[0].text;
-        
-        // 2. Extract the Google Search sources
-        let sources = [];
-        const groundingMetadata = candidate.groundingMetadata;
-        if (groundingMetadata && groundingMetadata.groundingAttributions) {
-            sources = groundingMetadata.groundingAttributions
-                .map(attribution => ({
-                    uri: attribution.web?.uri,
-                    title: attribution.web?.title,
-                }))
-                .filter(source => source.uri && source.title); // Ensure sources are valid
-        }
-
-        return { text, sources };
-    }
-
-    /**
-     * @description A retry-wrapped version of our API call function.
-     * We call this instead of `callGeminiApi` directly.
-     */
-    const performSearchWithRetry = exponentialBackoff(callGeminiApi);
-
-    /**
-     * @description Handles the entire search process: shows modal, calls API, and renders results.
-     * @param {string} userQuery - The user's question.
-     */
-    async function performSearch(userQuery) {
-        if (!searchModal || !searchOutput || !loadingSpinner || !amigoHeader) {
-            console.error("CRITICAL: Search modal elements are missing!");
-            return;
-        }
-        
-        // 1. Show modal and loading spinner
-        searchModal.classList.remove('hidden');
-        searchOutput.innerHTML = ''; // Clear previous results
-        loadingSpinner.classList.remove('hidden');
-        amigoHeader.classList.add('animate-pulse-glow'); // Add pulse animation
-
-        try {
-            // 2. Call the API (with retries) and wait for the response
-            const { text, sources } = await performSearchWithRetry(userQuery);
-            
-            // 3. Build the HTML to display the results
-            let htmlOutput = `<p class="text-brand-green font-bold text-xl mb-3">Amigo's Answer for: "${userQuery}"</p>`;
-            
-            // Format response text: replace markdown (##, **, \n) with HTML
-            const formattedText = text
-                .replace(/##\s*(.*?)(?:\n|<br>)/g, '<h4 class="text-xl font-bold text-brand-blue mt-4 mb-2">$1</h4>') // H2
-                .replace(/###\s*(.*?)(?:\n|<br>)/g, '<h5 class="text-lg font-bold text-gray-300 mt-3 mb-1">$1</h5>') // H3
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
-                .replace(/\*(.*?)\*/g, '<em>$1</em>') // Italics
-                .replace(/\n/g, '<br>'); // Add line breaks
-                
-            htmlOutput += `<div class="p-4 border border-gray-800 rounded-lg text-lg">${formattedText}</div>`;
-
-            // 4. Add the sources, if any
-            if (sources.length > 0) {
-                htmlOutput += '<div class="source-container"><p class="font-bold text-brand-blue">Grounded Sources (via Google Search):</p><ul>';
-                sources.forEach((source, index) => {
-                    htmlOutput += `<li><a href="${source.uri}" target="_blank" rel="noopener noreferrer" class="source-link">Source ${index + 1}: ${source.title}</a></li>`;
-                });
-                htmlOutput += '</ul></div>';
-            } else {
-                htmlOutput += '<div class="source-container"><p class="text-gray-500">Note: Response was generated from my internal knowledge. For the latest info, try a more specific search.</p></div>';
-            }
-            
-            // 5. Render the final HTML
-            searchOutput.innerHTML = htmlOutput;
-            
-        } catch (error) {
-            // Handle any errors from the API call
-            console.error("Amigo Answers Error:", error);
-            searchOutput.innerHTML = `<div class="text-brand-red p-4 border border-brand-red rounded-lg">
-                <p class="font-bold text-xl mb-2">GROHIO System Failure</p>
-                <p>I encountered a critical error while processing your request. The API may be unavailable or the connection failed.</p>
-                <p class="text-sm mt-2">Error Detail: ${error.message}</p>
-                <p class="text-sm mt-1">Please try again with a slightly different query or check your console for further diagnostics.</p>
-            </div>`;
-        } finally {
-            // 6. Hide the loading spinner
-            loadingSpinner.classList.add('hidden');
-            amigoHeader.classList.remove('animate-pulse-glow');
-        }
-    }
     
     //
     // =========================================
@@ -911,23 +738,8 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
             });
         }
 
-        // --- Search Listeners ---
-        if (searchInput) {
-            // Add 'keypress' listener for the "Enter" key
-            searchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter' && searchInput.value.trim()) {
-                    performSearch(searchInput.value.trim());
-                    e.preventDefault(); // Prevent form submission (if any)
-                }
-            });
-        }
-
-        // --- Modal Close Listeners ---
-        if (closeModalBtns) {
-            closeModalBtns.forEach(btn => {
-                btn.addEventListener('click', closeModal);
-            });
-        }
+        // [REMOVED] Search Listeners
+        // [REMOVED] Modal Close Listeners
         
         // --- Grow Tools Calculator Listeners ---
         // These 'input' listeners recalculate on every single key press.
