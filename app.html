@@ -9,10 +9,13 @@
         
         // If not verified, send them back to the index page
         if (!isVerified) {
-            // Using './' assumes index.html is in the same directory
+            // FIX: Use an absolute path derived from the origin to reliably redirect
+            // regardless of the current document's specific path (blob URL, etc.).
+            const absoluteIndexUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1) + 'index.html';
+            
             // We use .replace() so the user can't click the "back" button
             // to get back to the app page.
-            window.location.replace('./index.html');
+            window.location.replace(absoluteIndexUrl);
         }
     </script>
     
@@ -136,7 +139,7 @@
                 <h2 class="border-brand-blue">💡 The Complete Indoor Grow Guide for Beginners</h2>
                 <p>Welcome to the most rewarding way to grow! Indoor cultivation gives you 100% control. You become Mother Nature, providing everything the plant needs. This means you can grow amazing cannabis year-round, safe from Ohio weather and pests. Here's the ultimate beginner's shopping list and guide.</p>
 
-                <h3 class="text-brand-blue">Chapter 1: Your Shopping List (The "Core Four")</h3>
+                <h3 class="text-brand-blue">Chapter 1: Your Shopping List (The "Core Four" + Control)</h3>
                 <p>You can get fancy later. To start, you only *need* four key things to create a perfect environment. We recommend a "grow tent kit" which bundles all of this together and saves you money.</p>
                 
                 <h4 class="text-gray-300">1. The Tent (Your "Grow Room")</h4>
@@ -169,6 +172,13 @@
                 <ul>
                     <li><strong>Why you need it:</strong> You need a fan *inside* the tent to blow a gentle breeze over your plants. This strengthens their stems and prevents stale, humid air from sitting around the leaves, which can cause mold.</li>
                     <li><strong>What to buy:</strong> Any 6-inch clip-on fan will do.</li>
+                </ul>
+
+                <h4 class="text-gray-300">5. Humidity Control (The "Unsung Hero")</h4>
+                <p>Ohio's climate makes **humidity** control non-negotiable, especially indoors. Proper humidity management (Relative Humidity or RH) is as important as light and nutrients, as it directly impacts your plant's ability to "drink" and fight off mold. See the **Automation** tab for details on controlling these with smart devices.</p>
+                <ul>
+                    <li><strong>Dehumidifier (Crucial for Flower):</strong> In the flowering stage (12/12), high humidity is the primary cause of **bud rot (Botrytis)**. You absolutely need a dehumidifier (ideally connected to a controller) to keep RH low (<strong>$40-55\%$</strong>). A small bedroom unit is often enough for a small tent, but check its capacity.</li>
+                    <li><strong>Humidifier (Crucial for Seedling/Veg):</strong> Seedlings and young plants need high humidity (<strong>$60-80\%$</strong>) to promote rapid, healthy leaf growth. A simple cool-mist humidifier can run inside the tent during the vegetative stage to keep the RH high.</li>
                 </ul>
 
                 <h3 class="text-brand-blue">Chapter 2: Pot, Soil, and Food</h3>
@@ -297,8 +307,8 @@
                  <div class="note">
                     <p><strong>THE GOLDEN RULE: CHECK YOUR pH FIRST!</strong> 90% of the time, a new grower's "nutrient problem" is actually a **pH problem**. Cannabis plants can only "eat" their food if the water's pH is in the right range. If the pH is wrong, the nutrients are "locked out," and the plant starves—even if the food is in the soil!
                     <br><strong>Target pH Range:</strong>
-                    <br> - **Soil:** 6.0 - 6.8
-                    <br> - **Coco/Hydro:** 5.5 - 6.5
+                    <br> - **Soil:** $6.0 - 6.8$
+                    <br> - **Coco/Hydro:** $5.5 - 6.5$
                     <br>Always pH your water *after* adding nutrients. Get a decent digital pH pen; it's the best diagnostic tool you can own.</p>
                 </div>
 
@@ -338,7 +348,7 @@
                 <h3 class="text-brand-red">Common Nutrient & Water Issues</h3>
                  <table class="table-auto">
                      <thead>
-                        <tr><th>Symptom</th><th>What It Looks Like</th><th>What It Probably Means</th></tr>
+                        <tr><th>Symptom</th><th>What It Looks Looks Like</th><th>What It Probably Means</th></tr>
                     </thead>
                     <tbody>
                         <tr>
@@ -379,7 +389,7 @@
                 
                 <h4 class="text-gray-300">Photoperiod Strains (The "Traditional" Way)</h4>
                 <ul>
-                    <li><strong>How they work:** These plants (the "normal" kind) will keep growing leaves and branches ("Veg") for as long as you give them 18+ hours of light per day.</li>
+                    <li><strong>How they work:** These plants (the "normal" kind) will keep growing leaves and branches ("Veg") for as long as you give them $18+$ hours of light per day.</li>
                     <li><strong>The "Flip":** You *force* them to flower by changing your light timer to **12 hours on, 12 hours off**. This "flip" to a shorter day tricks them into thinking winter is coming.</li>
                     <li><strong>Pros:** You have total control. You can keep it in "Veg" for 3 weeks or 3 months to make it as big as you want. You can also take "clones" (cuttings) from it.</li>
                     <li><strong>Cons:** You *must* have a light-proof tent. Light leaks during the 12-hour dark period can stress them out and ruin your harvest.</li>
@@ -408,14 +418,14 @@
                 <h4 class="text-gray-300">Cannabinoids (The "Effect")</h4>
                 <p>These are the main active chemicals in the plant. The two you need to know are:</p>
                 <ul>
-                    <li><strong>THC:** This is the one that produces the psychoactive "high." A strain listed at 25% THC is very strong.</li>
+                    <li><strong>THC:** This is the one that produces the psychoactive "high." A strain listed at $25\%$ THC is very strong.</li>
                     <li><strong>CBD:** This one is non-psychoactive (it doesn't get you "high"). It's known for its calming, anti-anxiety, and anti-inflammatory properties.</li>
-                    <li><strong>Balanced Strains:** Many modern strains have both THC and CBD (like a 1:1 ratio), which many people love for a balanced, less-intense effect.</li>
+                    <li><strong>Balanced Strains:** Many modern strains have both THC and CBD (like a $1:1$ ratio), which many people love for a balanced, less-intense effect.</li>
                 </ul>
                 
                 <h4 class="text-gray-300">Terpenes (The "Smell" and "Flavor")</h4>
                 <p>Terpenes are the essential oils in cannabis (and also in things like lemons, pine trees, and lavender). They are what make a plant smell like gas, fruit, or pine. We are now learning that terpenes also *guide* the high. This is called the "entourage effect."</p>
-                <p>A strain with 20% THC and a "Limonene" terpene (lemony smell) might feel uplifting, while a strain with 20% THC and a "Myrcene" terpene (musky smell) might feel sleepy. This is why "smell" is often the best way to pick a strain you'll like!</p>
+                <p>A strain with $20\%$ THC and a "Limonene" terpene (lemony smell) might feel uplifting, while a strain with $20\%$ THC and a "Myrcene" terpene (musky smell) might feel sleepy. This is why "smell" is often the best way to pick a strain you'll like!</p>
             </div>
 
             <div id="cost-calc" class="content-section hidden">
@@ -544,7 +554,7 @@
                             <p>This is the #1 question, and the answer is: **"When the plant needs it, not on a schedule."**</p>
                             <p>The biggest mistake new growers make is watering a little bit every day. This keeps the soil soggy, drowns the roots, and invites pests like fungus gnats. Cannabis plants *love* a "wet-dry" cycle.</p>
                             <ol>
-                                <li><strong>Water Thoroughly:** Water your plant until the soil is fully saturated and you see about 10-20% of the water run out the bottom of the pot. This is called "runoff."</li>
+                                <li><strong>Water Thoroughly:** Water your plant until the soil is fully saturated and you see about $10-20\%$ of the water run out the bottom of the pot. This is called "runoff."</li>
                                 <li><strong>Wait:** Now, do *not* water it again until the pot is significantly lighter.</li>
                                 <li><strong>The "Lift Test":** This is the best way. After you water, pick up the pot. Feel how heavy it is. Now, wait 2, 3, or even 5 days. Keep picking it up. When it feels *much lighter* (like the water is almost all gone), it's time to water again.</li>
                             </ol>
@@ -584,7 +594,7 @@
                                 <li><strong>A Fan (Ventilation):** A closet is a small, sealed box. It will get hot and humid *fast*. You will need an exhaust fan (like the ones for a tent) to pull the hot air out, and another fan to move air around inside.</li>
                                 <li><strong>Light Proofing:** You have to make the closet *perfectly* dark for the 12/12 flower cycle. This means sealing all the cracks around the door.</li>
                             </ol>
-                            <p>Honestly, it's *much* easier and safer to just buy a 2x4 tent and put it *in* the closet. It's designed for exactly this!</p>
+                            <p>Honestly, it's *much* easier and safer to just buy a $2\text{x}4$ tent and put it *in* the closet. It's designed for exactly this!</p>
                         </div>
                     </div>
                     
@@ -592,13 +602,13 @@
                         <h3 class="faq-question">"What are those 'trichomes' and why do I need a loupe?"</h3>
                         <div class="faq-answer">
                             <p>The "trichomes" are the tiny, sticky, crystal "frost" that covers your buds. They look like microscopic mushrooms. This is where the plant makes almost all of its THC, CBD, and terpenes!</p>
-                            <p>Harvesting is all about timing, and you can't guess the timing by looking at the "hairs" (pistils). The *only* way to know for sure is to look at the *color* of these trichomes with a 60x jeweler's loupe (a $10 magnifying glass).</p>
+                            <p>Harvesting is all about timing, and you can't guess the timing by looking at the "hairs" (pistils). The *only* way to know for sure is to look at the *color* of these trichomes with a $60\text{x}$ jeweler's loupe (a \$10 magnifying glass).</p>
                             <ul>
                                 <li><strong>Clear Trichomes:** Mean "Not Ready." The plant is still producing THC.</li>
                                 <li><strong>Cloudy / Milky Trichomes:** Mean "Peak Potency." This is the sweet spot! This is when THC is at its highest. This is when most people harvest for a strong, energetic high.</li>
                                 <li><strong>Amber / Brown Trichomes:** Mean "Past Peak." The THC is now degrading into a different chemical (CBN), which is known for making you feel sleepy and sedated.</li>
                             </ul>
-                            <p>You want to harvest when *all* the trichomes are cloudy, and you see just the first few (maybe 5-10%) turning amber.</p>
+                            <p>You want to harvest when *all* the trichomes are cloudy, and you see just the first few (maybe $5-10\%$) turning amber.</p>
                         </div>
                     </div>
 
@@ -607,25 +617,43 @@
             
             <div id="automation" class="content-section hidden">
                 <h2 class="border-brand-purple">⚙️ Automation: Making Your Life Easier</h2>
-                <p>You don't need a fancy computer to grow weed. But a few simple pieces of automation can take 90% of the daily work off your plate and make your plants *much* happier by keeping their environment stable. Automation scales from simple $10 tools to full-blown hydroponic systems.</p>
+                <p>You don't need a fancy computer to grow weed. But a few simple pieces of automation can take $90\%$ of the daily work off your plate and make your plants *much* happier by keeping their environment stable. Automation scales from simple \$10 tools to full-blown hydroponic systems.</p>
                 
                 <h3 class="text-brand-purple">Level 1: The Non-Negotiable Tool</h3>
                 <h4 class="text-gray-300">The Simple Outlet Timer</h4>
-                <p>This is the single most important piece of automation, and it costs $10. You **must** have one for your grow light.</p>
+                <p>This is the single most important piece of automation, and it costs \$10. You **must** have one for your grow light.</p>
                 <ul>
                     <li><strong>Why:** Your light schedule (like 18/6 for veg or 12/12 for flower) needs to be *exact*. Forgetting to turn your light on or off can stress your plants, and in flower, it can even cause them to stop budding or grow seeds (herm).</li>
                     <li><strong>What to buy:** A simple digital outlet timer from any hardware store. Plug your light into it, set the "ON" and "OFF" times, and you're done.</li>
                 </ul>
                 
-                <h3 class="text-brand-purple">Level 2: The "Set It and Forget It" Upgrade</h3>
-                <h4 class="text-gray-300">Temperature and Humidity Controllers</h4>
-                <p>This is the best $50-$70 you will ever spend on your grow. These are smart power strips that turn your fans or humidifiers on and off for you.</p>
+                <h3 class="text-brand-purple">Level 2: The "Set It and Forget It" Upgrade (Environmental Control)</h3>
+                <p>This level involves using affordable, dedicated controllers to automate environmental variables like temperature and humidity. By automating these factors, you ensure a **stable environment**—the secret to maximizing plant health and yield. The goal is to minimize wild swings in temperature and humidity.</p>
+                
+                <h4 class="text-gray-300">A. Environmental Controllers (The Brains)</h4>
+                <p>The best \$50-\$70 you will ever spend on your grow is an **Environmental Controller** (e.g., Inkbird, AC Infinity Controller). These are smart power strips or modules that have built-in sensors and turn your fans, heaters, humidifiers, or dehumidifiers on and off for you.</p>
                 <ul>
-                    <li><strong>How they work:** You plug your exhaust fan into a "Temperature Controller" (like an Inkbird). You set the controller to "78&deg;F." If the tent gets hotter than 78&deg;F, the controller automatically turns your fan on. When it cools down, it turns it back off.</li>
-                    <li><strong>The Same for Humidity:** You plug a dehumidifier (or a humidifier) into a "Humidity Controller." You set it to "55%." It will automatically keep your room's humidity right at that level.</li>
+                    <li><strong>How it Works (Temperature):</strong> You plug your exhaust fan into the controller. You set the controller to a target temperature (e.g., <strong>$78^\circ F$</strong>). If the tent gets hotter, the controller automatically turns your fan on. When the temperature drops below the set point, it turns the fan off, maintaining a tight, stable range.</li>
+                    <li><strong>How it Works (Humidity):</strong> You plug a humidifier or dehumidifier into the controller. You set a target humidity (e.g., <strong>$65\%$</strong> for veg, <strong>$50\%$</strong> for flower). The controller manages the associated device to keep the air's moisture content exactly where you want it.</li>
+                </ul>
+                
+                <h4 class="text-gray-300">B. Active Humidification (Seedling/Veg Growth)</h4>
+                <p>In the early stages of life, a cannabis plant does not have a fully developed root system. It needs to absorb much of its water through its leaves (transpiration). Therefore, maintaining high relative humidity (RH) is critical.</p>
+                <ul>
+                    <li><strong>Target Range:</strong> <strong>$60-75\%$ RH</strong>. This range translates to a lower Vapor Pressure Deficit (VPD), which encourages rapid, healthy leaf growth.</li>
+                    <li><strong>Equipment:</strong> A simple, inexpensive **cool-mist ultrasonic humidifier** placed inside the tent or room is sufficient. If you use the controller mentioned above, you simply plug the humidifier into the controller's "Humidity ON" outlet and set the target RH. The controller handles the rest automatically.</li>
+                    <li><strong>Maintenance:</strong> Humidifiers can be a vector for mold if the water isn't clean. Only use **distilled or reverse osmosis (RO) water** to prevent white dust (mineral deposits) from coating your leaves and equipment.</li>
+                </ul>
+                
+                <h4 class="text-gray-300">C. Active Dehumidification (Flowering Phase)</h4>
+                <p>As the plant matures, especially during the crucial <strong>flowering phase</strong>, high humidity becomes your greatest enemy, as it is the direct cause of **Botrytis (Bud Rot)**. A fully mature plant needs lower humidity to transpire properly and to dry out the dense bud sites.</p>
+                <ul>
+                    <li><strong>Target Range:</strong> **$40-55\%$ RH**. This range creates a higher Vapor Pressure Deficit (VPD), which helps the plant "pull" nutrients up from the roots and makes the air too dry for mold and mildew spores to germinate.</li>
+                    <li><strong>Equipment:</strong> A **dehumidifier** is necessary. The size depends on your space: a small, portable home unit works well in a tent ($2\text{x}4$ or $4\text{x}4$), but a basement-style unit might be required for a dedicated room.</li>
+                    <li><strong>Water Disposal:</strong> Dehumidifiers pull a surprising amount of water out of the air. Ensure your unit has a **drain hose attachment** so you can run a pipe out of your tent directly into a drain or a large bucket. This prevents you from having to empty the reservoir daily, which is a major hassle.</li>
                 </ul>
                  <div class="note">
-                    <p><strong>This is the secret to a stable environment!</strong> Instead of your fan running 24/7, it only runs when it *needs* to. This saves power and, more importantly, keeps your temperature and humidity from swinging wildly, which your plants will love.</p>
+                    <p><strong>This is the secret to a stable environment!</strong> Instead of your fan running $24/7$, it only runs when it *needs* to. This saves power and, more importantly, keeps your temperature and humidity from swinging wildly, which your plants will love.</p>
                 </div>
                 
                 <h3 class="text-brand-purple">Level 3: Automated Watering (Off-the-Shelf)</h3>
@@ -668,7 +696,7 @@
                 <h4 class="text-gray-300">1. DWC (Deep Water Culture) - "Bubbler Buckets"</h4>
                 
                 <ul>
-                    <li><strong>How it works:** This is the simplest form of hydro. The plant lives in a "net pot" (a small basket) in the lid of a 5-gallon bucket. The roots hang down into the bucket, which is filled with nutrient solution. An air stone (from a fish tank pump) bubbles air into the water 24/7 to provide oxygen.</li>
+                    <li><strong>How it works:** This is the simplest form of hydro. The plant lives in a "net pot" (a small basket) in the lid of a 5-gallon bucket. The roots hang down into the bucket, which is filled with nutrient solution. An air stone (from a fish tank pump) bubbles air into the water $24/7$ to provide oxygen.</li>
                     <li><strong>Pros:** Explosive growth. Very cheap and easy to build yourself.</li>
                     <li><strong>Cons:** The water in the bucket can get hot. You have to check the pH and EC of *each bucket* every day, which is a lot of work.</li>
                 </ul>
@@ -698,7 +726,7 @@
                 </ul>
 
                 <h3 class="text-brand-purple">Level 6: The "Hobbyist" Level (Pi & Arduino)</h3>
-                <p>This is where you combine all of the above. You use a mini-computer like a Raspberry Pi or an Arduino to control *everything*. You connect sensors for temperature, humidity, pH, and EC. You write code to turn on fans, pumps, and lights based on the sensor data. This is super fun if you're a tech nerd, but it is **100% not necessary** to grow amazing cannabis. A $10 timer and a $50 Inkbird controller will get you 99% of the way there.</p>
+                <p>This is where you combine all of the above. You use a mini-computer like a Raspberry Pi or an Arduino to control *everything*. You connect sensors for temperature, humidity, pH, and EC. You write code to turn on fans, pumps, and lights based on the sensor data. This is super fun if you're a tech nerd, but it is **$100\%$ not necessary** to grow amazing cannabis. A \$10 timer and a \$50 Inkbird controller will get you $99\%$ of the way there.</p>
             </div>
 
             <div id="calculators" class="content-section hidden">
@@ -709,7 +737,7 @@
                     <p><strong>Your Must-Have Measurement Tools:</strong>
                     <br>1. **A pH Pen:** To measure the pH of your water (see Problem Hub).
                     <br>2. **A TDS/EC Pen:** To measure how "strong" your nutrient water is.
-                    <br>3. **A Thermo-Hygrometer:** A simple $10 device that shows the Temperature (Temp) and Relative Humidity (RH) in your tent.
+                    <br>3. **A Thermo-Hygrometer:** A simple \$10 device that shows the Temperature (Temp) and Relative Humidity (RH) in your tent.
                     </p>
                 </div>
 
@@ -718,11 +746,11 @@
                 <p>If the VPD is too low (air is too wet), your plant can't sweat and might get mold. If the VPD is too high (air is too dry), your plant sweats too fast and gets stressed. You're just looking for the "green zone."</p>
                 <div class="calculator-container grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                        <label for="temp-c" class="block text-gray-400">Air Temp (&deg;C)</label>
+                        <label for="temp-c" class="block text-gray-400">Air Temp ($^\circ C$)</label>
                         <input type="number" id="temp-c" value="26.5" step="0.1" class="calc-input w-full">
                     </div>
                     <div>
-                        <label for="rh" class="block text-gray-400">Relative Humidity (%)</label>
+                        <label for="rh" class="block text-gray-400">Relative Humidity ($\%$)</label>
                         <input type="number" id="rh" value="65" step="1" class="calc-input w-full">
                     </div>
                     <div class="md:col-span-3 mt-4">
@@ -737,7 +765,7 @@
                 <p>Think of it like water: PPFD is how *fast* the water is flowing. DLI is the *total gallons* in the bucket at the end of the day. This is the number that *really* determines your yield.</p>
                 <div class="calculator-container grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
                     <div>
-                        <label for="ppfd-input" class="block text-gray-400">Light Intensity (PPFD, &mu;mol/m&sup2;/s)</label>
+                        <label for="ppfd-input" class="block text-gray-400">Light Intensity (PPFD, $\mu\text{mol}/\text{m}^2/\text{s}$)</label>
                         <input type="number" id="ppfd-input" value="800" step="10" class="calc-input w-full">
                     </div>
                     <div>
@@ -746,7 +774,7 @@
                     </div>
                     <div class="md:col-span-3 mt-4">
                         <label for="dli-output" class="block text-gray-400 mb-2">Calculated Total Daily Light (DLI)</label>
-                        <div id="dli-output" class="calc-output flex items-center justify-center">34.56 mol/m²/day (Good for Flower)</div>
+                        <div id="dli-output" class="calc-output flex items-center justify-center">34.56 $\text{mol}/\text{m}^2/\text{day}$ (Good for Flower)</div>
                     </div>
                     <p class="text-xs text-gray-500 md:col-span-3 mt-2"><strong>Good Ranges:</strong> Seedlings (12-18), Veg (20-40), Flower (40-60).</p>
                 </div>
@@ -757,7 +785,7 @@
                 <p>An EC of **1.5** is the same as **750 PPM** (on the 500 scale) and **1050 PPM** (on the 700 scale). This calculator just does that simple math for you, so you can follow feeding charts correctly.</p>
                 <div class="calculator-container grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
                     <div class="col-span-1 md:col-span-2">
-                        <label for="ec-input" class="block text-gray-400">EC (mS/cm)</label>
+                        <label for="ec-input" class="block text-gray-400">EC ($\text{mS}/\text{cm}$)</label>
                         <input type="number" id="ec-input" value="1.5" step="0.01" class="calc-input w-full">
                     </div>
                     <div class="col-span-1 md:col-span-2">
@@ -777,7 +805,7 @@
 
             <div id="gallery" class="content-section hidden">
                 <h2 class="border-brand-purple">🖼️ Amigo's Grow Gallery</h2>
-                <p>This is your personal grow gallery. Upload photos of your plants to track their progress, show off your harvest, or get help diagnosing a problem. All images are stored **locally in your browser** and are not uploaded to our server, so your privacy is 100% protected.</p>
+                <p>This is your personal grow gallery. Upload photos of your plants to track their progress, show off your harvest, or get help diagnosing a problem. All images are stored **locally in your browser** and are not uploaded to our server, so your privacy is $100\%$ protected.</p>
                 
                 <div class="gallery-upload-container text-center my-8">
                     <label for="image-upload-btn" class="gallery-upload-btn">
@@ -836,7 +864,7 @@
                             <p class="font-bold text-brand-blue">Amigo (Reply):</p>
                             <p>Hey ...a4f8! This is a classic case of **nutrient burn**. It's the most common mistake! You're right, the tips are "burnt" from too much food. Don't panic, it's an easy fix:
                             <br>1. **Flush:** Next watering, just give plain, pH'd water (aim for 6.5 in soil) until you get plenty of runoff. This washes out the extra salts.
-                            <br>2. **Weaker Dose:** For your next *feeding*, drop to 1/4 strength. It's always easier to feed *more* later than to fix a burn.
+                            <br>2. **Weaker Dose:** For your next *feeding*, drop to $1/4$ strength. It's always easier to feed *more* later than to fix a burn.
                             <br>Keep it up, you're learning!</p>
                         </div>
                     </div>
@@ -844,11 +872,11 @@
                 
                 <div class="journal-entry">
                     <div class="journal-meta">
-                        <h4 class="text-brand-blue text-xl font-bold m-0">Harvest Day! 280g from a 2x4!</h4>
+                        <h4 class="text-brand-blue text-xl font-bold m-0">Harvest Day! 280g from a $2\text{x}4$!</h4>
                         <span class="text-sm text-gray-500">Posted by: User ...e9b2 (5 hours ago)</span>
                     </div>
                     <div class="journal-body">
-                        <p>Just chopped my first plant! Total weight (wet) is over 1200g, hoping to get around 280-300g dry. Grew in a 2x4 tent with a 300W light and used LST and a trellis net. So sticky! Thanks for all the help from this guide!</p>
+                        <p>Just chopped my first plant! Total weight (wet) is over 1200g, hoping to get around 280-300g dry. Grew in a $2\text{x}4$ tent with a 300W light and used LST and a trellis net. So sticky! Thanks for all the help from this guide!</p>
                     </div>
                 </div>
 
