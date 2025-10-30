@@ -4,48 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GROHIO by 3 Amigos Cannabis Co.: The Ultimate Grow Guide</title>
-    <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Load Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-    <!-- Load our Custom CSS -->
     <link rel="stylesheet" href="./style.css">
 </head>
 <body class="bg-black text-gray-300">
 
-    <!-- Main App Container -->
     <div id="app" class="max-w-5xl mx-auto p-4 md:p-8">
         
-        <!-- Header Section with Both Logos -->
         <header class="text-center mb-10 flex flex-col items-center">
             
-            <!-- GROHIO Logo (Stretches Horizontally) -->
             <img id="grohio-logo-img" src="https://raw.githubusercontent.com/3AmigosCannabisCo/testing.grohio/main/grohio_nobg.png" 
                  alt="GROHIO by 3 Amigos Cannabis Co. Logo" 
                  class="w-full h-auto max-w-4xl mb-4" 
                  style="filter: drop-shadow(0 0 10px var(--grohio-purple));">
             
-            <!-- Hidden H1 and Subtitle for screen readers or future use, logo is primary visual -->
             <h1 class="text-6xl font-black text-white uppercase tracking-tighter hidden">GROHIO V17.0</h1> 
             <p class="text-xl text-gray-400 mt-3 hidden">The Ultimate Ohio Grower's Platform by 3 Amigos Cannabis Co.</p> 
             
-            <!-- User ID Display (for Firebase) -->
             <p id="user-id-display" class="text-xs text-gray-600 mt-1">Authenticating...</p>
         </header>
 
-         <!-- Sticky Search Bar -->
-        <div class="sticky top-0 z-20 bg-black/90 backdrop-blur-md py-4 mb-8 border-b-2 border-gray-900 shadow-xl">
-            <div class="relative">
-                <input type="search" id="search-input" placeholder="Ask GROHIO anything (e.g., 'what is an AutoPot?')..." class="w-full p-4 pl-12 text-lg border-2 border-gray-700 rounded-full focus:ring-4 focus:ring-brand-blue transition bg-gray-900 text-white placeholder-gray-500 search-input-focus">
-                <div class="absolute inset-y-0 left-0 flex items-center pl-4">
-                    <!-- Search Icon -->
-                    <svg class="h-6 w-6 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                </div>
-            </div>
-        </div>
-
-        <!-- Navigation Tabs -->
-        <nav class="flex flex-wrap justify-center gap-2 md:gap-3 mb-12">
+         <nav class="flex flex-wrap justify-center gap-2 md:gap-3 mb-12">
             <button data-section="home" class="nav-btn active px-4 py-2 rounded-full font-semibold transition">🏠 Home</button>
             <button data-section="legal" class="nav-btn px-4 py-2 rounded-full font-semibold transition">⚖️ Legal</button>
             <button data-section="indoor" class="nav-btn px-4 py-2 rounded-full font-semibold transition">💡 Indoor Guide</button>
@@ -56,15 +36,12 @@
             <button data-section="faq" class="nav-btn px-4 py-2 rounded-full font-semibold transition">❓ FAQ</button>
             <button data-section="automation" class="nav-btn px-4 py-2 rounded-full font-semibold transition">⚙️ Automation</button>
             <button data-section="calculators" class="nav-btn px-4 py-2 rounded-full font-semibold transition">🛠️ Tools</button>
-            <!-- v16.0 Additions -->
             <button data-section="gallery" class="nav-btn px-4 py-2 rounded-full font-semibold transition">🖼️ Gallery</button>
             <button data-section="community" class="nav-btn px-4 py-2 rounded-full font-semibold transition">📓 Community</button>
         </nav>
 
-        <!-- Main Content Area -->
         <main id="main-content">
             
-            <!-- === HOME SECTION === -->
             <div id="home" class="content-section">
                 <h2 class="border-brand-purple">Welcome, Future Ohio Grower!</h2>
                 <p>Welcome to the ultimate guide for growing cannabis at home, made by Ohioans, for Ohioans. We're the 3 Amigos, and we created this platform to take the mystery and confusion out of cultivation. Growing your own cannabis is an incredibly rewarding hobby, and our mission is to give you the knowledge to go from your first seed to your first successful harvest with confidence.</p>
@@ -99,7 +76,6 @@
                 </div>
             </div>
 
-            <!-- === LEGAL SECTION === -->
             <div id="legal" class="content-section hidden">
                 <h2 class="border-brand-blue">⚖️ Ohio's Grow Laws: The Simple Version</h2>
                 <div class="note">
@@ -142,7 +118,6 @@
                 </ul>
             </div>
 
-            <!-- === INDOOR SECTION === -->
             <div id="indoor" class="content-section hidden">
                 <h2 class="border-brand-blue">💡 The Complete Indoor Grow Guide for Beginners</h2>
                 <p>Welcome to the most rewarding way to grow! Indoor cultivation gives you 100% control. You become Mother Nature, providing everything the plant needs. This means you can grow amazing cannabis year-round, safe from Ohio weather and pests. Here's the ultimate beginner's shopping list and guide.</p>
@@ -251,7 +226,6 @@
                 </ul>
             </div>
 
-            <!-- === OUTDOOR SECTION === -->
             <div id="outdoor" class="content-section hidden">
                  <h2 class="border-brand-green">☀️ The Ohio Outdoor Grower's Guide</h2>
                  <p>Ready to use the power of the sun? Outdoor growing is fantastic. It's cheap, the yields can be *massive*, and the sun provides a light spectrum that even the best LEDs can't fully replicate. However, growing in Ohio means you are battling our specific climate: high humidity, summer storms, and fall rain.</p>
@@ -302,7 +276,6 @@
                 </ol>
             </div>
 
-            <!-- === PESTS (PROBLEM HUB) SECTION === -->
             <div id="pests" class="content-section hidden">
                  <h2 class="border-brand-red">🐛 Problem Hub: What's Wrong With My Plant?</h2>
                  <p>Don't panic! Every grower runs into problems. The key is to catch them early. This hub will help you diagnose the most common issues you'll face.</p>
@@ -383,7 +356,6 @@
                 </table>
             </div>
             
-            <!-- === GENETICS & STRAINS SECTION === -->
             <div id="genetics" class="content-section hidden">
                 <h2 class="border-brand-purple">🧬 Strains & Genetics: Picking Your Perfect Plant</h2>
                 <p>Walking into a seed store (or website) is overwhelming. You'll see hundreds of strains with crazy names. What's the difference? This section will help you understand what to look for, so you pick a plant that's right for you *and* right for your grow room.</p>
@@ -432,7 +404,6 @@
                 <p>A strain with 20% THC and a "Limonene" terpene (lemony smell) might feel uplifting, while a strain with 20% THC and a "Myrcene" terpene (musky smell) might feel sleepy. This is why "smell" is often the best way to pick a strain you'll like!</p>
             </div>
 
-            <!-- === COST CALCULATOR SECTION === -->
             <div id="cost-calc" class="content-section hidden">
                 <h2 class="border-brand-purple">💲 Grow Cost & Savings Calculator</h2>
                 <p>Is growing your own cannabis *really* cheaper? Let's run the numbers. This calculator helps you figure out your total investment, your "cost per gram" to produce, and your total savings compared to buying from a dispensary.</p>
@@ -443,7 +414,6 @@
 
                 <div class="cost-calculator-container grid grid-cols-1 md:grid-cols-2 gap-6">
                     
-                    <!-- Inputs Column -->
                     <div class="space-y-4">
                         <h3 class="text-brand-purple mt-0">Step 1: One-Time Setup Costs</h3>
                         <p class="text-sm text-gray-400 -mt-4 mb-4">Enter what you paid for your reusable gear.</p>
@@ -501,7 +471,6 @@
                         </div>
                     </div>
                     
-                    <!-- Outputs Column -->
                     <div class="space-y-4">
                         <h3 class="text-brand-green mt-0">Your Estimated Cost Breakdown</h3>
                         
@@ -549,7 +518,6 @@
                 </div>
             </div>
 
-            <!-- === FAQ SECTION === -->
             <div id="faq" class="content-section hidden">
                 <h2 class="border-brand-purple">❓ Frequently Asked Questions (FAQ)</h2>
                 <p>Here are some of the most common questions we hear from new and intermediate growers. Don't be afraid to ask—we all started here!</p>
@@ -623,7 +591,6 @@
                 </div>
             </div>
             
-            <!-- === AUTOMATION SECTION (v17.0 EXPANDED) === -->
             <div id="automation" class="content-section hidden">
                 <h2 class="border-brand-purple">⚙️ Automation: Making Your Life Easier</h2>
                 <p>You don't need a fancy computer to grow weed. But a few simple pieces of automation can take 90% of the daily work off your plate and make your plants *much* happier by keeping their environment stable. Automation scales from simple $10 tools to full-blown hydroponic systems.</p>
@@ -705,7 +672,7 @@
                 <ul>
                     <li><strong>How it works:** Plants sit in a large tray filled with an inert medium (like clay pebbles or Rockwool blocks). A timer is set to a pump that *floods* the tray with nutrient solution for 15 minutes. Then, it drains back out to the reservoir. This repeats 3-5 times a day.</li>
                     <li><strong>Pros:** The "drain" part is amazing for the roots. They get a huge rush of oxygen every time the tray empties, leading to very healthy, robust root systems.</li>
-                    <li><strong>Cons:** Requires a special "flood table." Can be noisy. If the pump or timer fails, your plants can dry out very quickly.</li>
+<li><strong>Cons:** Requires a special "flood table." Can be noisy. If the pump or timer fails, your plants can dry out very quickly.</li>
                 </ul>
                 
                 <h4 class="text-gray-300">4. NFT (Nutrient Film Technique)</h4>
@@ -720,7 +687,6 @@
                 <p>This is where you combine all of the above. You use a mini-computer like a Raspberry Pi or an Arduino to control *everything*. You connect sensors for temperature, humidity, pH, and EC. You write code to turn on fans, pumps, and lights based on the sensor data. This is super fun if you're a tech nerd, but it is **100% not necessary** to grow amazing cannabis. A $10 timer and a $50 Inkbird controller will get you 99% of the way there.</p>
             </div>
 
-            <!-- === CALCULATORS (TOOLS) SECTION === -->
             <div id="calculators" class="content-section hidden">
                  <h2 class="border-brand-purple">🛠️ Interactive Grow Tools</h2>
                  <p>Don't guess, *know*. These simple tools help you measure the most important parts of your grow. We've included calculators here to take the guesswork out of the three most confusing measurements.</p>
@@ -795,13 +761,11 @@
                 </div>
             </div>
 
-            <!-- === GALLERY SECTION (v16.0) === -->
             <div id="gallery" class="content-section hidden">
                 <h2 class="border-brand-purple">🖼️ Amigo's Grow Gallery</h2>
                 <p>This is your personal grow gallery. Upload photos of your plants to track their progress, show off your harvest, or get help diagnosing a problem. All images are stored **locally in your browser** and are not uploaded to our server, so your privacy is 100% protected.</p>
                 
                 <div class="gallery-upload-container text-center my-8">
-                    <!-- This label is styled like a button, but targets the hidden file input -->
                     <label for="image-upload-btn" class="gallery-upload-btn">
                         Upload Your Photo (5MB Max)
                     </label>
@@ -809,9 +773,7 @@
                     <p id="gallery-message" class="text-sm text-gray-500 mt-4 hidden"></p>
                 </div>
                 
-                <!-- The grid where uploaded images will appear -->
                 <div id="gallery-grid" class="gallery-grid">
-                    <!-- Example placeholder -->
                     <div class="gallery-item">
                         <img src="https://placehold.co/400x400/0d0d0d/999?text=Your+Photo+Here" alt="Placeholder image">
                         <div class="gallery-item-caption">
@@ -819,16 +781,13 @@
                             <span class="text-xs text-gray-400">Images are stored locally</span>
                         </div>
                     </div>
-                    <!-- Uploaded images will be prepended here by script.js -->
-                </div>
+                    </div>
             </div>
 
-            <!-- === COMMUNITY SECTION (v16.0) === -->
             <div id="community" class="content-section hidden">
                 <h2 class="border-brand-purple">📓 Amigo's Notebook (Community Journal)</h2>
                 <p>Welcome to the community hub! This is a place to share your grow journal, ask questions, and see what other Ohio growers are up to. Your User ID is your anonymous name. (This feature is a live-wired concept and will be fully enabled soon!)</p>
                 
-                <!-- New Post Form -->
                 <div class="journal-form-container mt-8">
                     <h3 class="text-brand-green mt-0">Create a New Journal Entry</h3>
                     <form id="journal-form">
@@ -849,7 +808,6 @@
                     </form>
                 </div>
                 
-                <!-- Community Feed (Example) -->
                 <h3 class="text-brand-purple mt-12">Community Feed (Examples)</h3>
                 
                 <div class="journal-entry">
@@ -885,35 +843,7 @@
         </main>
     </div>
 
-    <!-- Search Modal (Pop-up) -->
-    <div id="search-modal" class="hidden fixed inset-0 flex items-center justify-center z-50 p-4">
-        <div class="bg-black border-2 border-brand-purple rounded-2xl max-w-2xl w-full mx-auto search-modal-content-wrapper flex flex-col animate-modalSlideIn">
-            <!-- Modal Header -->
-            <div class="p-6 flex-grow overflow-hidden">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 id="amigo-answer-header" class="text-3xl font-bold text-brand-purple">🧠 GROHIO Amigo Answers</h2>
-                    <button id="close-modal-btn-top" class="text-gray-400 hover:text-white text-3xl leading-none">&times;</button>
-                </div>
-                <!-- Modal Content (Scrollable) -->
-                <div id="search-results-container" class="search-modal-content overflow-y-auto pr-2">
-                    <!-- Loading Spinner -->
-                    <div id="loading-spinner" class="hidden flex justify-center items-center my-8">
-                        <div class="animate-spin rounded-full h-16 w-16 border-b-4 spinner-color"></div>
-                    </div>
-                    <!-- Search Output Content -->
-                    <div id="search-output" class="prose-custom prose-invert max-w-none text-gray-300"></div>
-                </div>
-            </div>
-            <!-- Modal Footer -->
-            <div class="bg-black px-6 py-4 rounded-b-2xl text-right border-t border-gray-800">
-                <button id="close-modal-btn-bottom" class="px-6 py-2 text-black font-semibold rounded-lg shadow-lg transition">Close Amigo</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Footer Section -->
     <footer class="mt-16 py-8 text-center border-t-2 border-gray-900">
-        <!-- 3 Amigos Logo -->
         <img src="https://raw.githubusercontent.com/3AmigosCannabisCo/testing.grohio/main/3amigos_nobg.png" 
              alt="3 Amigos Cannabis Co. Logo" 
              class="h-24 mx-auto mb-4" 
@@ -922,7 +852,6 @@
         <p class="text-sm text-gray-600 mt-2">Empowering Ohio growers since 2024</p>
     </footer>
 
-    <!-- Load our JavaScript (as a module) -->
     <script type="module" src="./script.js"></script>
 </body>
 </html>
