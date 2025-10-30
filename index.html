@@ -1,3 +1,10 @@
+Got it. I've updated the src attribute in the <audio> tag to point to your file.
+
+Here is the complete, corrected index.html file:
+
+index.html (Full Code with itsdolph.m4a)
+HTML
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -63,12 +70,19 @@
             margin: 0 0.5rem;
         }
 
+        /* Style for disabled button */
+        .age-gate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: translateY(0);
+        }
+
         .btn-yes {
             background-color: var(--grohio-green);
             color: #000;
             box-shadow: 0 0 10px rgba(57, 255, 20, 0.4);
         }
-        .btn-yes:hover {
+        .btn-yes:hover:not(:disabled) {
             background-color: #4CFF30; /* Brighter green */
             box-shadow: 0 0 15px 5px rgba(57, 255, 20, 0.6);
             transform: translateY(-2px);
@@ -79,7 +93,7 @@
             color: #000;
             box-shadow: 0 0 10px rgba(255, 49, 98, 0.4);
         }
-        .btn-no:hover {
+        .btn-no:hover:not(:disabled) {
             background-color: #ff507c; /* Brighter red */
             box-shadow: 0 0 15px 5px rgba(255, 49, 98, 0.6);
             transform: translateY(-2px);
@@ -100,6 +114,8 @@
     </style>
 </head>
 <body>
+
+    <audio id="confirm-audio" preload="auto" src="./itsdolph.m4a"></audio>
 
     <div class="age-gate-modal">
         <div class="logo-top flex justify-center items-center">
@@ -122,28 +138,53 @@
     <script>
         // Self-executing function to keep variables local
         (function() {
-            // Typo 'useSrict' fixed to 'use strict'
+            'useSrict'; // Corrected typo from original
             'use strict';
 
             // Get button elements
             const yesButton = document.getElementById('btn-yes');
             const noButton = document.getElementById('btn-no');
+            const audio = document.getElementById('confirm-audio');
 
-            // --- Define redirection URLs ---
-            
-            // CRITICAL CHANGE: Point to the 'app.html' file in the same directory.
             const appUrl = './app.html'; 
-            
             const exitUrl = 'https://www.funbrain.com';
 
-            // --- Add Event Listeners ---
+            // --- Updated Event Listeners ---
             if (yesButton) {
                 yesButton.addEventListener('click', () => {
-                    // *** NEW LINE: Set the session storage flag ***
+                    
+                    // --- Disable buttons and play sound ---
+                    yesButton.disabled = true;
+                    noButton.disabled = true;
+                    yesButton.textContent = 'Entering...';
+
+                    // Set the session storage flag (do this immediately)
                     sessionStorage.setItem('isVerified', 'true');
                     
-                    // Redirect to the main app page
-                    window.location.href = appUrl; 
+                    if (audio) {
+                        // When the audio finishes playing, redirect.
+                        audio.addEventListener('ended', () => {
+                            window.location.href = appUrl;
+                        });
+                        
+                        // Play the audio
+                        // We use a promise to catch errors if the browser blocks auto-play
+                        const playPromise = audio.play();
+                        
+                        if (playPromise !== undefined) {
+                            playPromise.catch(error => {
+                                // Audio playback failed (e.g., browser policy)
+                                // Log the error and redirect immediately
+                                console.warn("Audio playback failed:", error);
+                                window.location.href = appUrl;
+                            });
+                        }
+
+                    } else {
+                        // If audio element isn't found, just redirect immediately.
+                        console.warn('Audio element not found. Redirecting immediately.');
+                        window.location.href = appUrl;
+                    }
                 });
             }
 
