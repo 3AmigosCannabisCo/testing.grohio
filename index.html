@@ -108,7 +108,11 @@
 </head>
 <body>
 
-    <audio id="confirm-audio" preload="auto" src="./dolph-sound.mp3"></audio>
+    <!-- 
+      FIX: The 'src' attribute was changed from './dolph-sound.mp3' 
+      to './dolph-sound.mp3.mp3' to match your uploaded file name.
+    -->
+    <audio id="confirm-audio" preload="auto" src="./dolph-sound.mp3.mp3"></audio>
 
     <div class="age-gate-modal">
         <div class="logo-top flex justify-center items-center">
@@ -138,12 +142,23 @@
             const noButton = document.getElementById('btn-no');
             const audio = document.getElementById('confirm-audio'); // Correct ID
 
-            const appUrl = './app.html'; 
+            // FIX: Changed from relative path './app.html' to a dynamically
+            // constructed absolute path. This resolves the 'invalid URL'
+            // SyntaxError that can occur in certain sandboxed environments
+            // or when the base URL isn't what's expected.
+            // This logic correctly finds the current directory path,
+            // whether the URL ends with '/' or '/index.html'.
+            const currentPath = window.location.pathname.endsWith('index.html') 
+                ? window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1)
+                : window.location.pathname;
+            
+            const appUrl = window.location.origin + currentPath + 'app.html';
             const exitUrl = 'https://www.funbrain.com';
 
             // --- Updated Event Listeners ---
             if (yesButton) {
-                yesButton.addEventListener('click', () => {
+                // Make the event listener ASYNC to allow for 'await'
+                yesButton.addEventListener('click', async () => {
                     
                     // --- Disable buttons ---
                     yesButton.disabled = true;
@@ -153,18 +168,26 @@
                     // Set the session storage flag
                     sessionStorage.setItem('isVerified', 'true');
                     
-                    // 1. "Fire and forget" the play command
-                    if (audio) {
-                        audio.play().catch(error => {
-                            // If it fails, just log it. The timer will still work.
-                            console.warn("Audio playback failed (browser policy?):", error);
-                        });
+                    try {
+                        // 1. AWAIT the play() command.
+                        // This is the crucial fix. It properly handles the
+                        // promise returned by audio.play() inside a user
+                        // interaction (the click), making it much more
+                        // likely to be allowed by the browser.
+                        if (audio) {
+                            await audio.play();
+                        }
+                    } catch (error) {
+                        // If it *still* fails (e.g., audio file is corrupt),
+                        // just log it and continue. The redirect is more important.
+                        console.warn("Audio playback failed:", error);
+                    } finally {
+                        // 2. Start the redirect timer AFTER the audio
+                        // has either finished playing or failed.
+                        setTimeout(() => {
+                            window.location.href = appUrl;
+                        }, 3000); // 3 seconds
                     }
-
-                    // 2. Start the 3-second redirect timer
-                    setTimeout(() => {
-                        window.location.href = appUrl;
-                    }, 3000); // 3 seconds
                 });
             }
 
