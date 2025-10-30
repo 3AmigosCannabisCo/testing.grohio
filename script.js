@@ -7,30 +7,17 @@
  * The entire application is wrapped in an IIFE (Immediately Invoked
  * Function Expression) to prevent polluting the global namespace.
  *
- * File Structure:
- * 1. Firebase Imports
- * 2. IIFE Wrapper
- * 3. Global Constants & DOM References (now with Gallery/Community)
- * 4. Core Utility Functions (exponentialBackoff)
- * 5. Navigation & UI Control (showSection, closeModal)
- * 6. [REMOVED] Gemini API Implementation
- * 7. Firebase Setup & Authentication
- * 8. Calculator Logic (VPD, DLI, PPM, Cost)
- * 9. NEW: Interactive Gallery Logic (Now with localStorage)
- * 10. NEW: Community Journal Logic (Concept)
- * 11. Initialization (Event Listeners)
- *
  * v17.0 (Local) Changes:
  * - REMOVED: All Gemini API, search modal, and search bar code for security.
  * - ADDED: Gallery persistence using localStorage.
- * - FIXED: Added try...catch to loadGalleryFromStorage to prevent script-halting errors.
+ * - FIXED: Moved all DOM element queries inside onDOMLoaded to prevent
+ * race conditions and ensure all elements are found.
  */
 
 //
 // =========================================
 // FIREBASE IMPORTS
 // =========================================
-// These are loaded as modules from Google's CDN.
 //
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -53,108 +40,26 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
     // =========================================
     // GLOBAL CONSTANTS & DOM REFERENCES
     // =========================================
-    // We cache all our DOM element queries here for performance.
-    // Instead of searching the DOM every time, we find them once.
     //
+    // We declare all our variables here in the main scope
+    // so all functions can access them.
+    // We will *assign* them inside onDOMLoaded.
     
-    /** @type {NodeListOf<HTMLElement>} */
-    const sections = document.querySelectorAll('.content-section');
-    
-    /** @type {NodeListOf<HTMLButtonElement>} */
-    const navButtons = document.querySelectorAll('nav .nav-btn');
-    
-    /** @type {NodeListOf<HTMLButtonElement>} */
-    const internalNavButtons = document.querySelectorAll('.nav-btn-internal');
-    
-    // [REMOVED] Search Modal & Input Elements
-    
-    /** @type {HTMLElement} */
-    const userIdDisplay = document.getElementById('user-id-display');
-
+    let sections, navButtons, internalNavButtons, userIdDisplay;
     
     // --- Grow Tools Calculator Elements ---
-    
-    /** @type {HTMLInputElement} */
-    const tempCInput = document.getElementById('temp-c');
-    
-    /** @type {HTMLInputElement} */
-    const rhInput = document.getElementById('rh');
-    
-    /** @type {HTMLElement} */
-    const vpdOutput = document.getElementById('vpd-output');
-    
-    /** @type {HTMLInputElement} */
-    const ecInput = document.getElementById('ec-input');
-    
-    /** @type {HTMLSelectElement} */
-    const ppmScaleSelect = document.getElementById('ppm-scale');
-    
-    /** @type {HTMLElement} */
-    const ppmOutput = document.getElementById('ppm-output');
-    
-    /** @type {HTMLInputElement} */
-    const ppfdInput = document.getElementById('ppfd-input');
-    
-    /** @type {HTMLInputElement} */
-    const hoursOnInput = document.getElementById('hours-on-input');
-    
-    /** @type {HTMLElement} */
-    const dliOutput = document.getElementById('dli-output');
+    let tempCInput, rhInput, vpdOutput, ecInput, ppmScaleSelect, ppmOutput,
+        ppfdInput, hoursOnInput, dliOutput;
 
-    
     // --- Cost Calculator Elements ---
-    
-    /** @type {Object<string, HTMLInputElement>} */
-    const costInputs = {
-        onetimeTent: document.getElementById('cost-onetime-tent'),
-        onetimeLight: document.getElementById('cost-onetime-light'),
-        onetimeOther: document.getElementById('cost-onetime-other'),
-        recurringSeeds: document.getElementById('cost-recurring-seeds'),
-        recurringSoil: document.getElementById('cost-recurring-soil'),
-        recurringNutrients: document.getElementById('cost-recurring-nutrients'),
-        lightWatts: document.getElementById('cost-light-watts'),
-        kwhRate: document.getElementById('cost-kwh-rate'),
-        totalDays: document.getElementById('cost-total-days'),
-        yieldGrams: document.getElementById('cost-yield-grams'),
-        dispensaryPrice: document.getElementById('cost-dispensary-price')
-    };
-
-    /** @type {Object<string, HTMLElement>} */
-    const costOutputs = {
-        onetimeCost: document.getElementById('output-onetime-cost'),
-        electricCost: document.getElementById('output-electric-cost'),
-        recurringCost: document.getElementById('output-recurring-cost'),
-        totalCost: document.getElementById('output-total-cost'),
-        harvestValue: document.getElementById('output-harvest-value'),
-        totalSavings: document.getElementById('output-total-savings'),
-        costPerGram: document.getElementById('output-cost-per-gram'),
-        costPerGramFuture: document.getElementById('output-cost-per-gram-future')
-    };
+    let costInputs = {};
+    let costOutputs = {};
 
     // --- NEW: Gallery Elements (v16.0) ---
-
-    /** @type {HTMLInputElement} */
-    const imageUploadBtn = document.getElementById('image-upload-btn');
-    
-    /** @type {HTMLElement} */
-    const galleryGrid = document.getElementById('gallery-grid');
-    
-    /** @type {HTMLElement} */
-    const galleryMessage = document.getElementById('gallery-message');
+    let imageUploadBtn, galleryGrid, galleryMessage;
 
     // --- NEW: Community Elements (v16.0) ---
-    
-    /** @type {HTMLFormElement} */
-    const journalForm = document.getElementById('journal-form');
-    
-    /** @type {HTMLInputElement} */
-    const journalTitle = document.getElementById('journal-title');
-    
-    /** @type {HTMLTextAreaElement} */
-    const journalBody = document.getElementById('journal-body');
-
-    /** @type {HTMLElement} */
-    const journalSubmitMessage = document.getElementById('journal-submit-message');
+    let journalForm, journalTitle, journalBody, journalSubmitMessage;
 
     //
     // =========================================
@@ -164,14 +69,7 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
 
     /**
      * @description Implements exponential backoff for retrying a failed async function.
-     * This is crucial for network requests (like our API call) that might fail
-     * due to temporary server issues or rate limiting. It waits progressively
-     * longer after each failure.
-     *
-     * @param {Function} fn - The async function to retry (e.g., `callGeminiApi`).
-     * @param {number} [maxRetries=5] - Maximum number of retry attempts.
-     * @param {number} [delay=500] - The base delay in milliseconds.
-     * @returns {Function} A new function that, when called, will retry `fn`.
+     * This function is no longer used since removing Gemini, but is good utility.
      */
     function exponentialBackoff(fn, maxRetries = 5, delay = 500) {
         return async function retryWrapper(...args) {
@@ -183,13 +81,7 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
                     // If this was the last retry, throw the error
                     if (i === maxRetries - 1) throw error;
                     
-                    // Don't log retry attempts to the console as errors,
-                    // as this is expected behavior for a network request.
-                    
-                    // Calculate wait time: (delay * 2^i) + random jitter
                     const waitTime = delay * Math.pow(2, i) + Math.random() * delay;
-                    
-                    // Wait for the calculated time before the next loop iteration
                     await new Promise(resolve => setTimeout(resolve, waitTime));
                 }
             }
@@ -246,14 +138,6 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
         // 4. Scroll to the top of the page
         window.scrollTo(0, 0); 
     }
-
-    // [REMOVED] closeModal function
-    
-    //
-    // =========================================
-    // [REMOVED] GEMINI API IMPLEMENTATION
-    // =========================================
-    //
     
     //
     // =========================================
@@ -272,11 +156,6 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
 
     /**
      * @description Initializes the Firebase app, database, and auth.
-     * This function uses special variables (`__app_id`, `__firebase_config`, `__initial_auth_token`)
-     * that are injected by the Canvas environment.
-     * It will authenticate the user (with a token if provided, or anonymously
-     * if not) and display their User ID. This is the first step
-     * to building persistent features like a grow journal.
      */
     async function initFirebase() {
         try {
@@ -332,9 +211,6 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
 
     /**
      * @description Calculates Vapor Pressure Deficit (VPD) in kPa.
-     * VPD is the "thirst" of the air. It's the difference between how much
-     * moisture the air *can* hold (SVP) and how much it *is* holding (AVP).
-     * This is the primary driver of plant transpiration (sweating).
      */
     function calculateVPD() {
         if (!tempCInput || !rhInput || !vpdOutput) return; // Guard clause
@@ -349,35 +225,20 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
         
         const RH = RH_percent / 100.0; // Convert % to decimal
 
-        // --- The Science ---
-        // 1. Calculate Saturation Vapor Pressure (SVP) in kPa.
-        // We use a simplified version of Buck's equation, common in horticulture.
-        // This formula calculates the maximum amount of water vapor the air can
-        // hold at a given temperature (T_C).
         const SVP_kPa = 0.61094 * Math.exp((17.625 * T_C) / (T_C + 243.04));
-
-        // 2. Calculate Vapor Pressure Deficit (VPD).
-        // VPD = (Max moisture air can hold) - (Current moisture in air)
-        // VPD = SVP_kPa - (SVP_kPa * RH)
-        // VPD = SVP_kPa * (1 - RH)
         const VPD = SVP_kPa * (1 - RH);
 
-        // 3. Determine the growth stage target
         let stage = 'Unknown Stage';
         if (VPD < 0.8) stage = 'Seedling/Clone';
         else if (VPD <= 1.2) stage = 'Vegetative Growth';
         else if (VPD <= 1.6) stage = 'Peak Flowering';
         else stage = 'High Stress/Late Flower';
 
-        // 4. Display the result
         vpdOutput.textContent = `${VPD.toFixed(2)} kPa (Target: ${stage})`;
     }
 
     /**
      * @description Converts Electrical Conductivity (EC) to Parts Per Million (PPM).
-     * EC is the *true* measurement of total dissolved solids (nutrient strength).
-     * PPM is a *conversion* from EC. Different meters use different
-     * conversion factors (scales).
      */
     function convertPPM() {
         if (!ecInput || !ppmScaleSelect || !ppmOutput) return; // Guard clause
@@ -390,21 +251,12 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
             return;
         }
         
-        // --- The Math ---
-        // PPM = EC (in mS/cm) * ScaleFactor
-        // e.g., 1.5 mS/cm * 500 = 750 PPM (500 Scale)
-        // e.g., 1.5 mS/cm * 700 = 1050 PPM (700 Scale)
         const PPM = EC * scale;
-
         ppmOutput.textContent = `${PPM.toFixed(0)} PPM (${scale} Scale)`;
     }
     
     /**
      * @description Calculates Daily Light Integral (DLI) in mol/m²/day.
-     * DLI is the *total number* of photons that land on a given area in a day.
-     * It's the most important metric for determining plant growth and yield.
-     * PPFD = Light *intensity* (photons per second).
-     * DLI = Total light *volume* (photons per day).
      */
     function calculateDLI() {
         if (!ppfdInput || !hoursOnInput || !dliOutput) return; // Guard clause
@@ -417,32 +269,21 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
             return;
         }
 
-        // --- The Math ---
-        // 1. Seconds of light = Hours * 3600 (seconds/hour)
         const secondsOfLight = Hours * 3600;
-        
-        // 2. Total photons per day (in µmol) = PPFD * seconds
         const totalMicromols = PPFD * secondsOfLight;
-        
-        // 3. Convert µmol (micromols) to mol (mols) by dividing by 1,000,000
-        // DLI (mol/m²/day) = (PPFD * Hours * 3600) / 1,000,000
         const DLI = totalMicromols / 1000000;
         
-        // 4. Determine growth stage
         let stage = 'Unknown Stage';
         if (DLI < 18) stage = 'Seedlings/Clones';
         else if (DLI <= 40) stage = 'Vegetative Growth';
         else if (DLI <= 60) stage = 'Peak Flower Production';
         else stage = 'Supplemental CO2 Recommended';
 
-        // 5. Display the result
         dliOutput.textContent = `${DLI.toFixed(2)} mol/m²/day (Target: ${stage})`;
     }
 
     /**
      * @description Calculates all fields for the Grow Cost Calculator.
-     * This function reads all inputs, performs the math, and updates all
-     * output fields with formatted currency.
      */
     function calculateCost() {
         // Guard clause: Check if all elements exist
@@ -469,36 +310,25 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
         const dispensaryPrice = parseFloat(costInputs.dispensaryPrice.value) || 0; 
 
         // 2. Perform Calculations
-        
-        // --- Electricity Cost Calculation ---
-        // Assume 4 weeks (28 days) of Veg at 18/6 and the rest Flower at 12/12
         const vegDays = Math.min(totalDays, 28);
         const flowerDays = Math.max(0, totalDays - vegDays);
         
-        // (Watts * Hours * Days) / 1000 = kWh
         const vegKwh = (lightWatts * 18 * vegDays) / 1000;
         const flowerKwh = (lightWatts * 12 * flowerDays) / 1000;
         const totalKwh = vegKwh + flowerKwh;
-        
-        // This is a rough estimate. It doesn't include fans, pumps, etc.
-        // We add a 15% flat fee to account for fans/pumps.
         const totalKwhWithFans = totalKwh * 1.15;
-        
         const electricCost = totalKwhWithFans * kwhRateDollars;
         
-        // --- Total Cost Calculation ---
         const totalOnetimeCost = onetimeTent + onetimeLight + onetimeOther;
         const totalRecurringCost = recurringSeeds + recurringSoil + recurringNutrients + electricCost;
         const totalFirstCost = totalOnetimeCost + totalRecurringCost;
         
-        // --- Cost Per Gram & Savings ---
         const costPerGram = totalFirstCost / yieldGrams;
         const costPerGramFuture = totalRecurringCost / yieldGrams;
         const harvestValue = yieldGrams * dispensaryPrice;
-        const totalSavings = harvestValue - totalRecurringCost; // This is the "profit" function
+        const totalSavings = harvestValue - totalRecurringCost;
 
         // 3. Update UI
-        // Use the Intl.NumberFormat object for easy currency formatting
         const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
 
         costOutputs.onetimeCost.textContent = formatter.format(totalOnetimeCost);
@@ -554,7 +384,6 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
     function loadGalleryFromStorage() {
         if (!galleryGrid) return;
         
-        // *** THIS IS THE FIX ***
         // Wrap in try...catch to prevent bad JSON from breaking the whole script
         try {
             const storedImages = JSON.parse(localStorage.getItem('grohioGallery') || '[]');
@@ -783,10 +612,69 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
      * It initializes Firebase and sets up all event listeners for the app.
      */
     function onDOMLoaded() {
+        
+        // --- 1. DOM VARIABLE ASSIGNMENT ---
+        // Now that the DOM is loaded, we can safely find all our elements.
+        
+        sections = document.querySelectorAll('.content-section');
+        navButtons = document.querySelectorAll('nav .nav-btn');
+        internalNavButtons = document.querySelectorAll('.nav-btn-internal');
+        userIdDisplay = document.getElementById('user-id-display');
+
+        // Grow Tools
+        tempCInput = document.getElementById('temp-c');
+        rhInput = document.getElementById('rh');
+        vpdOutput = document.getElementById('vpd-output');
+        ecInput = document.getElementById('ec-input');
+        ppmScaleSelect = document.getElementById('ppm-scale');
+        ppmOutput = document.getElementById('ppm-output');
+        ppfdInput = document.getElementById('ppfd-input');
+        hoursOnInput = document.getElementById('hours-on-input');
+        dliOutput = document.getElementById('dli-output');
+
+        // Cost Calculator
+        costInputs = {
+            onetimeTent: document.getElementById('cost-onetime-tent'),
+            onetimeLight: document.getElementById('cost-onetime-light'),
+            onetimeOther: document.getElementById('cost-onetime-other'),
+            recurringSeeds: document.getElementById('cost-recurring-seeds'),
+            recurringSoil: document.getElementById('cost-recurring-soil'),
+            recurringNutrients: document.getElementById('cost-recurring-nutrients'),
+            lightWatts: document.getElementById('cost-light-watts'),
+            kwhRate: document.getElementById('cost-kwh-rate'),
+            totalDays: document.getElementById('cost-total-days'),
+            yieldGrams: document.getElementById('cost-yield-grams'),
+            dispensaryPrice: document.getElementById('cost-dispensary-price')
+        };
+        costOutputs = {
+            onetimeCost: document.getElementById('output-onetime-cost'),
+            electricCost: document.getElementById('output-electric-cost'),
+            recurringCost: document.getElementById('output-recurring-cost'),
+            totalCost: document.getElementById('output-total-cost'),
+            harvestValue: document.getElementById('output-harvest-value'),
+            totalSavings: document.getElementById('output-total-savings'),
+            costPerGram: document.getElementById('output-cost-per-gram'),
+            costPerGramFuture: document.getElementById('output-cost-per-gram-future')
+        };
+
+        // Gallery
+        imageUploadBtn = document.getElementById('image-upload-btn');
+        galleryGrid = document.getElementById('gallery-grid');
+        galleryMessage = document.getElementById('gallery-message');
+
+        // Community
+        journalForm = document.getElementById('journal-form');
+        journalTitle = document.getElementById('journal-title');
+        journalBody = document.getElementById('journal-body');
+        journalSubmitMessage = document.getElementById('journal-submit-message');
+
+        
+        // --- 2. INITIALIZATION ---
+        
         // Initialize Firebase for user authentication
         initFirebase();
         
-        // *** Load gallery from storage ***
+        // Load gallery from storage
         loadGalleryFromStorage();
         
         // Run all calculators once on load to populate them
@@ -796,7 +684,10 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
         calculateDLI();
         calculateCost(); 
 
-        // --- Navigation Listeners ---
+        
+        // --- 3. ADD EVENT LISTENERS ---
+
+        // Navigation Listeners
         if (navButtons) {
             navButtons.forEach(button => {
                 button.addEventListener('click', () => {
@@ -812,12 +703,8 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
                  });
             });
         }
-
-        // [REMOVED] Search Listeners
-        // [REMOVED] Modal Close Listeners
         
-        // --- Grow Tools Calculator Listeners ---
-        // These 'input' listeners recalculate on every single key press.
+        // Grow Tools Calculator Listeners
         if (tempCInput) tempCInput.addEventListener('input', calculateVPD);
         if (rhInput) rhInput.addEventListener('input', calculateVPD);
         if (ecInput) ecInput.addEventListener('input', convertPPM);
@@ -825,24 +712,24 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
         if (ppfdInput) ppfdInput.addEventListener('input', calculateDLI);
         if (hoursOnInput) hoursOnInput.addEventListener('input', calculateDLI);
         
-        // --- Cost Calculator Listeners ---
-        // We loop over all our cached input elements and add a listener.
+        // Cost Calculator Listeners
         Object.values(costInputs).forEach(input => {
             if (input) {
                 input.addEventListener('input', calculateCost);
             }
         });
         
-        // --- NEW: Gallery Listener (v16.0) ---
+        // Gallery Listener
         if (imageUploadBtn) {
             imageUploadBtn.addEventListener('change', handleImageUpload);
         }
         
-        // --- NEW: Community Listener (v16.0) ---
+        // Community Listener
         if (journalForm) {
             journalForm.addEventListener('submit', handleJournalSubmit);
         }
         
+        // --- 4. SHOW INITIAL SECTION ---
         // Ensure Home section is visible on load
         showSection('home');
     }
@@ -851,4 +738,3 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
     document.addEventListener('DOMContentLoaded', onDOMLoaded);
 
 })(); // End IIFE
-
