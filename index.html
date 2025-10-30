@@ -108,7 +108,7 @@
 </head>
 <body>
 
-    <audio id="confirm-audio" preload="auto" src="https://raw.githubusercontent.com/3AmigosCannabisCo/testing.grohio/main/itsdolph.mp3"></audio>
+    <audio id="confirm-audio" preload="auto" src="./dolph-sound.mp3"></audio>
 
     <div class="age-gate-modal">
         <div class="logo-top flex justify-center items-center">
@@ -156,12 +156,12 @@
                     // 1. "Fire and forget" the play command
                     if (audio) {
                         audio.play().catch(error => {
-                            // This just logs the error to the console, it won't stop the script.
+                            // If it fails, just log it. The timer will still work.
                             console.warn("Audio playback failed (browser policy?):", error);
                         });
                     }
 
-                    // 2. Start the 3-second redirect timer at the same time
+                    // 2. Start the 3-second redirect timer
                     setTimeout(() => {
                         window.location.href = appUrl;
                     }, 3000); // 3 seconds
