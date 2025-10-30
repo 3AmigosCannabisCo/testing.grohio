@@ -2,6 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+
+    <script>
+        // Check if the user has been verified in this session
+        const isVerified = sessionStorage.getItem('isVerified');
+        
+        // If not verified, send them back to the index page
+        if (!isVerified) {
+            // Using './' assumes index.html is in the same directory
+            // We use .replace() so the user can't click the "back" button
+            // to get back to the app page.
+            window.location.replace('./index.html');
+        }
+    </script>
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GROHIO by 3 Amigos Cannabis Co.: The Ultimate Grow Guide</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -25,7 +39,7 @@
             <p id="user-id-display" class="text-xs text-gray-600 mt-1">Authenticating...</p>
         </header>
 
-         <nav class="flex flex-wrap justify-center gap-2 md:gap-3 mb-12">
+        <nav class="flex flex-wrap justify-center gap-2 md:gap-3 mb-12">
             <button data-section="home" class="nav-btn active px-4 py-2 rounded-full font-semibold transition">🏠 Home</button>
             <button data-section="legal" class="nav-btn px-4 py-2 rounded-full font-semibold transition">⚖️ Legal</button>
             <button data-section="indoor" class="nav-btn px-4 py-2 rounded-full font-semibold transition">💡 Indoor Guide</button>
@@ -309,7 +323,7 @@
                         <tr>
                             <td><strong>Aphids</strong></td>
                             <td>Small, pear-shaped bugs (green, black, or yellow). They cluster on the *stems* and undersides of new leaves.</td>
-                            <td>New growth looks twisted or stunted. They leave behind a sticky, clear "honeydew" (poop) that can attract ants or grow sooty mold.</td>
+                            <td>New growth looks twisted or stunted. They leave behind a sticky, clear "hone_dew" (poop) that can attract ants or grow sooty mold.</td>
                             <td>A strong spray of water can knock them off. Wipe them off by hand. Insecticidal soap works well. Ladybugs (good bugs!) love to eat them.</td>
                         </tr>
                         <tr>
@@ -520,7 +534,7 @@
 
             <div id="faq" class="content-section hidden">
                 <h2 class="border-brand-purple">❓ Frequently Asked Questions (FAQ)</h2>
-                <p>Here are some of the most common questions we hear from new and intermediate growers. Don't be afraid to ask—we all started here!</p>
+                <p>Here are some ofthe most common questions we hear from new and intermediate growers. Don't be afraid to ask—we all started here!</p>
 
                 <div class="faq-container space-y-6">
                     
@@ -664,7 +678,7 @@
                 <ul>
                     <li><strong>How it works:** This is the "gold standard" for home-grow hydro. It's a DWC system where all the buckets are connected by large pipes. A water pump circulates the *entire* volume of water through all the buckets and back to a main "control" reservoir.</li>
                     <li><strong>Pros:** Amazingly stable. You only have to check the pH and EC in the *one* control reservoir. The circulating water stays cooler and more oxygenated. This setup grows the biggest monsters.</li>
-                    <li><strong>Cons:** Expensive. Complex to build. Many potential leak points if you don't build it right.</li>
+                    <li><strong>Cons:** Expensive. Complex to build. Many potential leak points if you don'Type_don't build it right.</li>
                 </ul>
                 
                 <h4 class="text-gray-300">3. Ebb & Flow (Flood & Drain)</h4>
@@ -672,7 +686,7 @@
                 <ul>
                     <li><strong>How it works:** Plants sit in a large tray filled with an inert medium (like clay pebbles or Rockwool blocks). A timer is set to a pump that *floods* the tray with nutrient solution for 15 minutes. Then, it drains back out to the reservoir. This repeats 3-5 times a day.</li>
                     <li><strong>Pros:** The "drain" part is amazing for the roots. They get a huge rush of oxygen every time the tray empties, leading to very healthy, robust root systems.</li>
-<li><strong>Cons:** Requires a special "flood table." Can be noisy. If the pump or timer fails, your plants can dry out very quickly.</li>
+                    <li><strong>Cons:** Requires a special "flood table." Can be noisy. If the pump or timer fails, your plants can dry out very quickly.</li>
                 </ul>
                 
                 <h4 class="text-gray-300">4. NFT (Nutrient Film Technique)</h4>
