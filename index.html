@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
     <title>Age Verification - GROHIO</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display.swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
             /* GROHIO Neon Palette */
@@ -108,7 +108,7 @@
 </head>
 <body>
 
-    <audio id="confirm-audio" preload="auto" src="./itsdolph.mp3"></audio>
+    <audio id="confirm-audio" preload="auto" src="https://raw.githubusercontent.com/3AmigosCannabisCo/testing.grohio/main/itsdolph.mp3"></audio>
 
     <div class="age-gate-modal">
         <div class="logo-top flex justify-center items-center">
@@ -148,37 +148,23 @@
                     // --- Disable buttons ---
                     yesButton.disabled = true;
                     noButton.disabled = true;
-                    yesButton.textContent = 'Testing...'; // New text
+                    yesButton.textContent = 'Entering...';
+
+                    // Set the session storage flag
                     sessionStorage.setItem('isVerified', 'true');
                     
+                    // 1. "Fire and forget" the play command
                     if (audio) {
-                        const playPromise = audio.play();
-
-                        if (playPromise !== undefined) {
-                            playPromise.then(() => {
-                                // --- SUCCESS ---
-                                yesButton.textContent = 'Success!'; // New text
-                                // Now we wait 3 seconds for it to finish.
-                                setTimeout(() => {
-                                    window.location.href = appUrl;
-                                }, 3000); // 3 seconds
-                            })
-                            .catch(error => {
-                                // --- FAILURE ---
-                                console.error("--- AUDIO PLAYBACK FAILED ---");
-                                console.error(error);
-                                
-                                // **DON'T REDIRECT. SHOW THE ERROR.**
-                                yesButton.textContent = 'Audio Failed! Check Console.';
-                                yesButton.style.backgroundColor = 'var(--grohio-red)';
-                                noButton.disabled = false; // Re-enable "No" button
-                            });
-                        }
-                    } else {
-                        console.error('Audio element not found!');
-                        yesButton.textContent = 'Audio Not Found!';
-                        yesButton.style.backgroundColor = 'var(--grohio-red)';
+                        audio.play().catch(error => {
+                            // If it fails, just log it. The timer will still work.
+                            console.warn("Audio playback failed (browser policy?):", error);
+                        });
                     }
+
+                    // 2. Start the 3-second redirect timer
+                    setTimeout(() => {
+                        window.location.href = appUrl;
+                    }, 3000); // 3 seconds
                 });
             }
 
