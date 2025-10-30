@@ -109,10 +109,10 @@
 <body>
 
     <!-- 
-      FIX: The 'src' attribute was changed from './dolph-sound.mp3' 
-      to './dolph-sound.mp3.mp3' to match your uploaded file name.
+      FIX: The 'src' attribute was changed from './dolph-sound.mp3.mp3' 
+      back to './dolph-sound.mp3' to match your newly uploaded file.
     -->
-    <audio id="confirm-audio" preload="auto" src="./dolph-sound.mp3.mp3"></audio>
+    <audio id="confirm-audio" preload="auto" src="./dolph-sound.mp3"></audio>
 
     <div class="age-gate-modal">
         <div class="logo-top flex justify-center items-center">
@@ -168,25 +168,38 @@
                     // Set the session storage flag
                     sessionStorage.setItem('isVerified', 'true');
                     
-                    try {
-                        // 1. AWAIT the play() command.
-                        // This is the crucial fix. It properly handles the
-                        // promise returned by audio.play() inside a user
-                        // interaction (the click), making it much more
-                        // likely to be allowed by the browser.
-                        if (audio) {
-                            await audio.play();
-                        }
-                    } catch (error) {
-                        // If it *still* fails (e.g., audio file is corrupt),
-                        // just log it and continue. The redirect is more important.
-                        console.warn("Audio playback failed:", error);
-                    } finally {
-                        // 2. Start the redirect timer AFTER the audio
-                        // has either finished playing or failed.
-                        setTimeout(() => {
+                    let redirected = false;
+                    const redirectToApp = () => {
+                        if (!redirected) {
+                            redirected = true;
                             window.location.href = appUrl;
-                        }, 3000); // 3 seconds
+                        }
+                    };
+
+                    // 1. Set a fallback timer. This will run no matter what,
+                    // ensuring the user gets redirected even if audio fails.
+                    setTimeout(redirectToApp, 3000); // 3-second max wait
+
+                    if (audio) {
+                        try {
+                            // 2. Add an event listener for when the audio *finishes* playing
+                            // This is the "happy path" - audio plays, then redirect.
+                            // If the audio file is 3s, this will fire around the
+                            // same time as the timeout.
+                            audio.addEventListener('ended', redirectToApp);
+
+                            // 3. Try to play the audio
+                            await audio.play();
+                            
+                            // If audio.play() succeeds, the 'ended' listener
+                            // will fire when the sound is done.
+
+                        } catch (error) {
+                            // If audio.play() *itself* throws an error (e.g., browser policy)
+                            // log it, but the 3-second fallback timer
+                            // is already running, so the user will still be redirected.
+                            console.warn("Audio playback failed:", error);
+                        }
                     }
                 });
             }
