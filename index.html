@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Age Verification - GROHIO</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display.swap" rel="stylesheet">
     <style>
         :root {
             /* GROHIO Neon Palette */
@@ -108,8 +108,6 @@
 </head>
 <body>
 
-    <audio id="confirm-audio" preload="auto" src="https://www.soundjay.com/buttons/beep-07a.mp3"></audio>
-
     <div class="age-gate-modal">
         <div class="logo-top flex justify-center items-center">
              <img id="grohio-logo-gate" src="https://raw.githubusercontent.com/3AmigosCannabisCo/testing.grohio/main/grohio_nobg.png" alt="GROHIO Logo">
@@ -136,7 +134,7 @@
             // Get button elements
             const yesButton = document.getElementById('btn-yes');
             const noButton = document.getElementById('btn-no');
-            const audio = document.getElementById('confirm-audio');
+            // *** AUDIO CONST IS REMOVED ***
 
             const appUrl = './app.html'; 
             const exitUrl = 'https://www.funbrain.com';
@@ -145,7 +143,7 @@
             if (yesButton) {
                 yesButton.addEventListener('click', () => {
                     
-                    // --- Disable buttons and play sound ---
+                    // --- Disable buttons ---
                     yesButton.disabled = true;
                     noButton.disabled = true;
                     yesButton.textContent = 'Entering...';
@@ -153,17 +151,10 @@
                     // Set the session storage flag
                     sessionStorage.setItem('isVerified', 'true');
                     
-                    if (audio) {
-                        // Try to play the audio
-                        audio.play().catch(error => {
-                            // If it fails, just log the error. The timer will still redirect.
-                            console.warn("Audio playback failed:", error);
-                        });
-                    }
+                    // *** ALL AUDIO.PLAY() LOGIC IS REMOVED ***
 
                     // --- Use a timer ---
-                    // Wait 3 seconds (3000 milliseconds) for the clip to play,
-                    // then redirect no matter what.
+                    // Wait 3 seconds (3000 milliseconds), then redirect.
                     setTimeout(() => {
                         window.location.href = appUrl;
                     }, 3000); // 3 seconds
