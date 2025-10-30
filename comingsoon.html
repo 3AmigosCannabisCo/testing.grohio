@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coming Soon</title>
+    <!-- 1. Load Tailwind CSS for utility-first styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 2. Import a Google Font similar to the logo's script style -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kaushan+Script&display=swap');
+
+        /* 3. Apply the custom font to a specific class */
+        .logo-font {
+            font-family: 'Kaushan+Script', cursive;
+        }
+
+        /* Ensure the html and body take up the full height */
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+    </style>
+</head>
+<body class="bg-black text-white min-h-screen flex flex-col items-center justify-center p-4 antialiased">
+    
+    <!-- 
+      Main content container.
+      - 'flex flex-col': Stacks children (logo and text) vertically.
+      - 'items-center': Centers children horizontally.
+      - 'justify-center': Centers children vertically.
+      - 'min-h-screen': Ensures the container takes at least the full viewport height.
+    -->
+    <main class="flex flex-col items-center justify-center text-center">
+        
+        <!-- 
+          The Logo.
+          UPDATED: The 'src' attribute now points to the web URL you provided.
+          I've added "https://" to make it a valid, absolute URL.
+        -->
+        <img src="https://3amigoscannabisco.github.io/testing.grohio/3amigos_nobg.png" 
+             alt="3 Amigos Cannabis Co. Logo" 
+             class="w-3/4 max-w-md"
+             onerror="this.style.display='none'; this.nextElementSibling.insertAdjacentHTML('beforebegin', '<div class=\'w-64 h-64 bg-gray-800 rounded-lg flex items-center justify-center text-gray-500 mb-4\'>Image could not be loaded.</div>');">
+
+        <!-- 
+          The Date and Time Text.
+          - 'logo-font': Applies the custom Kaushan Script font.
+          - 'font-bold': Makes the text bold (as requested).
+          - 'text-3xl md:text-5xl': Sets a responsive font size.
+          - 'mt-6': Adds margin (space) above the text, separating it from the logo.
+        -->
+        <p class="logo-font font-bold text-3xl md:text-5xl mt-6">
+            November 1st 2025 6PM
+        </p>
+
+    </main>
+
+</body>
+</html>
+
+
