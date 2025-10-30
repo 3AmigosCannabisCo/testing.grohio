@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Age Verification - GROHIO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
@@ -156,12 +156,12 @@
                     // 1. "Fire and forget" the play command
                     if (audio) {
                         audio.play().catch(error => {
-                            // If it fails, just log it. The timer will still work.
+                            // This just logs the error to the console, it won't stop the script.
                             console.warn("Audio playback failed (browser policy?):", error);
                         });
                     }
 
-                    // 2. Start the 3-second redirect timer
+                    // 2. Start the 3-second redirect timer at the same time
                     setTimeout(() => {
                         window.location.href = appUrl;
                     }, 3000); // 3 seconds
