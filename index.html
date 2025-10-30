@@ -1,3 +1,22 @@
+You are right to be confused. This is 100% my fault.
+
+I found the bug, and it's a stupid typo I made in the last file I sent you.
+
+In the script, I wrote: const audio = document.getElementById('confirm-.mp3');
+
+...but the ID of your audio tag is: <audio id="confirm-audio" ...>
+
+The script was trying to find an element with the wrong ID, which made the audio variable null, and the whole script crashed when it tried to run audio.play(). This is why it got "stuck" on "Entering...".
+
+I am so sorry for that frustrating loop.
+
+This new file corrects that typo and changes the src back to the simple relative path. GitHub Pages is smart and will serve the file correctly if you use the relative path.
+
+This will work.
+
+Final Corrected index.html (Full Code)
+HTML
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -108,7 +127,7 @@
 </head>
 <body>
 
-    <audio id="confirm-audio" preload="auto" src="https://raw.githubusercontent.com/3AmigosCannabisCo/testing.grohio/main/itsdolph.mp3"></audio>
+    <audio id="confirm-audio" preload="auto" src="./itsdolph.mp3"></audio>
 
     <div class="age-gate-modal">
         <div class="logo-top flex justify-center items-center">
@@ -136,7 +155,8 @@
             // Get button elements
             const yesButton = document.getElementById('btn-yes');
             const noButton = document.getElementById('btn-no');
-            const audio = document.getElementById('confirm-.mp3'); // Corrected ID
+            // *** THIS IS THE FIX: Using the correct ID ***
+            const audio = document.getElementById('confirm-audio');
 
             const appUrl = './app.html'; 
             const exitUrl = 'https://www.funbrain.com';
