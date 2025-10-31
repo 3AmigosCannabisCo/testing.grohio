@@ -9,7 +9,7 @@
         
         // If not verified, send them back to the index page
         if (!isVerified) {
-            // Preview Workaround: Use absolute path derived from the origin to reliably redirect
+            // FIX: Use an absolute path derived from the origin to reliably redirect
             const absoluteIndexUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1) + 'index.html';
             
             // We use .replace() so the user can't click the "back" button
@@ -95,9 +95,6 @@
                 </div>
             </div>
 
-### 2. Legal, Indoor, and Outdoor Guides
-
-```html
             <div id="legal" class="content-section hidden">
                 <h2 class="border-brand-blue">⚖️ Ohio's Grow Laws: The Simple Version - Know Your Risks</h2>
                 <div class="note">
@@ -148,7 +145,7 @@
                             <li><strong>Outcome:** The illegal excess plants are seized. **Crucially**, this violation is **not a criminal conviction**.</li>
                         </ul>
                     </li>
-                    <li><strong>Unsecured/Visible Grow (1st Offense):</strong> Failure to meet the security or visibility requirements.
+                    <li><strong>Unsecured/Visible Grow (1st Offense):** Failure to meet the security or visibility requirements.
                         <ul class="ml-4 list-disc">
                             <li><strong>Penalty:** Typically a **civil fine** of up to $250.</li>
                             <li><strong>Outcome:** You are usually given a chance to immediately secure the grow. Repeated, intentional violations, however, can escalate the charge.</li>
@@ -165,7 +162,7 @@
                             <li><strong>Penalty:** Prison time and high fines are possible, depending on the amount sold or grown.</li>
                         </ul>
                     </li>
-                    <li><strong>Possession Over Home Limit (2.5 oz in Public):</strong> Being caught transporting more than the legal limit (2.5 ounces) in public.
+                    <li><strong>Possession Over Home Limit (2.5 oz in Public):** Being caught transporting more than the legal limit (2.5 ounces) in public.
                         <ul class="ml-4 list-disc">
                             <li><strong>Felony Charge:** Depending on the amount, possession can range from a misdemeanor (under 2.5 oz) to a felony (over 100 grams / 3.5 oz).</li>
                         </ul>
@@ -365,9 +362,6 @@
                 </ul>
             </div>
 
-### 3. Genetics and Problem Hub
-
-```html
             <div id="genetics" class="content-section hidden">
                 <h2 class="border-brand-purple">🧬 Strains & Genetics: Picking Your Perfect Plant</h2>
                 <p>Walking into a seed store (or website) is overwhelming. You'll see hundreds of strains with crazy names. What's the difference? This section will help you understand what to look for, so you pick a plant that's right for you *and* right for your grow room.</p>
@@ -557,9 +551,6 @@
                 <p>This is where you combine all of the above. You use a mini-computer like a Raspberry Pi or an Arduino to control *everything*. You connect sensors for temperature, humidity, pH, and EC. You write code to turn on fans, pumps, and lights based on the sensor data. This is super fun if you're a tech nerd, but it is **100% not necessary** to grow amazing cannabis. A $10 timer and a $50 Inkbird controller will get you 99% of the way there.</p>
             </div>
 
-### 4. Problem Hub, Calculators, and Final Sections
-
-```html
             <div id="pests" class="content-section hidden">
                  <h2 class="border-brand-red">🐛 Problem Hub: What's Wrong With My Plant?</h2>
                  <p>Don't panic! Every grower runs into problems. The key is to catch them early. This hub will help you diagnose the most common issues you'll face.</p>
@@ -930,7 +921,7 @@
                 
                 <div id="gallery-grid" class="gallery-grid">
                     <div class="gallery-item placeholder">
-                        <img src="[https://placehold.co/400x400/0d0d0d/999?text=Your+Photo+Here](https://placehold.co/400x400/0d0d0d/999?text=Your+Photo+Here)" alt="Placeholder image">
+                        <img src="https://placehold.co/400x400/0d0d0d/999?text=Your+Photo+Here" alt="Placeholder image">
                         <div class="gallery-item-caption">
                             <p>Your Uploads</p>
                             <span class="text-xs text-gray-400">Images are stored locally</span>
@@ -977,7 +968,7 @@
     </div>
 
     <footer class="mt-16 py-8 text-center border-t-2 border-gray-900">
-        <img src="[https://raw.githubusercontent.com/3AmigosCannabisCo/testing.grohio/main/3amigos_nobg.png](https://raw.githubusercontent.com/3AmigosCannabisCo/testing.grohio/main/3amigos_nobg.png)" 
+        <img src="https://raw.githubusercontent.com/3AmigosCannabisCo/testing.grohio/main/3amigos_nobg.png" 
              alt="3 Amigos Cannabis Co. Logo" 
              class="h-24 mx-auto mb-4" 
              style="filter: drop-shadow(0 0 6px var(--grohio-blue));">
@@ -985,29 +976,7 @@
         <p class="text-sm text-gray-600 mt-2">Empowering Ohio growers since 2024</p>
     </footer>
     
-    <!-- CRITICAL FIX: The preview environment struggles with the simple <script type="module" src="./script.js"></script> 
-         for large files. This dynamic loader breaks that barrier. -->
-    <script type="module">
-        (function() {
-            // Get the base path dynamically, including the current directory's depth
-            const pathParts = window.location.pathname.split('/');
-            // Remove the last part (the filename) to get the directory path
-            pathParts.pop(); 
-            const basePath = window.location.origin + pathParts.join('/') + '/';
-
-            const script = document.createElement('script');
-            script.type = 'module';
-            script.src = basePath + 'script.js';
-            script.onerror = (e) => console.error("Failed to load script.js:", e);
-            document.body.appendChild(script);
-
-            // Optional: Remove the dynamic block after execution to clean up the DOM
-            script.onload = () => {
-                // Remove the wrapper script element to clean up DOM after load
-                const selfScript = document.currentScript;
-                if (selfScript) selfScript.remove();
-            };
-        })();
-    </script>
+    <!-- PRODUCTION-READY SCRIPT MODULE TAG -->
+    <script type="module" src="./script.js"></script>
 </body>
 </html>
