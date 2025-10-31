@@ -132,21 +132,23 @@
             z-index: 10;
             opacity: 0;
             transition: opacity 0.5s ease-in;
-            padding: 3rem 1rem; 
+            /* Minor adjustment: reduced padding and added justify-content to center vertically */
+            padding: 1rem; 
+            box-sizing: border-box; /* Crucial for size calculation */
+            justify-content: space-around; /* Spread image and text out vertically */
         }
         .dolphin-sequence.show {
             display: flex;
             opacity: 1;
         }
         .dolphin-sequence img {
-            /* Image is contained within the fixed 450x450 modal */
             max-width: 400px; 
-            max-height: 400px; 
+            max-height: 300px; /* Reduced max height slightly to ensure text fits below */
             width: auto;
             height: auto;
             object-fit: contain; 
             filter: drop-shadow(0 0 15px var(--grohio-blue)); 
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.5rem; /* Reduced bottom margin */
             animation: bounce 1s infinite alternate; 
         }
         .dolphin-text {
@@ -154,6 +156,7 @@
             font-weight: 900;
             color: var(--grohio-blue);
             text-shadow: 0 0 10px rgba(0, 191, 255, 0.8), 0 0 20px rgba(0, 191, 255, 0.6);
+            margin-top: 0.5rem; /* Added top margin */
         }
         
         /* Keyframe animation for the dolphin (unchanged) */
