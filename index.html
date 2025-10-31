@@ -44,15 +44,15 @@
             transition: all 0.3s ease-in-out; /* Smooth size transitions */
         }
         
-        /* *** FIX: ENFORCED SIZE FOR DOLPHIN VIEWPORT *** */
+        /* *** CRITICAL FIX: ENFORCED LARGER SIZE FOR DOLPHIN VIEWPORT *** */
         .age-gate-modal.modal-dolphin-active {
-            /* Set to be 50px wider and taller than the max image size (400px) */
-            width: 450px;
-            max-width: 450px;
-            height: 450px; 
-            max-height: 450px;
+            /* Increased to 500px to give ample padding around the 400px image and text */
+            width: 500px;
+            max-width: 500px;
+            height: 500px; 
+            max-height: 500px;
         }
-        /* ********************************************** */
+        /* ************************************************************** */
 
         /* Age Gate Content - Defines the smaller size for the question */
         #age-gate-content {
@@ -132,23 +132,23 @@
             z-index: 10;
             opacity: 0;
             transition: opacity 0.5s ease-in;
-            /* Minor adjustment: reduced padding and added justify-content to center vertically */
             padding: 1rem; 
-            box-sizing: border-box; /* Crucial for size calculation */
-            justify-content: space-around; /* Spread image and text out vertically */
+            box-sizing: border-box;
+            justify-content: space-around; 
         }
         .dolphin-sequence.show {
             display: flex;
             opacity: 1;
         }
         .dolphin-sequence img {
+            /* Image sizing is relative to its own container, which is now fixed at 500px */
             max-width: 400px; 
-            max-height: 300px; /* Reduced max height slightly to ensure text fits below */
+            max-height: 300px; 
             width: auto;
             height: auto;
             object-fit: contain; 
             filter: drop-shadow(0 0 15px var(--grohio-blue)); 
-            margin-bottom: 0.5rem; /* Reduced bottom margin */
+            margin-bottom: 0.5rem; 
             animation: bounce 1s infinite alternate; 
         }
         .dolphin-text {
@@ -156,7 +156,7 @@
             font-weight: 900;
             color: var(--grohio-blue);
             text-shadow: 0 0 10px rgba(0, 191, 255, 0.8), 0 0 20px rgba(0, 191, 255, 0.6);
-            margin-top: 0.5rem; /* Added top margin */
+            margin-top: 0.5rem; 
         }
         
         /* Keyframe animation for the dolphin (unchanged) */
