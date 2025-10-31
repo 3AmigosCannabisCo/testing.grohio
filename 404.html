@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found</title>
+    <!-- Load Tailwind for button styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Add your GROHIO colors for consistent branding */
+        :root {
+            --grohio-red: #ff3162;
+            --grohio-blue: #00bfff;
+            --color-bg: #000000;
+        }
+        .text-brand-red { color: var(--grohio-red); }
+        .border-brand-blue { border-color: var(--grohio-blue); }
+        .shadow-brand-red { box-shadow: 0 0 15px rgba(255, 49, 98, 0.5); } /* Red Shadow */
+    </style>
+</head>
+<body class="bg-black text-gray-300 min-h-screen relative flex flex-col items-center justify-center p-4 font-sans">
+
+    <!-- Image container is centered -->
+    <div class="text-center">
+        
+        <!-- Image with custom 404 art -->
+        <img src="./bones.png" 
+             alt="Custom 404 Error: Bones" 
+             class="mx-auto h-auto mb-8 max-w-full"
+             style="filter: drop-shadow(0 0 15px rgba(0, 191, 255, 0.5));" 
+             onerror="this.style.display='none';">
+
+    </div>
+    
+    <!-- Button Container: positioned absolutely to the bottom left -->
+    <div class="absolute bottom-4 left-4 md:bottom-8 md:left-8">
+        <!-- Return to Homepage Button - RED NEON -->
+        <a href="./index.html" class="inline-block px-8 py-4 
+           bg-[var(--grohio-red)] text-black font-extrabold uppercase 
+           rounded-full transition duration-200 
+           hover:bg-[#ff507c] hover:shadow-lg 
+           shadow-brand-red text-lg tracking-wider">
+            Return to Homepage &rarr;
+        </a>
+    </div>
+
+</body>
+</html>
