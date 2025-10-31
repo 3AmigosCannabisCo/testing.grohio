@@ -30,26 +30,35 @@
             min-height: 100vh;
         }
 
-        /* Modal styling - Now flexible in size */
+        /* Modal styling - Now flexible in size for Age Gate Content */
         .age-gate-modal {
             background-color: var(--color-bg-modal);
             border: 2px solid var(--grohio-purple);
             box-shadow: 0 0 25px 5px rgba(159, 80, 255, 0.5); /* Purple Glow */
             border-radius: 1.5rem; /* More rounded */
-            /* Removed fixed width/padding here to allow internal content to size it */
+            max-width: 900px;
             width: 90%; 
-            max-width: 900px; /* Increased general max-width for the container */
             text-align: center;
             position: relative; 
-            overflow: hidden; /* Important for containing absolute content */
+            overflow: hidden; 
             transition: all 0.3s ease-in-out; /* Smooth size transitions */
         }
+        
+        /* *** FIX: ENFORCED SIZE FOR DOLPHIN VIEWPORT *** */
+        .age-gate-modal.modal-dolphin-active {
+            /* Set to be 50px wider and taller than the max image size (400px) */
+            width: 450px;
+            max-width: 450px;
+            height: 450px; 
+            max-height: 450px;
+        }
+        /* ********************************************** */
 
         /* Age Gate Content - Defines the smaller size for the question */
         #age-gate-content {
             padding: 2.5rem;
             max-width: 500px; /* Standard width for the question */
-            margin: 0 auto; /* Center content within flexible modal */
+            margin: 0 auto; 
         }
 
         /* Logo styling */
@@ -72,8 +81,6 @@
             border: none;
             margin: 0 0.5rem;
         }
-
-        /* ... (rest of button styling omitted for brevity, it's unchanged) ... */
 
         .btn-yes {
             background-color: var(--grohio-green);
@@ -109,7 +116,7 @@
             filter: drop-shadow(0 0 4px var(--grohio-blue));
         }
 
-        /* --- Dolphin Sequence Styling - Maximized for effect --- */
+        /* --- Dolphin Sequence Styling - Image containment ensures no bleed --- */
         .dolphin-sequence {
             display: none; 
             position: absolute;
@@ -125,8 +132,6 @@
             z-index: 10;
             opacity: 0;
             transition: opacity 0.5s ease-in;
-            
-            /* Give it extra padding to ensure the DOLPH text fits well */
             padding: 3rem 1rem; 
         }
         .dolphin-sequence.show {
@@ -134,19 +139,18 @@
             opacity: 1;
         }
         .dolphin-sequence img {
-            /* *** FIX: INCREASED MAX WIDTH HERE *** */
+            /* Image is contained within the fixed 450x450 modal */
             max-width: 400px; 
-            max-height: 400px; /* Added a limit to prevent it from getting too tall */
+            max-height: 400px; 
             width: auto;
             height: auto;
             object-fit: contain; 
-            /* -------------------------------------- */
             filter: drop-shadow(0 0 15px var(--grohio-blue)); 
             margin-bottom: 1.5rem;
             animation: bounce 1s infinite alternate; 
         }
         .dolphin-text {
-            font-size: 3rem; /* Increased text size to match the larger image */
+            font-size: 3rem; 
             font-weight: 900;
             color: var(--grohio-blue);
             text-shadow: 0 0 10px rgba(0, 191, 255, 0.8), 0 0 20px rgba(0, 191, 255, 0.6);
@@ -203,7 +207,7 @@
             // NEW ELEMENTS: The content container and the dolphin sequence container
             const ageGateContent = document.getElementById('age-gate-content');
             const dolphinSequence = document.getElementById('dolphin-sequence');
-            const ageGateModal = document.querySelector('.age-gate-modal');
+            const ageGateModal = document.querySelector('.age-gate-modal'); // Get the main modal element
 
 
             // Path logic to determine the correct target URL for app.html
@@ -232,13 +236,13 @@
                     noButton.disabled = true;
                     yesButton.textContent = 'Verifying...';
                     
-                    // NEW: Temporarily hide age gate content and remove its sizing constraints
+                    // NEW FIX 1: Add the specific size class to the modal
+                    ageGateModal.classList.add('modal-dolphin-active');
+                    
+                    // NEW FIX 2: Hide age gate content 
                     ageGateContent.style.display = 'none';
 
-                    // NEW: Show the dolphin sequence
-                    // The dolphin-sequence (which is full height/width of the modal)
-                    // combined with the flexible .age-gate-modal container, will
-                    // allow the modal to expand to the dolphin's content size.
+                    // NEW FIX 3: Show the dolphin sequence
                     dolphinSequence.classList.add('show');
                     
                     // Set the session storage flag
@@ -248,9 +252,11 @@
                     const redirectToApp = () => {
                         if (!redirected) {
                             redirected = true;
-                            // Ensure the dolphin sequence is hidden before redirect (for clean exit)
+                            // Reset the modal size and content state before redirect
                             dolphinSequence.classList.remove('show');
-                            ageGateContent.style.display = 'block'; // Reset for next time if needed
+                            ageGateContent.style.display = 'block'; 
+                            ageGateModal.classList.remove('modal-dolphin-active');
+                            
                             window.location.href = appUrl;
                         }
                     };
