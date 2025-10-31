@@ -40,6 +40,8 @@
             max-width: 500px;
             width: 90%;
             text-align: center;
+            /* CRITICAL: Set position relative for absolute dolphin content */
+            position: relative; 
         }
 
         /* Logo styling */
@@ -104,32 +106,81 @@
             filter: drop-shadow(0 0 4px var(--grohio-blue));
         }
 
+        /* --- NEW: Dolphin Sequence Styling --- */
+        .dolphin-sequence {
+            display: none; /* Initially hidden */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--color-bg-modal);
+            border-radius: 1.5rem;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            /* Optional: Add transition for smoother appearance */
+            opacity: 0;
+            transition: opacity 0.5s ease-in;
+        }
+        .dolphin-sequence.show {
+            display: flex; /* Show the container */
+            opacity: 1;
+        }
+        .dolphin-sequence img {
+            max-width: 60%; 
+            max-height: 150px; /* Limit size for better fit */
+            height: auto;
+            /* Apply a blue neon glow to the image */
+            filter: drop-shadow(0 0 15px var(--grohio-blue)); 
+            margin-bottom: 1.5rem;
+            animation: bounce 1s infinite alternate; /* Simple animation */
+        }
+        .dolphin-text {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--grohio-blue);
+            text-shadow: 0 0 10px rgba(0, 191, 255, 0.8), 0 0 20px rgba(0, 191, 255, 0.6);
+        }
+        
+        /* Keyframe animation for the dolphin */
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-5px); }
+        }
+
     </style>
 </head>
 <body>
 
-    <!-- 
-      UPDATED: The 'src' attribute now points to the uploaded audio file URL.
-    -->
-    <audio id="confirm-audio" preload="auto" src="http://googleusercontent.com/file_content/0"></audio>
+    <audio id="confirm-audio" preload="auto" src="./dolph-sound.mp3"></audio>
 
     <div class="age-gate-modal">
-        <div class="logo-top flex justify-center items-center">
-             <img id="grohio-logo-gate" src="https://raw.githubusercontent.com/3AmigosCannabisCo/testing.grohio/main/grohio_nobg.png" alt="GROHIO Logo">
+        
+        <div id="dolphin-sequence" class="dolphin-sequence">
+            <img src="./DOLPH.png" alt="It's a Dolphin!"> 
+            <p class="dolphin-text">It's. Dolph!!</p>
         </div>
         
-        <h2 class="modal-title">Are You At Least 21 Years Old?</h2>
+        <div id="age-gate-content">
+            <div class="logo-top flex justify-center items-center">
+                <img id="grohio-logo-gate" src="https://raw.githubusercontent.com/3AmigosCannabisCo/testing.grohio/main/grohio_nobg.png" alt="GROHIO Logo">
+            </div>
+            
+            <h2 class="modal-title">Are You At Least 21 Years Old?</h2>
 
-        <div class="mt-8">
-            <button id="btn-yes" class="age-gate-btn btn-yes">Yes</button>
-            <button id="btn-no" class="age-gate-btn btn-no">No</button>
-        </div>
+            <div class="mt-8">
+                <button id="btn-yes" class="age-gate-btn btn-yes">Yes</button>
+                <button id="btn-no" class="age-gate-btn btn-no">No</button>
+            </div>
 
-        <div class="mt-8 text-center">
-            <p class="text-sm text-gray-500">Brought to you by</p>
-            <p class="text-md font-semibold text-gray-400 company-credit-name">3 Amigos Cannabis Co.</p>
+            <div class="mt-8 text-center">
+                <p class="text-sm text-gray-500">Brought to you by</p>
+                <p class="text-md font-semibold text-gray-400 company-credit-name">3 Amigos Cannabis Co.</p>
+            </div>
         </div>
-    </div>
+        </div>
 
     <script>
         // Self-executing function to keep variables local
@@ -139,9 +190,15 @@
             // Get button elements
             const yesButton = document.getElementById('btn-yes');
             const noButton = document.getElementById('btn-no');
-            const audio = document.getElementById('confirm-audio'); // Correct ID
+            const audio = document.getElementById('confirm-audio'); 
+            
+            // NEW ELEMENTS: The content container and the dolphin sequence container
+            const ageGateContent = document.getElementById('age-gate-content');
+            const dolphinSequence = document.getElementById('dolphin-sequence');
 
-            // This logic is now more robust to handle all path cases
+
+            // FIX: This logic is now more robust to handle all path cases
+            // (e.g., /testing.grohio, /testing.grohio/, /testing.grohio/index.html)
             let currentPath = window.location.pathname; 
 
             // 1. If it ends with a file (like index.html), get the parent directory
@@ -152,6 +209,7 @@
             else if (!currentPath.endsWith('/')) {
                 currentPath = currentPath + '/'; // e.g., /testing.grohio -> /testing.grohio/
             }
+            // 3. If it already ends with a slash (e.g., /testing.grohio/), it's perfect.
             
             const appUrl = window.location.origin + currentPath + 'app.html';
             const exitUrl = 'https://www.funbrain.com';
@@ -164,8 +222,14 @@
                     // --- Disable buttons ---
                     yesButton.disabled = true;
                     noButton.disabled = true;
-                    yesButton.textContent = 'Entering...';
+                    yesButton.textContent = 'Verifying...';
+                    
+                    // NEW: Hide the age gate content
+                    ageGateContent.style.display = 'none';
 
+                    // NEW: Show the dolphin sequence
+                    dolphinSequence.classList.add('show');
+                    
                     // Set the session storage flag
                     sessionStorage.setItem('isVerified', 'true');
                     
@@ -173,37 +237,31 @@
                     const redirectToApp = () => {
                         if (!redirected) {
                             redirected = true;
+                            // Ensure the dolphin sequence is hidden before redirect (for clean exit)
+                            dolphinSequence.classList.remove('show');
                             window.location.href = appUrl;
                         }
                     };
 
-                    // --- UPDATED AUDIO LOGIC ---
+                    // 1. Set a fallback timer. This will run no matter what,
+                    // ensuring the user gets redirected after 3 seconds.
+                    setTimeout(redirectToApp, 3000); // 3-second max wait
+
                     if (audio) {
                         try {
-                            // 1. Set the 'ended' listener *before* playing.
-                            // This is now the primary redirect path.
+                            // 2. Add an event listener for when the audio *finishes* playing
+                            // If audio is shorter than 3s, this will fire first.
                             audio.addEventListener('ended', redirectToApp);
 
-                            // 2. Try to play the audio
+                            // 3. Try to play the audio
                             await audio.play();
                             
-                            // 3. If play() succeeds, set a fallback timer 
-                            // that is *longer* than the audio clip (e.g., 6 seconds)
-                            // This ensures redirect happens even if 'ended' event fails.
-                            setTimeout(redirectToApp, 6000); // 6-second max wait
-
                         } catch (error) {
-                            // 4. If audio.play() *itself* throws an error (e.g., browser policy)
-                            // log it and redirect immediately. This is the "failure" path.
-                            console.warn("Audio playback failed, redirecting immediately:", error);
-                            redirectToApp(); // Redirect now
+                            // If audio.play() *itself* throws an error (e.g., browser policy)
+                            console.warn("Audio playback failed:", error);
+                            // The 3-second fallback timer is already running.
                         }
-                    } else {
-                        // If there's no audio element at all, just redirect.
-                        console.warn("Audio element not found, redirecting immediately.");
-                        redirectToApp();
                     }
-                    // --- END OF UPDATED LOGIC ---
                 });
             }
 
@@ -219,4 +277,3 @@
 
 </body>
 </html>
-
