@@ -108,10 +108,6 @@
 </head>
 <body>
 
-    <!-- 
-      FIX: The 'src' attribute was changed from './dolph-sound.mp3.mp3' 
-      back to './dolph-sound.mp3' to match your newly uploaded file.
-    -->
     <audio id="confirm-audio" preload="auto" src="./dolph-sound.mp3"></audio>
 
     <div class="age-gate-modal">
@@ -137,81 +133,92 @@
         (function() {
             'use strict';
 
-            // Get button elements
+            // Get button elements and audio
             const yesButton = document.getElementById('btn-yes');
             const noButton = document.getElementById('btn-no');
-            const audio = document.getElementById('confirm-audio'); // Correct ID
+            const audio = document.getElementById('confirm-audio'); 
 
-            // FIX: This logic is now more robust to handle all path cases
-            // (e.g., /testing.grohio, /testing.grohio/, /testing.grohio/index.html)
-            // to prevent the "invalid URL" SyntaxError.
+            // --- URL Calculation (Kept robust pathing logic) ---
             let currentPath = window.location.pathname; 
-
-            // 1. If it ends with a file (like index.html), get the parent directory
             if (currentPath.endsWith('/index.html')) {
-                currentPath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1); // e.g., /testing.grohio/
+                currentPath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1); 
+            } else if (!currentPath.endsWith('/')) {
+                currentPath = currentPath + '/'; 
             }
-            // 2. If it does NOT end with a slash (e.g., /testing.grohio), add one
-            else if (!currentPath.endsWith('/')) {
-                currentPath = currentPath + '/'; // e.g., /testing.grohio -> /testing.grohio/
-            }
-            // 3. If it already ends with a slash (e.g., /testing.grohio/), it's perfect.
-            
             const appUrl = window.location.origin + currentPath + 'app.html';
             const exitUrl = 'https://www.funbrain.com';
 
+            /**
+             * @description A utility function that tries to play the audio and returns 
+             * a Promise that resolves ONLY when the audio fires the 'ended' event.
+             * This guarantees full playback duration.
+             * @param {HTMLAudioElement} audioElement - The audio element.
+             * @returns {Promise<void>} - Resolves upon successful completion of playback.
+             */
+            function playAudioAndAwaitEnd(audioElement) {
+                return new Promise(async (resolve, reject) => {
+                    if (!audioElement) return resolve(); // Skip if no audio element
+
+                    try {
+                        // 1. Attempt to start playback, consuming the user gesture.
+                        // This uses 'await' to wait for the play() Promise to resolve (i.e., start playing).
+                        await audioElement.play(); 
+                        
+                        // 2. Playback started successfully. Attach listener for when the sound completes.
+                        // We resolve the outer Promise only when the media's 'ended' event fires.
+                        audioElement.onended = resolve; 
+
+                    } catch (error) {
+                        // 3. Playback failed. Reject the wrapper Promise with the underlying error.
+                        reject(error);
+                    }
+                });
+            }
+
+
             // --- Updated Event Listeners ---
-            if (yesButton) {
-                // Make the event listener ASYNC to allow for 'await'
-                yesButton.addEventListener('click', async () => {
+            if (yesButton && audio) {
+                yesButton.addEventListener('click', async (event) => {
+                    // Prevent any quick redirects/form submits to ensure the user gesture
+                    // is immediately consumed by audio.play()
+                    event.preventDefault(); 
                     
-                    // --- Disable buttons ---
+                    // --- Disable buttons and provide feedback ---
                     yesButton.disabled = true;
                     noButton.disabled = true;
-                    yesButton.textContent = 'Entering...';
+                    yesButton.textContent = 'Authenticating...';
 
-                    // Set the session storage flag
+                    // Set the session storage flag BEFORE redirection (for app.html check)
                     sessionStorage.setItem('isVerified', 'true');
                     
-                    let redirected = false;
-                    const redirectToApp = () => {
-                        if (!redirected) {
-                            redirected = true;
-                            window.location.href = appUrl;
+                    try {
+                        // Await the full playback and completion (guaranteed full 5 seconds)
+                        await playAudioAndAwaitEnd(audio); 
+                        
+                        // 4. Playback finished successfully. Proceed to the main application.
+                        window.location.href = appUrl;
+
+                    } catch (error) {
+                        // 5. Playback failure caught (Promise rejection)
+                        console.warn("Audio playback failure caught.", error);
+                        
+                        // If browser policy specifically blocked playback (NotAllowedError),
+                        // we must immediately redirect the user as a graceful fallback.
+                        if (error.name === 'NotAllowedError') {
+                            console.warn('Browser policy blocked audible media. Implementing immediate fallback redirection.');
+                        } else {
+                            console.error('Unexpected audio error during playback attempt:', error);
                         }
-                    };
-
-                    // 1. Set a fallback timer. This will run no matter what,
-                    // ensuring the user gets redirected even if audio fails.
-                    setTimeout(redirectToApp, 3000); // 3-second max wait
-
-                    if (audio) {
-                        try {
-                            // 2. Add an event listener for when the audio *finishes* playing
-                            // This is the "happy path" - audio plays, then redirect.
-                            // If the audio file is 3s, this will fire around the
-                            // same time as the timeout.
-                            audio.addEventListener('ended', redirectToApp);
-
-                            // 3. Try to play the audio
-                            await audio.play();
-                            
-                            // If audio.play() succeeds, the 'ended' listener
-                            // will fire when the sound is done.
-
-                        } catch (error) {
-                            // If audio.play() *itself* throws an error (e.g., browser policy)
-                            // log it, but the 3-second fallback timer
-                            // is already running, so the user will still be redirected.
-                            console.warn("Audio playback failed:", error);
-                        }
+                        
+                        // Fallback: Redirect without playing audio if it fails to start.
+                        window.location.href = appUrl;
                     }
                 });
             }
 
             if (noButton) {
                 noButton.addEventListener('click', () => {
-                    // Redirect to the exit URL
+                    // Redirect to the exit URL (still synchronous and safe)
                     window.location.href = exitUrl;
                 });
             }
