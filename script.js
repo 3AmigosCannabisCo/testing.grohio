@@ -4,7 +4,7 @@
  *
  * This file contains all JavaScript for the GROHIO platform.
  * It is loaded as a "module" to support Firebase 'import' statements.
- * The entire application is wrapped in an IIFE (Immediately Invoked
+ * The entire application is wrapped in an IIFE (Immediately Implemented
  * Function Expression) to prevent polluting the global namespace.
  *
  * v19.0 Changes:
@@ -20,7 +20,7 @@
 //
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-// Import Firestore functions we *would* use for the community tab
+// Import Firestore functions 
 import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp, doc, setDoc, getDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 //
