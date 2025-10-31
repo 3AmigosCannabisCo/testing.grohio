@@ -4,42 +4,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 - Page Not Found</title>
-    <!-- Load Tailwind for button styling -->
+    <!-- Load Tailwind for styling the button and layout -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
-        /* Add your GROHIO colors for consistent branding */
+        /* GROHIO Colors (Must be defined here for 404 page) */
         :root {
             --grohio-red: #ff3162;
-            --grohio-blue: #00bfff;
             --color-bg: #000000;
+            --shadow-red: rgba(255, 49, 98, 0.5);
         }
-        .text-brand-red { color: var(--grohio-red); }
-        .border-brand-blue { border-color: var(--grohio-blue); }
-        .shadow-brand-red { box-shadow: 0 0 15px rgba(255, 49, 98, 0.5); } /* Red Shadow */
+        
+        /* Set body to full screen and black background */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-bg);
+            color: #ffffff;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            position: relative; 
+            
+            /* CRITICAL: Use Flexbox to manage the single content item (the button) relative to the screen */
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center horizontally */
+            
+            /* CRITICAL: Set background image properties (from your latest file) */
+            background-image: url('https://3amigoscannabisco.github.io/testing.grohio/bones.png');
+            background-size: contain; /* The entire image is visible, fits within screen */
+            background-position: center center;
+            background-repeat: no-repeat;
+        }
+
+        /* Styles for the button (Red Neon Glow) */
+        .neon-button {
+            background-color: var(--grohio-red);
+            text-shadow: 0 0 5px var(--grohio-red);
+            box-shadow: 0 0 15px var(--shadow-red);
+        }
+        
+        /* Positioning the button at the very bottom, centered horizontally */
+        .bottom-center-button {
+            position: absolute;
+            bottom: 4%; /* A slight offset from the very bottom for padding */
+            left: 50%;
+            transform: translateX(-50%); /* Centers the button horizontally */
+            z-index: 10;
+        }
+        
     </style>
 </head>
-<body class="bg-black text-gray-300 min-h-screen relative flex flex-col items-center justify-center p-4 font-sans">
-
-    <!-- Image container is centered -->
-    <div class="text-center">
-        
-        <!-- Image with custom 404 art -->
-        <img src="./bones.png" 
-             alt="Custom 404 Error: Bones" 
-             class="mx-auto h-auto mb-8 max-w-full"
-             style="filter: drop-shadow(0 0 15px rgba(0, 191, 255, 0.5));" 
-             onerror="this.style.display='none';">
-
-    </div>
+<body>
     
-    <!-- Button Container: positioned absolutely to the bottom left -->
-    <div class="absolute bottom-4 left-4 md:bottom-8 md:left-8">
+    <!-- Button Container: positioned absolutely bottom-center -->
+    <div class="bottom-center-button">
         <!-- Return to Homepage Button - RED NEON -->
-        <a href="./index.html" class="inline-block px-8 py-4 
-           bg-[var(--grohio-red)] text-black font-extrabold uppercase 
+        <a href="./index.html" class="neon-button inline-block px-8 py-4 
+           text-black font-extrabold uppercase 
            rounded-full transition duration-200 
            hover:bg-[#ff507c] hover:shadow-lg 
-           shadow-brand-red text-lg tracking-wider">
+           text-lg tracking-wider">
             Return to Homepage &rarr;
         </a>
     </div>
