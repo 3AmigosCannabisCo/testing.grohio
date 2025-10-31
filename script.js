@@ -1,5 +1,5 @@
 /**
- * GROHIO v16.0: "Amigo's Notebook" Edition
+ * GROHIO v17.0: "Amigo's Notebook" Edition
  * Main Application Logic (script.js)
  *
  * This file contains all JavaScript for the GROHIO platform.
@@ -7,11 +7,10 @@
  * The entire application is wrapped in an IIFE (Immediately Invoked
  * Function Expression) to prevent polluting the global namespace.
  *
- * v17.0 (Local) Changes:
- * - REMOVED: All Gemini API, search modal, and search bar code for security.
- * - ADDED: Gallery persistence using localStorage.
- * - FIXED: Moved all DOM element queries inside onDOMLoaded to prevent
- * race conditions and ensure all elements are found.
+ * v19.0 Changes:
+ * - ADDED: Full, functional Firebase persistence for all Calculators and the Community Journal.
+ * - ADDED: Real-time listener (onSnapshot) to load and display all community posts.
+ * - UPDATED: handleJournalSubmit now correctly writes to the Public Firestore path.
  */
 
 //
@@ -22,7 +21,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 // Import Firestore functions we *would* use for the community tab
-import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp, doc, setDoc, getDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 //
 // =========================================
@@ -59,7 +58,22 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
     let imageUploadBtn, galleryGrid, galleryMessage;
 
     // --- NEW: Community Elements (v16.0) ---
-    let journalForm, journalTitle, journalBody, journalSubmitMessage;
+    let journalForm, journalTitle, journalBody, journalSubmitMessage, communityFeedContainer;
+
+    // --- NEW: Map of all input IDs for persistence ---
+    const ALL_CALC_INPUT_IDS = [
+        // VPD
+        'temp-c', 'rh',
+        // PPM
+        'ec-input', 'ppm-scale',
+        // DLI
+        'ppfd-input', 'hours-on-input',
+        // COST
+        'cost-onetime-tent', 'cost-onetime-light', 'cost-onetime-other', 
+        'cost-recurring-seeds', 'cost-recurring-soil', 'cost-recurring-nutrients',
+        'cost-light-watts', 'cost-kwh-rate', 'cost-total-days',
+        'cost-yield-grams', 'cost-dispensary-price'
+    ];
 
     //
     // =========================================
@@ -68,25 +82,44 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
     //
 
     /**
-     * @description Implements exponential backoff for retrying a failed async function.
-     * This function is no longer used since removing Gemini, but is good utility.
+     * @description Simple debounce utility to limit the rate of function calls.
      */
-    function exponentialBackoff(fn, maxRetries = 5, delay = 500) {
-        return async function retryWrapper(...args) {
-            for (let i = 0; i < maxRetries; i++) {
-                try {
-                    // Try to execute the function
-                    return await fn.apply(this, args);
-                } catch (error) {
-                    // If this was the last retry, throw the error
-                    if (i === maxRetries - 1) throw error;
-                    
-                    const waitTime = delay * Math.pow(2, i) + Math.random() * delay;
-                    await new Promise(resolve => setTimeout(resolve, waitTime));
-                }
-            }
+    function debounce(func, timeout = 500) {
+        let timer;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => { func.apply(this, args); }, timeout);
         };
     }
+    
+    /**
+     * @description Formats a Firestore Timestamp object into a readable "X time ago" string.
+     * @param {object} timestamp - Firestore Timestamp object.
+     * @returns {string} - Formatted time string.
+     */
+    function timeSince(timestamp) {
+        if (!timestamp || !timestamp.toDate) return 'Just now';
+        
+        const seconds = Math.floor((new Date() - timestamp.toDate()) / 1000);
+
+        let interval = seconds / 31536000;
+        if (interval > 1) return Math.floor(interval) + " years ago";
+        
+        interval = seconds / 2592000;
+        if (interval > 1) return Math.floor(interval) + " months ago";
+        
+        interval = seconds / 86400;
+        if (interval > 1) return Math.floor(interval) + " days ago";
+        
+        interval = seconds / 3600;
+        if (interval > 1) return Math.floor(interval) + " hours ago";
+        
+        interval = seconds / 60;
+        if (interval > 1) return Math.floor(interval) + " minutes ago";
+        
+        return "Just now";
+    }
+
 
     //
     // =========================================
@@ -141,7 +174,7 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
     
     //
     // =========================================
-    // FIREBASE SETUP
+    // FIREBASE SETUP & PERSISTENCE
     // =========================================
     //
     
@@ -153,6 +186,144 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
     let userId = 'anon_user';
     /** @type {string} */
     let appId = 'default-app-id'; // Store appId for Firestore path
+    let isFirebaseReady = false;
+
+    /**
+     * @description Saves the current state of all calculator inputs to Firestore.
+     */
+    const saveAllInputs = debounce(async () => {
+        if (!isFirebaseReady) return; // Only save if authentication succeeded
+
+        try {
+            const inputs = {};
+            
+            // 1. Collect all input values
+            ALL_CALC_INPUT_IDS.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    // Save the value directly (Firebase can handle strings/numbers)
+                    inputs[id] = element.value; 
+                }
+            });
+            
+            // 2. Define the Firestore path (Private Data)
+            const docRef = doc(db, `/artifacts/${appId}/users/${userId}/app_data/calculator_inputs`);
+            
+            // 3. Write the data
+            await setDoc(docRef, inputs, { merge: true });
+            // console.log("Calculator data saved successfully.");
+
+        } catch (e) {
+            console.error("Error saving calculator data:", e);
+        }
+    }, 1000); // Debounce for 1 second
+
+    /**
+     * @description Loads saved calculator inputs from Firestore and updates the UI.
+     */
+    async function loadAllInputs() {
+        if (!isFirebaseReady) return; // Only load if authentication succeeded
+        
+        try {
+            // 1. Define the Firestore path
+            const docRef = doc(db, `/artifacts/${appId}/users/${userId}/app_data/calculator_inputs`);
+            
+            // 2. Fetch the data
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                // console.log("Calculator data loaded:", data);
+
+                // 3. Apply loaded data to the inputs
+                ALL_CALC_INPUT_IDS.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element && data[id] !== undefined) {
+                        element.value = data[id];
+                    }
+                });
+            } else {
+                // console.log("No saved calculator data found.");
+            }
+
+            // 4. Recalculate all output fields based on the restored (or default) values
+            calculateVPD();
+            convertPPM();
+            calculateDLI();
+            calculateCost();
+
+        } catch (e) {
+            console.error("Error loading calculator data:", e);
+        }
+    }
+
+    /**
+     * @description Renders a single journal entry HTML element.
+     * @param {object} post - The Firestore document data for a post.
+     * @returns {string} - The HTML string for the entry.
+     */
+    function renderJournalEntry(post) {
+        // Use the last 4 characters of the userId for a unique, anonymous identifier
+        const displayId = post.authorId ? `User ...${post.authorId.substring(post.authorId.length - 4)}` : 'Anonymous';
+        const postTime = timeSince(post.createdAt);
+
+        return `
+            <div class="journal-entry">
+                <div class="journal-meta">
+                    <h4 class="text-brand-blue text-xl font-bold m-0">${post.title}</h4>
+                    <span class="text-sm text-gray-500">Posted by: ${displayId} (${postTime})</span>
+                </div>
+                <div class="journal-body">
+                    <p>${post.body.replace(/\n/g, '<br>')}</p>
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * @description Sets up the real-time listener for the public community journal posts.
+     */
+    function setupCommunityListener() {
+        if (!isFirebaseReady || !communityFeedContainer) return;
+        
+        // 1. Define the public collection path
+        const collectionPath = `/artifacts/${appId}/public/data/journals`;
+        const q = query(collection(db, collectionPath));
+        // NOTE: Sorting is done client-side to maintain a responsive app on static hosting.
+
+        // 2. Attach the real-time listener
+        onSnapshot(q, (snapshot) => {
+            let posts = [];
+            snapshot.forEach(doc => {
+                posts.push({ id: doc.id, ...doc.data() });
+            });
+            
+            // 3. Sort posts by creation date (newest first)
+            posts.sort((a, b) => {
+                const dateA = a.createdAt ? a.createdAt.toDate().getTime() : 0;
+                const dateB = b.createdAt ? b.createdAt.toDate().getTime() : 0;
+                return dateB - dateA; // Descending order
+            });
+
+            // 4. Render posts
+            let html = '';
+            
+            // Add a friendly welcome/loading message if empty
+            if (posts.length === 0) {
+                 html = `<p class="text-center text-gray-600 italic mt-8">Be the first to share your grow journal!</p>`;
+            } else {
+                 posts.forEach(post => {
+                    html += renderJournalEntry(post);
+                 });
+            }
+
+            // Update the display area
+            communityFeedContainer.innerHTML = html;
+        }, (error) => {
+            console.error("Error listening to community feed:", error);
+            communityFeedContainer.innerHTML = `<p class="text-center text-brand-red italic mt-8">Error loading community posts. Check console.</p>`;
+        });
+    }
 
     /**
      * @description Initializes the Firebase app, database, and auth.
@@ -168,7 +339,14 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
             if (!firebaseConfigStr) {
                 console.warn("Firebase config not found. Running in Offline Mode.");
                 if(userIdDisplay) userIdDisplay.textContent = 'Data: Offline Mode';
-                return; // Exit if firebase config isn't present
+                isFirebaseReady = false;
+                
+                // Still run calculations with defaults if offline
+                calculateVPD();
+                convertPPM();
+                calculateDLI();
+                calculateCost(); 
+                return; 
             }
             
             // 3. Initialize Firebase App
@@ -191,21 +369,30 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
 
             // 5. Set and display the User ID
             userId = auth.currentUser?.uid || 'anon_' + crypto.randomUUID();
+            isFirebaseReady = true; // Set flag after successful auth
             
             if (userIdDisplay) {
                 userIdDisplay.textContent = `Active User ID: ${userId}`;
             }
 
+            // 6. Load persisted data and then run calculations
+            await loadAllInputs();
+            
+            // 7. Start listening to public community posts
+            setupCommunityListener();
+
+
         } catch (e) {
             console.error("Firebase Initialization Error:", e);
             if(userIdDisplay) userIdDisplay.textContent = 'Authentication Failed (Check Console)';
+            isFirebaseReady = false;
         }
     }
 
 
     //
     // =========================================
-    // CALCULATOR LOGIC
+    // CALCULATOR LOGIC (Runs client-side)
     // =========================================
     //
 
@@ -288,7 +475,8 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
     function calculateCost() {
         // Guard clause: Check if all elements exist
         if (Object.values(costInputs).some(el => !el) || Object.values(costOutputs).some(el => !el)) {
-            console.error("CRITICAL: Cost calculator elements are missing!");
+            // Error is okay if run *before* onDOMLoaded assigns elements
+            // console.error("CRITICAL: Cost calculator elements are missing!");
             return;
         }
 
@@ -313,10 +501,12 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
         const vegDays = Math.min(totalDays, 28);
         const flowerDays = Math.max(0, totalDays - vegDays);
         
+        // Assuming 18h light in veg, 12h light in flower
         const vegKwh = (lightWatts * 18 * vegDays) / 1000;
         const flowerKwh = (lightWatts * 12 * flowerDays) / 1000;
         const totalKwh = vegKwh + flowerKwh;
-        const totalKwhWithFans = totalKwh * 1.15;
+        // Add 15% overhead for fans/pumps/controllers
+        const totalKwhWithFans = totalKwh * 1.15; 
         const electricCost = totalKwhWithFans * kwhRateDollars;
         
         const totalOnetimeCost = onetimeTent + onetimeLight + onetimeOther;
@@ -347,6 +537,7 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
     //
     // =========================================
     // NEW: INTERACTIVE GALLERY LOGIC (v16.0)
+    // (Unchanged from previous versions)
     // =========================================
     //
     
@@ -498,15 +689,12 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
     
     //
     // =========================================
-    // NEW: COMMUNITY JOURNAL LOGIC (v16.0)
+    // NEW: COMMUNITY JOURNAL LOGIC (v19.0 - LIVE)
     // =========================================
     //
     
     /**
      * @description Handles the submission of the new journal entry form.
-     * This is a *concept* and does not write to Firestore yet, but
-     * it shows the UI/UX and where the Firestore code *would* go.
-     * @param {Event} event - The 'submit' event from the form.
      */
     async function handleJournalSubmit(event) {
         event.preventDefault(); // Stop the form from reloading the page
@@ -516,8 +704,8 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
              return;
         }
         
-        // Check if Firebase is ready
-        if (!db || !auth.currentUser) {
+        // Check if Firebase is ready and the user is authenticated
+        if (!isFirebaseReady || !auth.currentUser) {
             console.warn("Firebase not ready. Cannot submit journal.");
             if(journalSubmitMessage) {
                 journalSubmitMessage.textContent = 'Error: Not connected to server. Please wait.';
@@ -537,34 +725,29 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
             return;
         }
         
-        // Show a temporary success message
+        // Show submitting message
         journalSubmitMessage.textContent = 'Submitting...';
         journalSubmitMessage.classList.remove('hidden', 'text-brand-red');
         journalSubmitMessage.classList.add('text-brand-green');
 
         
-        // --- THIS IS THE REAL FIRESTORE LOGIC ---
-        // This is currently commented out to prevent errors in an
-        // environment without write rules, but this is how it would work.
-        
-        /*
         try {
-            // This is the path for a *public* collection for this app
-            // We use the `appId` and `userId` variables we stored earlier.
+            // This is the public path for this app's shared data
             const collectionPath = `/artifacts/${appId}/public/data/journals`;
             
             // This is the data we will send
             const postData = {
                 title: title,
                 body: body,
+                // Shorten the ID for display purposes, but save the full ID for reference
                 authorId: userId,
                 createdAt: serverTimestamp() // Uses the server's time
             };
             
-            // This line writes the data to the database
-            const docRef = await addDoc(collection(db, collectionPath), postData);
+            // Write the data to the database
+            await addDoc(collection(db, collectionPath), postData);
             
-            console.log("Document written with ID: ", docRef.id);
+            // console.log("Document written with ID: ", docRef.id);
             
             // Real success message
             journalSubmitMessage.textContent = 'Post Submitted Successfully!';
@@ -574,6 +757,12 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
             // Clear the form
             journalTitle.value = '';
             journalBody.value = '';
+            
+            // Hide message after 3 seconds
+            setTimeout(() => {
+                journalSubmitMessage.classList.add('hidden');
+            }, 3000);
+
 
         } catch (e) {
             console.error("Error adding document: ", e);
@@ -581,23 +770,6 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
             journalSubmitMessage.classList.remove('hidden', 'text-brand-green');
             journalSubmitMessage.classList.add('text-brand-red');
         }
-        */
-        
-        // --- Mock-up behavior (for demonstration) ---
-        // We'll simulate a 1-second network delay
-        setTimeout(() => {
-            journalSubmitMessage.textContent = 'Post Submitted (Concept)!';
-            journalSubmitMessage.classList.remove('hidden', 'text-brand-red');
-            journalSubmitMessage.classList.add('text-brand-green');
-            journalTitle.value = '';
-            journalBody.value = '';
-            
-            // Hide message after 3 seconds
-            setTimeout(() => {
-                journalSubmitMessage.classList.add('hidden');
-            }, 3000);
-            
-        }, 1000);
     }
     
     
@@ -614,7 +786,6 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
     function onDOMLoaded() {
         
         // --- 1. DOM VARIABLE ASSIGNMENT ---
-        // Now that the DOM is loaded, we can safely find all our elements.
         
         sections = document.querySelectorAll('.content-section');
         navButtons = document.querySelectorAll('nav .nav-btn');
@@ -667,22 +838,17 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
         journalTitle = document.getElementById('journal-title');
         journalBody = document.getElementById('journal-body');
         journalSubmitMessage = document.getElementById('journal-submit-message');
+        // CRITICAL: We need a dedicated container to inject the live posts
+        communityFeedContainer = document.getElementById('community-feed-container'); 
 
         
         // --- 2. INITIALIZATION ---
         
-        // Initialize Firebase for user authentication
+        // Initialize Firebase (and triggers loading of data + initial calculations/listeners)
         initFirebase();
         
-        // Load gallery from storage
+        // Load gallery from storage (uses localStorage, not Firebase)
         loadGalleryFromStorage();
-        
-        // Run all calculators once on load to populate them
-        // with the default values from the HTML.
-        calculateVPD();
-        convertPPM();
-        calculateDLI();
-        calculateCost(); 
 
         
         // --- 3. ADD EVENT LISTENERS ---
@@ -704,18 +870,32 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
             });
         }
         
-        // Grow Tools Calculator Listeners
-        if (tempCInput) tempCInput.addEventListener('input', calculateVPD);
-        if (rhInput) rhInput.addEventListener('input', calculateVPD);
-        if (ecInput) ecInput.addEventListener('input', convertPPM);
-        if (ppmScaleSelect) ppmScaleSelect.addEventListener('change', convertPPM);
-        if (ppfdInput) ppfdInput.addEventListener('input', calculateDLI);
-        if (hoursOnInput) hoursOnInput.addEventListener('input', calculateDLI);
+        // --- Calculator Listeners (Now call persistence logic on change) ---
+
+        // Combined listeners for all Grow Tools (VPD, PPM, DLI)
+        const allToolInputs = [tempCInput, rhInput, ecInput, ppmScaleSelect, ppfdInput, hoursOnInput];
+        allToolInputs.forEach(input => {
+            if (input) {
+                input.addEventListener('input', () => {
+                    // Recalculate the relevant tool
+                    if (input.id === 'temp-c' || input.id === 'rh') calculateVPD();
+                    if (input.id === 'ec-input' || input.id === 'ppm-scale') convertPPM();
+                    if (input.id === 'ppfd-input' || input.id === 'hours-on-input') calculateDLI();
+                    
+                    // Save all inputs to Firestore (debounced)
+                    saveAllInputs();
+                });
+            }
+        });
         
         // Cost Calculator Listeners
         Object.values(costInputs).forEach(input => {
             if (input) {
-                input.addEventListener('input', calculateCost);
+                input.addEventListener('input', () => {
+                    // Recalculate and save all inputs (debounced)
+                    calculateCost();
+                    saveAllInputs();
+                });
             }
         });
         
@@ -724,7 +904,7 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp } from "
             imageUploadBtn.addEventListener('change', handleImageUpload);
         }
         
-        // Community Listener
+        // Community Listener (LIVE)
         if (journalForm) {
             journalForm.addEventListener('submit', handleJournalSubmit);
         }
