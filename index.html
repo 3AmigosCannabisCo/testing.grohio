@@ -197,17 +197,16 @@
             const dolphinSequence = document.getElementById('dolphin-sequence');
 
 
-            // FIX: This logic is now more robust to handle all path cases
-            // (e.g., /testing.grohio, /testing.grohio/, /testing.grohio/index.html)
+            // Path logic to determine the correct target URL for app.html
             let currentPath = window.location.pathname; 
 
             // 1. If it ends with a file (like index.html), get the parent directory
             if (currentPath.endsWith('/index.html')) {
-                currentPath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1); // e.g., /testing.grohio/
+                currentPath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1); 
             }
             // 2. If it does NOT end with a slash (e.g., /testing.grohio), add one
             else if (!currentPath.endsWith('/')) {
-                currentPath = currentPath + '/'; // e.g., /testing.grohio -> /testing.grohio/
+                currentPath = currentPath + '/'; 
             }
             // 3. If it already ends with a slash (e.g., /testing.grohio/), it's perfect.
             
@@ -250,7 +249,6 @@
                     if (audio) {
                         try {
                             // 2. Add an event listener for when the audio *finishes* playing
-                            // If audio is shorter than 3s, this will fire first.
                             audio.addEventListener('ended', redirectToApp);
 
                             // 3. Try to play the audio
@@ -259,7 +257,6 @@
                         } catch (error) {
                             // If audio.play() *itself* throws an error (e.g., browser policy)
                             console.warn("Audio playback failed:", error);
-                            // The 3-second fallback timer is already running.
                         }
                     }
                 });
