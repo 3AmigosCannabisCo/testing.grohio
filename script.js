@@ -11,6 +11,8 @@
  * - ADDED: Full, functional Firebase persistence for all Calculators and the Community Journal.
  * - ADDED: Real-time listener (onSnapshot) to load and display all community posts.
  * - UPDATED: handleJournalSubmit now correctly writes to the Public Firestore path.
+ * * Final Polish Edits (From Code Partner):
+ * - Minor cleanup in loadGalleryFromStorage for placeholder removal logic.
  */
 
 //
@@ -537,7 +539,6 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp, doc, se
     //
     // =========================================
     // NEW: INTERACTIVE GALLERY LOGIC (v16.0)
-    // (Unchanged from previous versions)
     // =========================================
     //
     
@@ -580,7 +581,7 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp, doc, se
             const storedImages = JSON.parse(localStorage.getItem('grohioGallery') || '[]');
             
             if (storedImages.length > 0) {
-                // Remove the placeholder if we are loading saved images
+                // Remove the placeholder immediately if we have saved images to load
                 const placeholder = galleryGrid.querySelector('.placeholder');
                 if (placeholder) {
                     placeholder.remove();
