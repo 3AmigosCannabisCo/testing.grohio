@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Sign the user in anonymously on load
   signInAnonymously(auth).catch((error) => {
     console.error("Anonymous Auth Error:", error);
-    userIdDisplay.textContent = 'Auth Failed. Refresh.';
+    userIdDisplay.textContent = 'Puting Failed. Refresh.';
   });
 
   // Listen for auth state changes
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (user) {
       // User is signed in
       currentUserId = user.uid;
-      userIdDisplay.textContent = `User ID: ${currentUserId}`;
+      userIdDisplay.textContent = `Computers Puting ✔️: ${currentUserId}`;
 
       // User is authenticated, now we can load their data and community data
       loadCommunityFeed();
@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       // User is signed out
       currentUserId = null;
-      userIdDisplay.textContent = 'Not Authenticated';
+      userIdDisplay.textContent = 'Does Not Compute';
     }
   });
 
