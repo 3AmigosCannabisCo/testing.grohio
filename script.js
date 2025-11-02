@@ -1,921 +1,630 @@
-/**
- * GROHIO v17.0: "Amigo's Notebook" Edition
- * Main Application Logic (script.js)
- *
- * This file contains all JavaScript for the GROHIO platform.
- * It is loaded as a "module" to support Firebase 'import' statements.
- * The entire application is wrapped in an IIFE (Immediately Implemented
- * Function Expression) to prevent polluting the global namespace.
- *
- * v19.0 Changes:
- * - ADDED: Full, functional Firebase persistence for all Calculators and the Community Journal.
- * - ADDED: Real-time listener (onSnapshot) to load and display all community posts.
- * - UPDATED: handleJournalSubmit now correctly writes to the Public Firestore path.
- * * Final Polish Edits (From Code Partner):
- * - Minor cleanup in loadGalleryFromStorage for placeholder removal logic.
- */
+// --- FILE: script.js ---
+// This is the "brain" of your app. It handles Firebase connection,
+// authentication, database posts, image uploads, and all user interactions.
 
-//
-// =========================================
-// FIREBASE IMPORTS
-// =========================================
-//
+// 1. IMPORT FIREBASE SERVICES
+// We use the modern "ESM" (ECMAScript Modules) to only load what we need.
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-// Import Firestore functions 
-import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp, doc, setDoc, getDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import {
+  getAuth,
+  signInAnonymously,
+  onAuthStateChanged,
+} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  addDoc,
+  getDoc,
+  getDocs,
+  collection,
+  query,
+  where,
+  onSnapshot,
+  serverTimestamp,
+  orderBy,
+  updateDoc,
+} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
+// 2. INITIALIZE FIREBASE
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+// --- !! CRITICAL !! ---
 //
-// =========================================
-// IIFE WRAPPER
-// =========================================
+// THIS IS THE SPOT!
 //
-(function() {
-    
-    /**
-     * @description A "strict mode" directive to enforce cleaner code and prevent common errors.
-     */
-    'use strict';
+// Paste your firebaseConfig object from your Firebase project
+// settings right here, replacing the placeholder keys.
+//
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+const firebaseConfig = {
+  apiKey: "AIzaSyCohZppMXwTkCUxq-bpcKtOwhQmhiZvW34",
+  authDomain: "grohio-3amigos.firebaseapp.com",
+  projectId: "grohio-3amigos",
+  storageBucket: "grohio-3amigos.firebasestorage.app",
+  messagingSenderId: "985498353759",
+  appId: "1:985498353759:web:954433dce5869ab60fdbea",
+  measurementId: "G-N6R2H9PWN6"
+};
 
-    //
-    // =========================================
-    // GLOBAL CONSTANTS & DOM REFERENCES
-    // =========================================
-    //
-    // We declare all our variables here in the main scope
-    // so all functions can access them.
-    // We will *assign* them inside onDOMLoaded.
-    
-    let sections, navButtons, internalNavButtons, userIdDisplay;
-    
-    // --- Grow Tools Calculator Elements ---
-    let tempCInput, rhInput, vpdOutput, ecInput, ppmScaleSelect, ppmOutput,
-        ppfdInput, hoursOnInput, dliOutput;
+// Initialize Firebase services
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
 
-    // --- Cost Calculator Elements ---
-    let costInputs = {};
-    let costOutputs = {};
+// Global variable to hold the current user's ID
+let currentUserId = null;
 
-    // --- NEW: Gallery Elements (v16.0) ---
-    let imageUploadBtn, galleryGrid, galleryMessage;
+// 3. CORE APP LOGIC
+document.addEventListener('DOMContentLoaded', () => {
+  // Grab all the key elements from app.html
+  const navButtons = document.querySelectorAll('.nav-btn');
+  const internalNavButtons = document.querySelectorAll('.nav-btn-internal');
+  const contentSections = document.querySelectorAll('.content-section');
+  const userIdDisplay = document.getElementById('user-id-display');
 
-    // --- NEW: Community Elements (v16.0) ---
-    let journalForm, journalTitle, journalBody, journalSubmitMessage, communityFeedContainer;
+  // --- Handle Navigation ---
+  function showSection(sectionId) {
+    // Hide all sections
+    contentSections.forEach(section => {
+      section.classList.add('hidden');
+    });
 
-    // --- NEW: Map of all input IDs for persistence ---
-    const ALL_CALC_INPUT_IDS = [
-        // VPD
-        'temp-c', 'rh',
-        // PPM
-        'ec-input', 'ppm-scale',
-        // DLI
-        'ppfd-input', 'hours-on-input',
-        // COST
-        'cost-onetime-tent', 'cost-onetime-light', 'cost-onetime-other', 
-        'cost-recurring-seeds', 'cost-recurring-soil', 'cost-recurring-nutrients',
-        'cost-light-watts', 'cost-kwh-rate', 'cost-total-days',
-        'cost-yield-grams', 'cost-dispensary-price'
-    ];
+    // Deactivate all nav buttons
+    navButtons.forEach(btn => {
+      btn.classList.remove('active');
+    });
 
-    //
-    // =========================================
-    // CORE UTILITY FUNCTIONS
-    // =========================================
-    //
-
-    /**
-     * @description Simple debounce utility to limit the rate of function calls.
-     */
-    function debounce(func, timeout = 500) {
-        let timer;
-        return (...args) => {
-            clearTimeout(timer);
-            timer = setTimeout(() => { func.apply(this, args); }, timeout);
-        };
-    }
-    
-    /**
-     * @description Formats a Firestore Timestamp object into a readable "X time ago" string.
-     * @param {object} timestamp - Firestore Timestamp object.
-     * @returns {string} - Formatted time string.
-     */
-    function timeSince(timestamp) {
-        if (!timestamp || !timestamp.toDate) return 'Just now';
-        
-        const seconds = Math.floor((new Date() - timestamp.toDate()) / 1000);
-
-        let interval = seconds / 31536000;
-        if (interval > 1) return Math.floor(interval) + " years ago";
-        
-        interval = seconds / 2592000;
-        if (interval > 1) return Math.floor(interval) + " months ago";
-        
-        interval = seconds / 86400;
-        if (interval > 1) return Math.floor(interval) + " days ago";
-        
-        interval = seconds / 3600;
-        if (interval > 1) return Math.floor(interval) + " hours ago";
-        
-        interval = seconds / 60;
-        if (interval > 1) return Math.floor(interval) + " minutes ago";
-        
-        return "Just now";
+    // Show the target section
+    const activeSection = document.getElementById(sectionId);
+    if (activeSection) {
+      activeSection.classList.remove('hidden');
     }
 
-
-    //
-    // =========================================
-    // NAVIGATION & UI CONTROL
-    // =========================================
-    //
-
-    /**
-     * @description Hides all content sections and shows the one with the matching ID.
-     * Also updates the navigation buttons to set the 'active' class.
-     * @param {string} id - The 'data-section' ID of the section to show (e.g., "home", "legal").
-     */
-    function showSection(id) {
-        if (!sections || sections.length === 0) {
-             console.error("CRITICAL: Content sections not found!");
-             return;
-        }
-        
-        // 1. Hide all sections
-        sections.forEach(section => {
-            section.classList.add('hidden');
-        });
-
-        // 2. Find and show the active section
-        const activeSection = document.getElementById(id);
-        
-        if (activeSection) {
-            activeSection.classList.remove('hidden');
-        } else {
-             // Fallback to home if section not found (e.g., bad link)
-             const homeSection = document.getElementById('home');
-             if (homeSection) homeSection.classList.remove('hidden');
-             id = 'home'; // Ensure nav button logic below highlights 'home'
-        }
-        
-        if (!navButtons || navButtons.length === 0) {
-            console.error("CRITICAL: Nav buttons not found!");
-            return;
-        }
-
-        // 3. Update navigation button styles
-        navButtons.forEach(btn => {
-            btn.classList.remove('active');
-            if (btn.dataset.section === id) {
-                btn.classList.add('active');
-            }
-        });
-        
-        // 4. Scroll to the top of the page
-        window.scrollTo(0, 0); 
+    // Activate the corresponding nav button
+    const activeButton = document.querySelector(`.nav-btn[data-section="${sectionId}"]`);
+    if (activeButton) {
+      activeButton.classList.add('active');
     }
-    
-    //
-    // =========================================
-    // FIREBASE SETUP & PERSISTENCE
-    // =========================================
-    //
-    
-    /** @type {import("firebase/firestore").Firestore} */
-    let db;
-    /** @type {import("firebase/auth").Auth} */
-    let auth;
-    /** @type {string} */
-    let userId = 'anon_user';
-    /** @type {string} */
-    let appId = 'default-app-id'; // Store appId for Firestore path
-    let isFirebaseReady = false;
+  }
 
-    /**
-     * @description Saves the current state of all calculator inputs to Firestore.
-     */
-    const saveAllInputs = debounce(async () => {
-        if (!isFirebaseReady) return; // Only save if authentication succeeded
+  // Add click listeners to top nav buttons
+  navButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const sectionId = button.getAttribute('data-section');
+      showSection(sectionId);
+    });
+  });
 
-        try {
-            const inputs = {};
-            
-            // 1. Collect all input values
-            ALL_CALC_INPUT_IDS.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) {
-                    // Save the value directly (Firebase can handle strings/numbers)
-                    inputs[id] = element.value; 
-                }
-            });
-            
-            // 2. Define the Firestore path (Private Data)
-            const docRef = doc(db, `/artifacts/${appId}/users/${userId}/app_data/calculator_inputs`);
-            
-            // 3. Write the data
-            await setDoc(docRef, inputs, { merge: true });
-            // console.log("Calculator data saved successfully.");
+  // Add click listeners to internal nav buttons (e.g., "View Ohio Grow Laws")
+  internalNavButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const sectionId = button.getAttribute('data-section');
+      showSection(sectionId);
+    });
+  });
 
-        } catch (e) {
-            console.error("Error saving calculator data:", e);
-        }
-    }, 1000); // Debounce for 1 second
+  // --- Firebase Authentication ---
+  // Sign the user in anonymously on load
+  signInAnonymously(auth).catch((error) => {
+    console.error("Anonymous Auth Error:", error);
+    userIdDisplay.textContent = 'Auth Failed. Refresh.';
+  });
 
-    /**
-     * @description Loads saved calculator inputs from Firestore and updates the UI.
-     */
-    async function loadAllInputs() {
-        if (!isFirebaseReady) return; // Only load if authentication succeeded
-        
-        try {
-            // 1. Define the Firestore path
-            const docRef = doc(db, `/artifacts/${appId}/users/${userId}/app_data/calculator_inputs`);
-            
-            // 2. Fetch the data
-            const docSnap = await getDoc(docRef);
+  // Listen for auth state changes
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // User is signed in
+      currentUserId = user.uid;
+      userIdDisplay.textContent = `User ID: ${currentUserId}`;
 
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                // console.log("Calculator data loaded:", data);
+      // User is authenticated, now we can load their data and community data
+      loadCommunityFeed();
+      loadGallery();
+      loadSavedCalculatorData(); // Load saved calculator data
 
-                // 3. Apply loaded data to the inputs
-                ALL_CALC_INPUT_IDS.forEach(id => {
-                    const element = document.getElementById(id);
-                    if (element && data[id] !== undefined) {
-                        element.value = data[id];
-                    }
-                });
-            } else {
-                // console.log("No saved calculator data found.");
-            }
+    } else {
+      // User is signed out
+      currentUserId = null;
+      userIdDisplay.textContent = 'Not Authenticated';
+    }
+  });
 
-            // 4. Recalculate all output fields based on the restored (or default) values
-            calculateVPD();
-            convertPPM();
-            calculateDLI();
-            calculateCost();
+  // --- Community Tab (Firestore) ---
+  const journalForm = document.getElementById('journal-form');
+  const journalTitleInput = document.getElementById('journal-title');
+  const journalBodyInput = document.getElementById('journal-body');
+  const journalSubmitMessage = document.getElementById('journal-submit-message');
+  const feedContainer = document.getElementById('community-feed-container');
 
-        } catch (e) {
-            console.error("Error loading calculator data:", e);
-        }
+  // Handle journal post submission
+  journalForm.addEventListener('submit', async (e) => {
+    e.preventDefault(); // Prevent default form submission
+    if (!currentUserId) {
+      setSubmitMessage('Error: You must be signed in to post.', 'error');
+      return;
     }
 
-    /**
-     * @description Renders a single journal entry HTML element.
-     * @param {object} post - The Firestore document data for a post.
-     * @returns {string} - The HTML string for the entry.
-     */
-    function renderJournalEntry(post) {
-        // Use the last 4 characters of the userId for a unique, anonymous identifier
-        const displayId = post.authorId ? `User ...${post.authorId.substring(post.authorId.length - 4)}` : 'Anonymous';
-        const postTime = timeSince(post.createdAt);
+    const title = journalTitleInput.value.trim();
+    const body = journalBodyInput.value.trim();
 
-        return `
-            <div class="journal-entry">
-                <div class="journal-meta">
-                    <h4 class="text-brand-blue text-xl font-bold m-0">${post.title}</h4>
-                    <span class="text-sm text-gray-500">Posted by: ${displayId} (${postTime})</span>
-                </div>
-                <div class="journal-body">
-                    <p>${post.body.replace(/\n/g, '<br>')}</p>
-                </div>
-            </div>
+    if (!title || !body) {
+      setSubmitMessage('Error: Title and body cannot be empty.', 'error');
+      return;
+    }
+
+    try {
+      // Add a new document to the "community-posts" collection
+      await addDoc(collection(db, 'community-posts'), {
+        userId: currentUserId,
+        title: title,
+        body: body,
+        createdAt: serverTimestamp() // Use Firebase's timestamp
+      });
+
+      // Clear the form and show success
+      journalTitleInput.value = '';
+      journalBodyInput.value = '';
+      setSubmitMessage('Post submitted successfully!', 'success');
+
+    } catch (error) {
+      console.error('Error adding document: ', error);
+      setSubmitMessage('Error: Could not submit post.', 'error');
+    }
+  });
+
+  // Helper for submit message
+  function setSubmitMessage(message, type) {
+    journalSubmitMessage.textContent = message;
+    journalSubmitMessage.className = `text-sm text-center mt-4 ${type === 'error' ? 'text-red-500' : 'text-green-500'}`;
+    journalSubmitMessage.classList.remove('hidden');
+    setTimeout(() => journalSubmitMessage.classList.add('hidden'), 4000);
+  }
+
+  // Load and listen for new community posts
+  function loadCommunityFeed() {
+    if (!currentUserId) return; // Don't load if no user
+
+    const postsCollection = collection(db, 'community-posts');
+    // Query to get posts, ordered by creation date (newest first)
+    // NOTE: This query requires a Firestore Index. 
+    // The console will provide a link to create it automatically if it fails.
+    const q = query(postsCollection, orderBy('createdAt', 'desc'));
+
+    // onSnapshot listens for real-time updates
+    onSnapshot(q, (querySnapshot) => {
+      if (querySnapshot.empty) {
+        feedContainer.innerHTML = '<p class="text-center text-gray-600 italic mt-8">No posts yet. Be the first!</p>';
+        return;
+      }
+
+      feedContainer.innerHTML = ''; // Clear the feed
+      querySnapshot.forEach((doc) => {
+        const post = doc.data();
+        const postElement = document.createElement('div');
+        postElement.className = 'community-post card p-6 mb-6';
+        
+        // Format the timestamp
+        const date = post.createdAt ? post.createdAt.toDate().toLocaleString() : 'Just now';
+
+        postElement.innerHTML = `
+          <h4 class="text-brand-green text-xl font-bold mb-2">${escapeHTML(post.title)}</h4>
+          <p class="mb-4">${escapeHTML(post.body)}</p>
+          <div class="text-xs text-gray-500">
+            <p>Posted by: ${escapeHTML(post.userId)}</p>
+            <p>${date}</p>
+          </div>
         `;
+        feedContainer.appendChild(postElement);
+      });
+    }, (error) => {
+      console.error("Error loading feed: ", error);
+      // This is the error you get if the index is missing
+      if (error.code === 'failed-precondition') {
+        feedContainer.innerHTML = `<p class="text-center text-red-500 italic mt-8">Error: Database index required. Please check the JavaScript console (F12) for a link to create the Firestore index.</p>`;
+      } else {
+        feedContainer.innerHTML = '<p class="text-center text-red-500 italic mt-8">Error loading community feed.</p>';
+      }
+    });
+  }
+
+  // --- Gallery Tab (Firebase Storage) ---
+  const imageUploadBtn = document.getElementById('image-upload-btn');
+  const galleryMessage = document.getElementById('gallery-message');
+  const galleryGrid = document.getElementById('gallery-grid');
+
+  // Handle image upload
+  imageUploadBtn.addEventListener('change', async (e) => {
+    if (!currentUserId) {
+      setGalleryMessage('Error: You must be signed in to upload.', 'error');
+      return;
     }
 
-    /**
-     * @description Sets up the real-time listener for the public community journal posts.
-     */
-    function setupCommunityListener() {
-        if (!isFirebaseReady || !communityFeedContainer) return;
-        
-        // 1. Define the public collection path
-        const collectionPath = `/artifacts/${appId}/public/data/journals`;
-        const q = query(collection(db, collectionPath));
-        // NOTE: Sorting is done client-side to maintain a responsive app on static hosting.
+    const file = e.target.files[0];
+    if (!file) return; // No file selected
 
-        // 2. Attach the real-time listener
-        onSnapshot(q, (snapshot) => {
-            let posts = [];
-            snapshot.forEach(doc => {
-                posts.push({ id: doc.id, ...doc.data() });
-            });
-            
-            // 3. Sort posts by creation date (newest first)
-            posts.sort((a, b) => {
-                const dateA = a.createdAt ? a.createdAt.toDate().getTime() : 0;
-                const dateB = b.createdAt ? b.createdAt.toDate().getTime() : 0;
-                return dateB - dateA; // Descending order
-            });
-
-            // 4. Render posts
-            let html = '';
-            
-            // Add a friendly welcome/loading message if empty
-            if (posts.length === 0) {
-                 html = `<p class="text-center text-gray-600 italic mt-8">Be the first to share your grow journal!</p>`;
-            } else {
-                 posts.forEach(post => {
-                    html += renderJournalEntry(post);
-                 });
-            }
-
-            // Update the display area
-            communityFeedContainer.innerHTML = html;
-        }, (error) => {
-            console.error("Error listening to community feed:", error);
-            communityFeedContainer.innerHTML = `<p class="text-center text-brand-red italic mt-8">Error loading community posts. Check console.</p>`;
-        });
+    // Check file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      setGalleryMessage('Error: File is too large (Max 5MB).', 'error');
+      return;
     }
 
-    /**
-     * @description Initializes the Firebase app, database, and auth.
-     */
-    async function initFirebase() {
-        try {
-            // 1. Get environment variables
-            appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-            const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : null;
-            const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+    // Check file type
+    if (!file.type.startsWith('image/')) {
+      setGalleryMessage('Error: Only image files are allowed.', 'error');
+      return;
+    }
 
-            // 2. Check if Firebase is available
-            if (!firebaseConfigStr) {
-                console.warn("Computers Aren't Puteing.");
-                if(userIdDisplay) userIdDisplay.textContent = 'Computers Aren\'t Puteing (Server Side: Static only)';
-                isFirebaseReady = false;
-                
-                // Still run calculations with defaults if offline
-                calculateVPD();
-                convertPPM();
-                calculateDLI();
-                calculateCost(); 
-                return; 
-            }
-            
-            // 3. Initialize Firebase App
-            const firebaseConfig = JSON.parse(firebaseConfigStr);
-            const app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db = getFirestore(app);
+    setGalleryMessage('Uploading...', 'success');
 
-            // Enable debug logging for Firestore (great for development)
-            setLogLevel('Debug');
+    try {
+      // Create a unique file path in Storage
+      const filePath = `gallery/${currentUserId}/${Date.now()}-${file.name}`;
+      const storageRef = ref(storage, filePath);
 
-            // 4. Authentication
-            if (initialAuthToken) {
-                // Use the token provided by the environment
-                await signInWithCustomToken(auth, initialAuthToken);
-            } else {
-                // Fallback to anonymous sign-in
-                await signInAnonymously(auth);
-            }
+      // Upload the file
+      const uploadResult = await uploadBytes(storageRef, file);
 
-            // 5. Set and display the User ID
-            userId = auth.currentUser?.uid || 'anon_' + crypto.randomUUID();
-            isFirebaseReady = true; // Set flag after successful auth
-            
-            if (userIdDisplay) {
-                userIdDisplay.textContent = `Computers Puteing: ✓`;
-            }
+      // Get the public download URL
+      const downloadURL = await getDownloadURL(uploadResult.ref);
 
-            // 6. Load persisted data and then run calculations
-            await loadAllInputs();
-            
-            // 7. Start listening to public community posts
-            setupCommunityListener();
+      // Now, save a reference to this image in *Firestore*
+      // This makes it easy to query for all gallery images
+      await addDoc(collection(db, 'gallery-images'), {
+        userId: currentUserId,
+        imageUrl: downloadURL,
+        storagePath: filePath, // Good to store this for later (e.g., deleting)
+        createdAt: serverTimestamp()
+      });
 
+      setGalleryMessage('Upload successful!', 'success');
+      // The onSnapshot listener for the gallery will automatically pick up the new image.
+      
+    } catch (error) {
+      console.error("Image upload error: ", error);
+      setGalleryMessage('Error: Upload failed.', 'error');
+    }
+  });
 
-        } catch (e) {
-            console.error("Firebase Initialization Error:", e);
-            if(userIdDisplay) userIdDisplay.textContent = 'Authentication Failed (Check Console)';
-            isFirebaseReady = false;
+  // Helper for gallery message
+  function setGalleryMessage(message, type) {
+    galleryMessage.textContent = message;
+    galleryMessage.className = `text-sm text-center mt-4 ${type === 'error' ? 'text-red-500' : 'text-green-500'}`;
+    galleryMessage.classList.remove('hidden');
+    setTimeout(() => galleryMessage.classList.add('hidden'), 4000);
+  }
+
+  // Load and listen for new gallery images
+  function loadGallery() {
+    if (!currentUserId) return;
+
+    const imagesCollection = collection(db, 'gallery-images');
+    // NOTE: This query also requires an index.
+    const q = query(imagesCollection, orderBy('createdAt', 'desc'));
+
+    onSnapshot(q, (querySnapshot) => {
+      if (querySnapshot.empty) {
+        // Don't clear the placeholder if it's the only thing there
+        const placeholder = galleryGrid.querySelector('.placeholder');
+        if (placeholder) {
+          placeholder.style.display = 'block';
         }
-    }
+        return;
+      }
 
+      // Clear the grid, but keep the placeholder template
+      const placeholder = galleryGrid.querySelector('.placeholder');
+      galleryGrid.innerHTML = '';
+      if(placeholder) {
+        placeholder.style.display = 'none'; // Hide placeholder
+        galleryGrid.appendChild(placeholder);
+      }
 
-    //
-    // =========================================
-    // CALCULATOR LOGIC (Runs client-side)
-    // =========================================
-    //
-
-    /**
-     * @description Calculates Vapor Pressure Deficit (VPD) in kPa.
-     */
-    function calculateVPD() {
-        if (!tempCInput || !rhInput || !vpdOutput) return; // Guard clause
-        
-        const T_C = parseFloat(tempCInput.value);
-        const RH_percent = parseFloat(rhInput.value);
-        
-        if (isNaN(T_C) || isNaN(RH_percent) || RH_percent < 0 || RH_percent > 100) {
-            vpdOutput.textContent = 'Invalid Input';
-            return;
-        }
-        
-        const RH = RH_percent / 100.0; // Convert % to decimal
-
-        const SVP_kPa = 0.61094 * Math.exp((17.625 * T_C) / (T_C + 243.04));
-        const VPD = SVP_kPa * (1 - RH);
-
-        let stage = 'Unknown Stage';
-        if (VPD < 0.8) stage = 'Seedling/Clone';
-        else if (VPD <= 1.2) stage = 'Vegetative Growth';
-        else if (VPD <= 1.6) stage = 'Peak Flowering';
-        else stage = 'High Stress/Late Flower';
-
-        vpdOutput.textContent = `${VPD.toFixed(2)} kPa (Target: ${stage})`;
-    }
-
-    /**
-     * @description Converts Electrical Conductivity (EC) to Parts Per Million (PPM).
-     */
-    function convertPPM() {
-        if (!ecInput || !ppmScaleSelect || !ppmOutput) return; // Guard clause
-
-        const EC = parseFloat(ecInput.value);
-        const scale = parseInt(ppmScaleSelect.value, 10); // 500 or 700
-
-        if (isNaN(EC) || EC < 0) {
-            ppmOutput.textContent = 'Invalid EC Input';
-            return;
-        }
-        
-        const PPM = EC * scale;
-        ppmOutput.textContent = `${PPM.toFixed(0)} PPM (${scale} Scale)`;
-    }
-    
-    /**
-     * @description Calculates Daily Light Integral (DLI) in mol/m²/day.
-     */
-    function calculateDLI() {
-        if (!ppfdInput || !hoursOnInput || !dliOutput) return; // Guard clause
-
-        const PPFD = parseFloat(ppfdInput.value); // e.g., 800
-        const Hours = parseFloat(hoursOnInput.value); // e.g., 12
-
-        if (isNaN(PPFD) || isNaN(Hours) || PPFD < 0 || Hours < 0 || Hours > 24) {
-            dliOutput.textContent = 'Invalid Input';
-            return;
-        }
-
-        const secondsOfLight = Hours * 3600;
-        const totalMicromols = PPFD * secondsOfLight;
-        const DLI = totalMicromols / 1000000;
-        
-        let stage = 'Unknown Stage';
-        if (DLI < 18) stage = 'Seedlings/Clones';
-        else if (DLI <= 40) stage = 'Vegetative Growth';
-        else if (DLI <= 60) stage = 'Peak Flower Production';
-        else stage = 'Supplemental CO2 Recommended';
-
-        dliOutput.textContent = `${DLI.toFixed(2)} mol/m²/day (Target: ${stage})`;
-    }
-
-    /**
-     * @description Calculates all fields for the Grow Cost Calculator.
-     */
-    function calculateCost() {
-        // Guard clause: Check if all elements exist
-        if (Object.values(costInputs).some(el => !el) || Object.values(costOutputs).some(el => !el)) {
-            // Error is okay if run *before* onDOMLoaded assigns elements
-            // console.error("CRITICAL: Cost calculator elements are missing!");
-            return;
-        }
-
-        // 1. Get all values, parseFloat, and default to 0 if NaN
-        const onetimeTent = parseFloat(costInputs.onetimeTent.value) || 0;
-        const onetimeLight = parseFloat(costInputs.onetimeLight.value) || 0;
-        const onetimeOther = parseFloat(costInputs.onetimeOther.value) || 0;
-        
-        const recurringSeeds = parseFloat(costInputs.recurringSeeds.value) || 0;
-        const recurringSoil = parseFloat(costInputs.recurringSoil.value) || 0;
-        const recurringNutrients = parseFloat(costInputs.recurringNutrients.value) || 0;
-        
-        const lightWatts = parseFloat(costInputs.lightWatts.value) || 0;
-        const kwhRateCents = parseFloat(costInputs.kwhRate.value) || 0;
-        const kwhRateDollars = kwhRateCents / 100.0;
-        const totalDays = parseFloat(costInputs.totalDays.value) || 0;
-        
-        const yieldGrams = parseFloat(costInputs.yieldGrams.value) || 1; // Default to 1 to avoid / by zero
-        const dispensaryPrice = parseFloat(costInputs.dispensaryPrice.value) || 0; 
-
-        // 2. Perform Calculations
-        const vegDays = Math.min(totalDays, 28);
-        const flowerDays = Math.max(0, totalDays - vegDays);
-        
-        // Assuming 18h light in veg, 12h light in flower
-        const vegKwh = (lightWatts * 18 * vegDays) / 1000;
-        const flowerKwh = (lightWatts * 12 * flowerDays) / 1000;
-        const totalKwh = vegKwh + flowerKwh;
-        // Add 15% overhead for fans/pumps/controllers
-        const totalKwhWithFans = totalKwh * 1.15; 
-        const electricCost = totalKwhWithFans * kwhRateDollars;
-        
-        const totalOnetimeCost = onetimeTent + onetimeLight + onetimeOther;
-        const totalRecurringCost = recurringSeeds + recurringSoil + recurringNutrients + electricCost;
-        const totalFirstCost = totalOnetimeCost + totalRecurringCost;
-        
-        const costPerGram = totalFirstCost / yieldGrams;
-        const costPerGramFuture = totalRecurringCost / yieldGrams;
-        const harvestValue = yieldGrams * dispensaryPrice;
-        const totalSavings = harvestValue - totalRecurringCost;
-
-        // 3. Update UI
-        const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
-
-        costOutputs.onetimeCost.textContent = formatter.format(totalOnetimeCost);
-        costOutputs.electricCost.textContent = formatter.format(electricCost);
-        costOutputs.recurringCost.textContent = formatter.format(totalRecurringCost);
-        costOutputs.totalCost.textContent = formatter.format(totalFirstCost);
-        
-        costOutputs.harvestValue.textContent = formatter.format(harvestValue); 
-        costOutputs.totalSavings.textContent = formatter.format(totalSavings); 
-        
-        costOutputs.costPerGram.textContent = `${formatter.format(costPerGram)} / gram`;
-        costOutputs.costPerGramFuture.textContent = `${formatter.format(costPerGramFuture)} / gram`;
-    }
-
-    
-    //
-    // =========================================
-    // NEW: INTERACTIVE GALLERY LOGIC (v16.0)
-    // =========================================
-    //
-    
-    /**
-     * @description Saves the current gallery images (as Base64 URLs) to localStorage.
-     */
-    function saveGalleryToStorage() {
-        if (!galleryGrid) return;
-        
-        const images = [];
-        // Find all images in the grid *except* the placeholder
-        const items = galleryGrid.querySelectorAll('.gallery-item:not(.placeholder)');
-        
-        // We save in reverse order so they load in the correct (newest first) order
-        const itemsArray = Array.from(items).reverse();
-
-        itemsArray.forEach(item => {
-            const img = item.querySelector('img');
-            const caption = item.querySelector('.gallery-item-caption p');
-            if (img && caption) {
-                images.push({
-                    src: img.src,
-                    name: caption.textContent
-                });
-            }
-        });
-        
-        // Save the array as a JSON string
-        localStorage.setItem('grohioGallery', JSON.stringify(images));
-    }
-
-    /**
-     * @description Loads images from localStorage and populates the gallery.
-     */
-    function loadGalleryFromStorage() {
-        if (!galleryGrid) return;
-        
-        // Wrap in try...catch to prevent bad JSON from breaking the whole script
-        try {
-            const storedImages = JSON.parse(localStorage.getItem('grohioGallery') || '[]');
-            
-            if (storedImages.length > 0) {
-                // Remove the placeholder immediately if we have saved images to load
-                const placeholder = galleryGrid.querySelector('.placeholder');
-                if (placeholder) {
-                    placeholder.remove();
-                }
-                
-                storedImages.forEach(imgData => {
-                    // Create and add the gallery item
-                    addGalleryItem(imgData.src, imgData.name, "Loaded from memory");
-                });
-            }
-        } catch (error) {
-            console.error("Error loading gallery from localStorage:", error);
-            // If storage is corrupt, clear it so it works next time.
-            localStorage.removeItem('grohioGallery');
-        }
-    }
-    
-    /**
-     * @description Helper function to create and prepend a new gallery item.
-     * @param {string} imageDataUrl - The Base64 image src.
-     * @param {string} fileName - The name of the file.
-     * @param {string} uploadTime - Text to display for upload time.
-     */
-    function addGalleryItem(imageDataUrl, fileName, uploadTime) {
-        if (!galleryGrid) return;
-
-        const galleryItem = document.createElement('div');
-        galleryItem.className = 'gallery-item animate-fadeIn'; // Add animation
-        
-        galleryItem.innerHTML = `
-            <img src="${imageDataUrl}" alt="User uploaded grow photo: ${fileName}">
-            <div class="gallery-item-caption">
-                <p>${fileName}</p>
-                <span class="text-xs text-gray-400">${uploadTime}</span>
-            </div>
+      querySnapshot.forEach((doc) => {
+        const image = doc.data();
+        const imgElement = document.createElement('div');
+        imgElement.className = 'gallery-item';
+        imgElement.innerHTML = `
+          <img src="${escapeHTML(image.imageUrl)}" alt="User Upload" 
+               onerror="this.src='https://placehold.co/400x400/0d0d0d/999?text=Image+Failed+to+Load'">
+          <div class="gallery-item-caption">
+              <p>Uploaded by:</p>
+              <span class="text-xs text-gray-400">${escapeHTML(image.userId)}</span>
+          </div>
         `;
-        
-        // Add the new item to the top of the grid
-        galleryGrid.prepend(galleryItem);
+        // Append new images *after* the (now hidden) placeholder
+        galleryGrid.appendChild(imgElement);
+      });
+      
+    }, (error) => {
+      console.error("Error loading gallery: ", error);
+      if (error.code === 'failed-precondition') {
+        galleryGrid.innerHTML = `<p class="text-center text-red-500 italic mt-8 col-span-full">Error: Database index required. Please check the JavaScript console (F12) for a link to create the Firestore index.</p>`;
+      } else {
+        galleryGrid.innerHTML = '<p class="text-center text-red-500 italic mt-8 col-span-full">Error loading gallery.</p>';
+      }
+    });
+  }
+
+  // --- Calculators & Data Persistence ---
+  // We will save calculator data to a *single document* per user
+  // in a 'user-profiles' collection. This is more efficient.
+
+  const calculatorInputs = document.querySelectorAll('.calc-input');
+  
+  // Function to get a reference to the user's profile document
+  function getUserProfileRef() {
+    if (!currentUserId) return null;
+    // Use 'user-profiles' as the collection for private user data
+    return doc(db, 'user-profiles', currentUserId);
+  }
+
+  // Save data whenever a calculator input changes (debounced)
+  const debouncedSave = debounce(async (fieldId, value) => {
+    if (!currentUserId) return;
+    const userProfileRef = getUserProfileRef();
+    try {
+      await setDoc(userProfileRef, {
+        calculators: {
+          [fieldId]: value
+        }
+      }, { merge: true });
+    } catch (error) {
+      console.error("Error saving calculator data: ", error);
     }
+  }, 1000); // Wait 1 second after user stops typing to save
 
-    /**
-     * @description Handles the file input change event for the gallery.
-     * Reads the selected file as a Base64 Data URL and adds it to the gallery.
-     * @param {Event} event - The 'change' event from the file input.
-     */
-    function handleImageUpload(event) {
-        if (!galleryGrid || !galleryMessage) return;
+  calculatorInputs.forEach(input => {
+    input.addEventListener('input', () => { // 'input' is better than 'change' for live updates
+      debouncedSave(input.id, input.value);
+    });
+  });
 
-        const file = event.target.files[0];
-        if (!file) {
-            return; // No file selected
-        }
-        
-        // Check file type
-        if (!file.type.startsWith('image/')) {
-            galleryMessage.textContent = 'Error: Please select an image file (jpg, png).';
-            galleryMessage.classList.remove('hidden', 'text-brand-green');
-            galleryMessage.classList.add('text-brand-red');
-            return;
-        }
-        
-        // Check file size (e.g., 5MB limit)
-        if (file.size > 5 * 1024 * 1024) {
-            galleryMessage.textContent = 'Error: File is too large (Max 5MB).';
-            galleryMessage.classList.remove('hidden', 'text-brand-green');
-            galleryMessage.classList.add('text-brand-red');
-            return;
-        }
+  // Load saved calculator data when the user signs in
+  async function loadSavedCalculatorData() {
+    const userProfileRef = getUserProfileRef();
+    if (!userProfileRef) return;
 
-        const reader = new FileReader();
-
-        // This event fires when the file is done reading
-        reader.onload = function(e) {
-            const imageDataUrl = e.target.result; // This is the Base64 string
-            
-            // 1. Use the new helper function
-            addGalleryItem(imageDataUrl, file.name, "Uploaded by: You (Local)");
-            
-            // 2. Save the new state to localStorage
-            saveGalleryToStorage();
-            
-            // 3. Show success message
-            galleryMessage.textContent = 'Success! Your image has been added to the local gallery.';
-            galleryMessage.classList.remove('hidden', 'text-brand-red');
-            galleryMessage.classList.add('text-brand-green');
-
-            // 4. Remove the placeholder if it exists
-            const placeholder = galleryGrid.querySelector('.placeholder');
-            if (placeholder) {
-                placeholder.remove();
-            }
-        };
-        
-        // This event fires if there's an error
-        reader.onerror = function() {
-            galleryMessage.textContent = 'Error: Could not read file.';
-            galleryMessage.classList.remove('hidden', 'text-brand-green');
-            galleryMessage.classList.add('text-brand-red');
-        };
-
-        // This starts the reading process
-        reader.readAsDataURL(file);
-    }
-
-    
-    //
-    // =========================================
-    // NEW: COMMUNITY JOURNAL LOGIC (v19.0 - LIVE)
-    // =========================================
-    //
-    
-    /**
-     * @description Handles the submission of the new journal entry form.
-     */
-    async function handleJournalSubmit(event) {
-        event.preventDefault(); // Stop the form from reloading the page
-        
-        if (!journalTitle || !journalBody || !journalSubmitMessage ) {
-             console.error("Journal form elements are missing.");
-             return;
-        }
-        
-        // Check if Firebase is ready and the user is authenticated
-        if (!isFirebaseReady || !auth.currentUser) {
-            console.warn("Firebase not ready. Cannot submit journal.");
-            if(journalSubmitMessage) {
-                journalSubmitMessage.textContent = 'Error: Not connected to server. Please wait.';
-                journalSubmitMessage.classList.remove('hidden', 'text-brand-green');
-                journalSubmitMessage.classList.add('text-brand-red');
-            }
-            return;
-        }
-        
-        const title = journalTitle.value.trim();
-        const body = journalBody.value.trim();
-        
-        if (!title || !body) {
-            journalSubmitMessage.textContent = 'Please fill out all fields.';
-            journalSubmitMessage.classList.remove('hidden', 'text-brand-green');
-            journalSubmitMessage.classList.add('text-brand-red');
-            return;
-        }
-        
-        // Show submitting message
-        journalSubmitMessage.textContent = 'Submitting...';
-        journalSubmitMessage.classList.remove('hidden', 'text-brand-red');
-        journalSubmitMessage.classList.add('text-brand-green');
-
-        
-        try {
-            // This is the public path for this app's shared data
-            const collectionPath = `/artifacts/${appId}/public/data/journals`;
-            
-            // This is the data we will send
-            const postData = {
-                title: title,
-                body: body,
-                // Shorten the ID for display purposes, but save the full ID for reference
-                authorId: userId,
-                createdAt: serverTimestamp() // Uses the server's time
-            };
-            
-            // Write the data to the database
-            await addDoc(collection(db, collectionPath), postData);
-            
-            // console.log("Document written with ID: ", docRef.id);
-            
-            // Real success message
-            journalSubmitMessage.textContent = 'Post Submitted Successfully!';
-            journalSubmitMessage.classList.remove('hidden', 'text-brand-red');
-            journalSubmitMessage.classList.add('text-brand-green');
-            
-            // Clear the form
-            journalTitle.value = '';
-            journalBody.value = '';
-            
-            // Hide message after 3 seconds
-            setTimeout(() => {
-                journalSubmitMessage.classList.add('hidden');
-            }, 3000);
-
-
-        } catch (e) {
-            console.error("Error adding document: ", e);
-            journalSubmitMessage.textContent = 'Error: Could not submit post. Check console.';
-            journalSubmitMessage.classList.remove('hidden', 'text-brand-green');
-            journalSubmitMessage.classList.add('text-brand-red');
-        }
-    }
-    
-    
-    //
-    // =========================================
-    // INITIALIZATION & EVENT LISTENERS
-    // =========================================
-    //
-    
-    /**
-     * @description This function runs when the page is fully loaded ("DOMContentLoaded").
-     * It initializes Firebase and sets up all event listeners for the app.
-     */
-    function onDOMLoaded() {
-        
-        // --- 1. DOM VARIABLE ASSIGNMENT ---
-        
-        sections = document.querySelectorAll('.content-section');
-        navButtons = document.querySelectorAll('nav .nav-btn');
-        internalNavButtons = document.querySelectorAll('.nav-btn-internal');
-        userIdDisplay = document.getElementById('user-id-display');
-
-        // Grow Tools
-        tempCInput = document.getElementById('temp-c');
-        rhInput = document.getElementById('rh');
-        vpdOutput = document.getElementById('vpd-output');
-        ecInput = document.getElementById('ec-input');
-        ppmScaleSelect = document.getElementById('ppm-scale');
-        ppmOutput = document.getElementById('ppm-output');
-        ppfdInput = document.getElementById('ppfd-input');
-        hoursOnInput = document.getElementById('hours-on-input');
-        dliOutput = document.getElementById('dli-output');
-
-        // Cost Calculator
-        costInputs = {
-            onetimeTent: document.getElementById('cost-onetime-tent'),
-            onetimeLight: document.getElementById('cost-onetime-light'),
-            onetimeOther: document.getElementById('cost-onetime-other'),
-            recurringSeeds: document.getElementById('cost-recurring-seeds'),
-            recurringSoil: document.getElementById('cost-recurring-soil'),
-            recurringNutrients: document.getElementById('cost-recurring-nutrients'),
-            lightWatts: document.getElementById('cost-light-watts'),
-            kwhRate: document.getElementById('cost-kwh-rate'),
-            totalDays: document.getElementById('cost-total-days'),
-            yieldGrams: document.getElementById('cost-yield-grams'),
-            dispensaryPrice: document.getElementById('cost-dispensary-price')
-        };
-        costOutputs = {
-            onetimeCost: document.getElementById('output-onetime-cost'),
-            electricCost: document.getElementById('output-electric-cost'),
-            recurringCost: document.getElementById('output-recurring-cost'),
-            totalCost: document.getElementById('output-total-cost'),
-            harvestValue: document.getElementById('output-harvest-value'),
-            totalSavings: document.getElementById('output-total-savings'),
-            costPerGram: document.getElementById('output-cost-per-gram'),
-            costPerGramFuture: document.getElementById('output-cost-per-gram-future')
-        };
-
-        // Gallery
-        imageUploadBtn = document.getElementById('image-upload-btn');
-        galleryGrid = document.getElementById('gallery-grid');
-        galleryMessage = document.getElementById('gallery-message');
-
-        // Community
-        journalForm = document.getElementById('journal-form');
-        journalTitle = document.getElementById('journal-title');
-        journalBody = document.getElementById('journal-body');
-        journalSubmitMessage = document.getElementById('journal-submit-message');
-        // CRITICAL: We need a dedicated container to inject the live posts
-        communityFeedContainer = document.getElementById('community-feed-container'); 
-
-        
-        // --- 2. INITIALIZATION ---
-        
-        // Initialize Firebase (and triggers loading of data + initial calculations/listeners)
-        initFirebase();
-        
-        // Load gallery from storage (uses localStorage, not Firebase)
-        loadGalleryFromStorage();
-
-        
-        // --- 3. ADD EVENT LISTENERS ---
-
-        // Navigation Listeners
-        if (navButtons) {
-            navButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    showSection(button.dataset.section);
-                });
-            });
-        }
-
-        if (internalNavButtons) {
-            internalNavButtons.forEach(button => {
-                 button.addEventListener('click', () => {
-                    showSection(button.dataset.section);
-                 });
-            });
-        }
-        
-        // --- Calculator Listeners (Now call persistence logic on change) ---
-
-        // Combined listeners for all Grow Tools (VPD, PPM, DLI)
-        const allToolInputs = [tempCInput, rhInput, ecInput, ppmScaleSelect, ppfdInput, hoursOnInput];
-        allToolInputs.forEach(input => {
-            if (input) {
-                input.addEventListener('input', () => {
-                    // Recalculate the relevant tool
-                    if (input.id === 'temp-c' || input.id === 'rh') calculateVPD();
-                    if (input.id === 'ec-input' || input.id === 'ppm-scale') convertPPM();
-                    if (input.id === 'ppfd-input' || input.id === 'hours-on-input') calculateDLI();
-                    
-                    // Save all inputs to Firestore (debounced)
-                    saveAllInputs();
-                });
-            }
+    try {
+      const docSnap = await getDoc(userProfileRef);
+      if (docSnap.exists() && docSnap.data().calculators) {
+        const calcData = docSnap.data().calculators;
+        // Apply saved data to each input
+        calculatorInputs.forEach(input => {
+          if (calcData[input.id]) {
+            input.value = calcData[input.id];
+          }
         });
-        
-        // Cost Calculator Listeners
-        Object.values(costInputs).forEach(input => {
-            if (input) {
-                input.addEventListener('input', () => {
-                    // Recalculate and save all inputs (debounced)
-                    calculateCost();
-                    saveAllInputs();
-                });
-            }
-        });
-        
-        // Gallery Listener
-        if (imageUploadBtn) {
-            imageUploadBtn.addEventListener('change', handleImageUpload);
-        }
-        
-        // Community Listener (LIVE)
-        if (journalForm) {
-            journalForm.addEventListener('submit', handleJournalSubmit);
-        }
-        
-        // --- 4. SHOW INITIAL SECTION ---
-        // Ensure Home section is visible on load
-        showSection('home');
+        // After loading, trigger calculations to update outputs
+        runAllCalculations();
+      }
+    } catch (error) {
+      console.error("Error loading calculator data: ", error);
+    }
+  }
+
+  // --- Run Calculations (VPD, DLI, Cost) ---
+  // Grab all calculator inputs and outputs
+  const vpdTemp = document.getElementById('temp-c');
+  const vpdRh = document.getElementById('rh');
+  const vpdOutput = document.getElementById('vpd-output');
+
+  const dliPpfd = document.getElementById('ppfd-input');
+  const dliHours = document.getElementById('hours-on-input');
+  const dliOutput = document.getElementById('dli-output');
+
+  const ecInput = document.getElementById('ec-input');
+  const ppmScale = document.getElementById('ppm-scale');
+  const ppmOutput = document.getElementById('ppm-output');
+
+  const costOnetimeTent = document.getElementById('cost-onetime-tent');
+  const costOnetimeLight = document.getElementById('cost-onetime-light');
+  const costOnetimeOther = document.getElementById('cost-onetime-other');
+  const costRecurringSeeds = document.getElementById('cost-recurring-seeds');
+  const costRecurringSoil = document.getElementById('cost-recurring-soil');
+  const costRecurringNutrients = document.getElementById('cost-recurring-nutrients');
+  const costLightWatts = document.getElementById('cost-light-watts');
+  const costKwhRate = document.getElementById('cost-kwh-rate');
+  const costTotalDays = document.getElementById('cost-total-days');
+  const costYieldGrams = document.getElementById('cost-yield-grams');
+  const costDispensaryPrice = document.getElementById(
+    'cost-dispensary-price'
+  );
+
+  const outputOnetimeCost = document.getElementById('output-onetime-cost');
+  const outputElectricCost = document.getElementById('output-electric-cost');
+  const outputRecurringCost = document.getElementById('output-recurring-cost');
+  const outputTotalCost = document.getElementById('output-total-cost');
+  const outputCostPerGram = document.getElementById('output-cost-per-gram');
+  const outputCostPerGramFuture = document.getElementById('output-cost-per-gram-future');
+  const outputHarvestValue = document.getElementById('output-harvest-value');
+  const outputTotalSavings = document.getElementById('output-total-savings');
+
+  function calculateVPD() {
+    if (!vpdTemp || !vpdRh || !vpdOutput) return;
+    const T = parseFloat(vpdTemp.value); // Temp in Celsius
+    const RH = parseFloat(vpdRh.value); // RH in %
+
+    if (isNaN(T) || isNaN(RH)) return;
+
+    // Saturation Vapor Pressure (SVP) using Buck's equation
+    const SVP = 0.61121 * Math.exp(((18.678 - T / 234.5) * (T / (257.14 + T))));
+    
+    // Vapor Pressure Deficit (VPD) in kPa
+    const VPD = SVP * (1 - (RH / 100));
+    
+    let vpdText = `${VPD.toFixed(2)} kPa`;
+    let colorClass = 'calc-output-green'; // Default green
+
+    if (VPD < 0.4) {
+      vpdText += " (Too Low - Mold Risk)";
+      colorClass = 'calc-output-blue';
+    } else if (VPD >= 0.4 && VPD < 0.8) {
+      vpdText += " (Ideal for Seedlings)";
+      colorClass = 'calc-output-blue';
+    } else if (VPD >= 0.8 && VPD <= 1.2) {
+      vpdText += " (Ideal for Veg)";
+    } else if (VPD > 1.2 && VPD <= 1.6) {
+      vpdText += " (Ideal for Flower)";
+    } else if (VPD > 1.6) {
+      vpdText += " (Too High - Stress)";
+      colorClass = 'calc-output-red';
+    }
+    
+    vpdOutput.textContent = vpdText;
+    vpdOutput.className = `calc-output flex items-center justify-center ${colorClass}`;
+  }
+
+  function calculateDLI() {
+    if (!dliPpfd || !dliHours || !dliOutput) return;
+    const ppfd = parseFloat(dliPpfd.value);
+    const hours = parseFloat(dliHours.value);
+    
+    if (isNaN(ppfd) || isNaN(hours)) return;
+
+    // DLI = (PPFD * hours * 3600) / 1,000,000
+    const dli = (ppfd * hours * 3600) / 1000000;
+
+    let dliText = `${dli.toFixed(2)} mol/m²/day`;
+    let colorClass = 'calc-output-green';
+
+    if (dli < 15) {
+      dliText += " (Seedlings)";
+      colorClass = 'calc-output-blue';
+    } else if (dli >= 15 && dli < 30) {
+      dliText += " (Good for Veg)";
+    } else if (dli >= 30 && dli < 45) {
+      dliText += " (Good for Flower)";
+    } else if (dli >= 45) {
+      dliText += " (Max Flower)";
+      colorClass = 'calc-output-red'; // High end
+    }
+    
+    dliOutput.textContent = dliText;
+    dliOutput.className = `calc-output flex items-center justify-center ${colorClass}`;
+  }
+  
+  function calculatePPM() {
+    if (!ecInput || !ppmScale || !ppmOutput) return;
+    const ec = parseFloat(ecInput.value);
+    const scale = parseFloat(ppmScale.value);
+    
+    if (isNaN(ec) || isNaN(scale)) return;
+    
+    const ppm = ec * scale;
+    const scaleText = scale === 500 ? "500 Scale" : "700 Scale";
+    
+    ppmOutput.textContent = `${ppm.toFixed(0)} PPM (${scaleText})`;
+  }
+  
+  function calculateCost() {
+    // Guard against missing elements
+    if (!costOnetimeTent || !costOnetimeLight || !costOnetimeOther || !costRecurringSeeds || 
+        !costRecurringSoil || !costRecurringNutrients || !costLightWatts || !costKwhRate || 
+        !costTotalDays || !costYieldGrams || !costDispensaryPrice || !outputOnetimeCost || 
+        !outputElectricCost || !outputRecurringCost || !outputTotalCost || !outputCostPerGram || 
+        !outputCostPerGramFuture || !outputHarvestValue || !outputTotalSavings) {
+      // console.warn("Cost calculator elements not ready.");
+      return;
     }
 
-    // Add the main event listener for when the HTML document is ready.
-    document.addEventListener('DOMContentLoaded', onDOMLoaded);
+    const onetime = (parseFloat(costOnetimeTent.value) || 0) + (parseFloat(costOnetimeLight.value) || 0) + (parseFloat(costOnetimeOther.value) || 0);
+    const consumables = (parseFloat(costRecurringSeeds.value) || 0) + (parseFloat(costRecurringSoil.value) || 0) + (parseFloat(costRecurringNutrients.value) || 0);
+    
+    const watts = parseFloat(costLightWatts.value) || 0;
+    const rate = (parseFloat(costKwhRate.value) || 0) / 100; // convert cents to dollars
+    const days = parseFloat(costTotalDays.value) || 0;
+    const yieldGrams = parseFloat(costYieldGrams.value) || 1; // Avoid division by zero
+    const dispoPrice = parseFloat(costDispensaryPrice.value) || 0;
+    
+    // Assume 4 weeks (28 days) of Veg @ 18/6, rest is Flower @ 12/12
+    const vegDays = Math.min(days, 28);
+    const flowerDays = Math.max(0, days - 28);
+    
+    const vegHours = vegDays * 18;
+    const flowerHours = flowerDays * 12;
+    
+    const totalKwh = (watts * (vegHours + flowerHours)) / 1000;
+    const electricCost = totalKwh * rate;
+    
+    const recurringCost = consumables + electricCost;
+    const totalFirstCost = onetime + recurringCost;
+    const costPerGram = totalFirstCost / yieldGrams;
+    const costPerGramFuture = recurringCost / yieldGrams;
 
-})(); // End IIFE
+    const harvestValue = (yieldGrams || 0) * dispoPrice;
+    const totalSavings = harvestValue - recurringCost; // Savings after first grow
+    
+    // Update UI
+    outputOnetimeCost.textContent = `$${onetime.toFixed(2)}`;
+    outputElectricCost.textContent = `$${electricCost.toFixed(2)}`;
+    outputRecurringCost.textContent = `$${recurringCost.toFixed(2)}`;
+    outputTotalCost.textContent = `$${totalFirstCost.toFixed(2)}`;
+    outputCostPerGram.textContent = `$${costPerGram.toFixed(2)} / gram`;
+    outputCostPerGramFuture.textContent = `$${costPerGramFuture.toFixed(2)} / gram`;
+    outputHarvestValue.textContent = `$${harvestValue.toFixed(2)}`;
+    outputTotalSavings.textContent = `$${totalSavings.toFixed(2)}`;
+  }
+
+  function runAllCalculations() {
+    calculateVPD();
+    calculateDLI();
+    calculatePPM();
+    calculateCost();
+  }
+
+  // Add listeners to all calc inputs to re-run calculations
+  const allCalcInputs = document.querySelectorAll('.calculator-container input, .calculator-container select, .cost-calculator-container input');
+  allCalcInputs.forEach(input => {
+    input.addEventListener('input', runAllCalculations);
+  });
+  
+  // Run once on load
+  runAllCalculations();
+
+  // --- FAQ Section ---
+  const faqItems = document.querySelectorAll('.faq-item');
+  faqItems.forEach(item => {
+    const question = item.querySelector('.faq-question');
+    question.addEventListener('click', () => {
+      item.classList.toggle('open');
+    });
+  });
+
+  // Show the home section by default
+  showSection('home');
+
+});
+
+// --- Utility Functions ---
+function escapeHTML(str) {
+  if (str === null || str === undefined) {
+    return '';
+  }
+  // Basic sanitization to prevent HTML injection from user posts
+  return str.toString()
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+/**
+ * @description Simple debounce utility to limit the rate of function calls.
+ */
+function debounce(func, timeout = 1000) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => { func.apply(this, args); }, timeout);
+    };
+}
