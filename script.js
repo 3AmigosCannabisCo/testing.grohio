@@ -339,8 +339,8 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp, doc, se
 
             // 2. Check if Firebase is available
             if (!firebaseConfigStr) {
-                console.warn("Firebase config not found. Running in Offline Mode.");
-                if(userIdDisplay) userIdDisplay.textContent = 'Data: Offline Mode';
+                console.warn("Computers Aren't Puteing.");
+                if(userIdDisplay) userIdDisplay.textContent = 'Computers Aren\'t Puteing (Server Side: Static only)';
                 isFirebaseReady = false;
                 
                 // Still run calculations with defaults if offline
@@ -374,7 +374,7 @@ import { getFirestore, setLogLevel, addDoc, collection, serverTimestamp, doc, se
             isFirebaseReady = true; // Set flag after successful auth
             
             if (userIdDisplay) {
-                userIdDisplay.textContent = `Active User ID: ${userId}`;
+                userIdDisplay.textContent = `Computers Puteing: ✓`;
             }
 
             // 6. Load persisted data and then run calculations
