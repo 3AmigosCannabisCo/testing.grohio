@@ -2,21 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-
-    <script>
-        // Check if the user has been verified in this session
-        const isVerified = sessionStorage.getItem('isVerified');
-        
-        // If not verified, send them back to the index page
-        if (!isVerified) {
-            // FIX: Use an absolute path derived from the origin to reliably redirect
-            const absoluteIndexUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1) + 'index.html';
-            
-            // We use .replace() so the user can't click the "back" button
-            // to get back to the app page.
-            window.location.replace(absoluteIndexIndexUrl);
-        }
-    </script>
+    
+    <!-- 
+      REMOVED the old, broken session-storage redirect script.
+      Firebase Auth now handles our user state.
+    -->
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GROHIO by 3 Amigos Cannabis Co.: The Ultimate Grow Guide</title>
@@ -38,6 +28,10 @@
             <h1 class="text-6xl font-black text-white uppercase tracking-tighter hidden">GROHIO V17.0</h1> 
             <p class="text-xl text-gray-400 mt-3 hidden">The Ultimate Ohio Grower's Platform by 3 Amigos Cannabis Co.</p> 
             
+            <!-- 
+              FIX: Changed text back to "Authenticating..."
+              This text will be replaced by script.js with your User ID.
+            -->
             <p id="user-id-display" class="text-xs text-gray-600 mt-1">Authenticating...</p>
         </header>
 
@@ -511,8 +505,8 @@
                         </ol>
                     </li>
                     <li><strong>Why it's amazing:</strong> This system automatically creates a perfect **wet-dry cycle**, which is exactly what roots love. It's the only system that "bottom-waters" and then lets the plant dry out before watering again.</li>
-                    <li><strong>Pros:</strong> You can leave your plants for $1-2$ weeks! It's infinitely expandable. No electricity, no timers.</li>
-                    <li><strong>Cons:</strong> More complex setup than wicks. The AQUAvalve can be sensitive to organic nutrients (which clog it), so it's best to use mineral-based (salt) nutrients.</li>
+                    <li>**Pros:** You can leave your plants for $1-2$ weeks! It's infinitely expandable. No electricity, no timers.</li>
+                    <li>**Cons:** More complex setup than wicks. The AQUAvalve can be sensitive to organic nutrients (which clog it), so it's best to use mineral-based (salt) nutrients.</li>
                 </ul>
 
                 <h3 class="text-brand-purple">Level 4: Automated Watering (DIY Drip)</h3>
