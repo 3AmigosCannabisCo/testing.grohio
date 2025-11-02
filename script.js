@@ -628,3 +628,4 @@ function debounce(func, timeout = 1000) {
         timer = setTimeout(() => { func.apply(this, args); }, timeout);
     };
 }
+
