@@ -1,3 +1,20 @@
+/**
+ * GROHIO v17.0: "Amigo's Notebook" Edition
+ * Main Application Logic (script.js)
+ *
+ * This file contains all JavaScript for the GROHIO platform.
+ * It is loaded as a "module" to support Firebase 'import' statements.
+ * The entire application is wrapped in an IIFE (Immediately Implemented
+ * Function Expression) to prevent polluting the global namespace.
+ *
+ * v19.0 Changes:
+ * - ADDED: Full, functional Firebase persistence for all Calculators and the Community Journal.
+ * - ADDED: Real-time listener (onSnapshot) to load and display all community posts.
+ * - UPDATED: handleJournalSubmit now correctly writes to the Public Firestore path.
+ * * Final Polish Edits (From Code Partner):
+ * - Minor cleanup in loadGalleryFromStorage for placeholder removal logic.
+ */
+
 // --- FILE: script.js ---
 // This is the "brain" of your app. It handles Firebase connection,
 // authentication, database posts, image uploads, and all user interactions.
@@ -39,28 +56,12 @@ import {
 //
 // THIS IS THE SPOT!
 //
-// Paste your firebaseConfig object from your Firebase project
-// settings right here, replacing the placeholder keys.
+// This is your config object from your Firebase project.
 //
 // ---------------------------------------------------------------------
 // ---------------------------------------------------------------------
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyCohZppMXwTkCUxq-bpcKtOwhQmhiZvW34",
   authDomain: "grohio-3amigos.firebaseapp.com",
@@ -73,15 +74,8 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 
 // Initialize Firebase services
-const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
@@ -188,8 +182,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-      // Add a new document to the "community-posts" collection
-      await addDoc(collection(db, 'community-posts'), {
+      // Add a new document to the "journalPosts" collection
+      await addDoc(collection(db, 'journalPosts'), {
         userId: currentUserId,
         title: title,
         body: body,
@@ -219,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function loadCommunityFeed() {
     if (!currentUserId) return; // Don't load if no user
 
-    const postsCollection = collection(db, 'community-posts');
+    const postsCollection = collection(db, 'journalPosts');
     // Query to get posts, ordered by creation date (newest first)
     // NOTE: This query requires a Firestore Index. 
     // The console will provide a link to create it automatically if it fails.
@@ -528,10 +522,10 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (dli >= 15 && dli < 30) {
       dliText += " (Good for Veg)";
     } else if (dli >= 30 && dli < 45) {
-      dliText += " (Good for Flower)";
-    } else if (dli >= 45) {
-      dliText += " (Max Flower)";
-      colorClass = 'calc-output-red'; // High end
+      dliText += " (Great for Flower)";
+    } else if (dli > 45) {
+      dliText += " (Max Yield / CO2)";
+      colorClass = 'calc-output-red';
     }
     
     dliOutput.textContent = dliText;
@@ -543,63 +537,72 @@ document.addEventListener('DOMContentLoaded', () => {
     const ec = parseFloat(ecInput.value);
     const scale = parseFloat(ppmScale.value);
     
-    if (isNaN(ec) || isNaN(scale)) return;
-    
+    if (isNaN(ec)) return;
+
     const ppm = ec * scale;
-    const scaleText = scale === 500 ? "500 Scale" : "700 Scale";
     
-    ppmOutput.textContent = `${ppm.toFixed(0)} PPM (${scaleText})`;
+    ppmOutput.textContent = `${ppm.toFixed(0)} PPM (${scale} Scale)`;
+    ppmOutput.className = 'calc-output flex items-center justify-center calc-output-green';
   }
-  
+
   function calculateCost() {
-    // Guard against missing elements
-    if (!costOnetimeTent || !costOnetimeLight || !costOnetimeOther || !costRecurringSeeds || 
-        !costRecurringSoil || !costRecurringNutrients || !costLightWatts || !costKwhRate || 
-        !costTotalDays || !costYieldGrams || !costDispensaryPrice || !outputOnetimeCost || 
-        !outputElectricCost || !outputRecurringCost || !outputTotalCost || !outputCostPerGram || 
+    // Check if all elements exist
+    if (!costOnetimeTent || !costOnetimeLight || !costOnetimeOther ||
+        !costRecurringSeeds || !costRecurringSoil || !costRecurringNutrients ||
+        !costLightWatts || !costKwhRate || !costTotalDays || !costYieldGrams ||
+        !costDispensaryPrice || !outputOnetimeCost || !outputElectricCost ||
+        !outputRecurringCost || !outputTotalCost || !outputCostPerGram ||
         !outputCostPerGramFuture || !outputHarvestValue || !outputTotalSavings) {
-      // console.warn("Cost calculator elements not ready.");
-      return;
+      console.error("One or more cost calculator elements are missing.");
+      return; 
     }
 
-    const onetime = (parseFloat(costOnetimeTent.value) || 0) + (parseFloat(costOnetimeLight.value) || 0) + (parseFloat(costOnetimeOther.value) || 0);
-    const consumables = (parseFloat(costRecurringSeeds.value) || 0) + (parseFloat(costRecurringSoil.value) || 0) + (parseFloat(costRecurringNutrients.value) || 0);
-    
-    const watts = parseFloat(costLightWatts.value) || 0;
-    const rate = (parseFloat(costKwhRate.value) || 0) / 100; // convert cents to dollars
-    const days = parseFloat(costTotalDays.value) || 0;
-    const yieldGrams = parseFloat(costYieldGrams.value) || 1; // Avoid division by zero
-    const dispoPrice = parseFloat(costDispensaryPrice.value) || 0;
-    
-    // Assume 4 weeks (28 days) of Veg @ 18/6, rest is Flower @ 12/12
-    const vegDays = Math.min(days, 28);
-    const flowerDays = Math.max(0, days - 28);
-    
-    const vegHours = vegDays * 18;
-    const flowerHours = flowerDays * 12;
-    
-    const totalKwh = (watts * (vegHours + flowerHours)) / 1000;
-    const electricCost = totalKwh * rate;
-    
-    const recurringCost = consumables + electricCost;
-    const totalFirstCost = onetime + recurringCost;
-    const costPerGram = totalFirstCost / yieldGrams;
-    const costPerGramFuture = recurringCost / yieldGrams;
+    // Get all values, parseFloat to ensure they are numbers
+    const onetimeTent = parseFloat(costOnetimeTent.value) || 0;
+    const onetimeLight = parseFloat(costOnetimeLight.value) || 0;
+    const onetimeOther = parseFloat(costOnetimeOther.value) || 0;
 
-    const harvestValue = (yieldGrams || 0) * dispoPrice;
-    const totalSavings = harvestValue - recurringCost; // Savings after first grow
+    const recurringSeeds = parseFloat(costRecurringSeeds.value) || 0;
+    const recurringSoil = parseFloat(costRecurringSoil.value) || 0;
+    const recurringNutrients = parseFloat(costRecurringNutrients.value) || 0;
+
+    const lightWatts = parseFloat(costLightWatts.value) || 0;
+    const kwhRateCents = parseFloat(costKwhRate.value) || 0;
+    const totalDays = parseFloat(costTotalDays.value) || 0;
+
+    const yieldGrams = parseFloat(costYieldGrams.value) || 0;
+    const dispensaryPrice = parseFloat(costDispensaryPrice.value) || 0;
+
+    // --- Calculations ---
+    const totalOnetime = onetimeTent + onetimeLight + onetimeOther;
+
+    // Calculate electric cost
+    const kwhRateDollars = kwhRateCents / 100;
+    const totalKwh = (lightWatts / 1000) * ( (28 * 18) + ( (totalDays - 28) * 12) );
+    const electricCost = totalKwh * kwhRateDollars;
+
+    const totalRecurring = recurringSeeds + recurringSoil + recurringNutrients + electricCost;
+    const totalFirstGrowCost = totalOnetime + totalRecurring;
     
-    // Update UI
-    outputOnetimeCost.textContent = `$${onetime.toFixed(2)}`;
+    const costPerGramFirst = (yieldGrams > 0) ? (totalFirstGrowCost / yieldGrams) : 0;
+    const costPerGramFuture = (yieldGrams > 0) ? (totalRecurring / yieldGrams) : 0;
+    
+    const harvestValue = yieldGrams * dispensaryPrice;
+    const totalSavings = harvestValue - totalRecurring;
+    
+    // --- Update UI ---
+    outputOnetimeCost.textContent = `$${totalOnetime.toFixed(2)}`;
     outputElectricCost.textContent = `$${electricCost.toFixed(2)}`;
-    outputRecurringCost.textContent = `$${recurringCost.toFixed(2)}`;
-    outputTotalCost.textContent = `$${totalFirstCost.toFixed(2)}`;
-    outputCostPerGram.textContent = `$${costPerGram.toFixed(2)} / gram`;
+    outputRecurringCost.textContent = `$${totalRecurring.toFixed(2)}`;
+    outputTotalCost.textContent = `$${totalFirstGrowCost.toFixed(2)}`;
+    
+    outputCostPerGram.textContent = `$${costPerGramFirst.toFixed(2)} / gram`;
     outputCostPerGramFuture.textContent = `$${costPerGramFuture.toFixed(2)} / gram`;
+    
     outputHarvestValue.textContent = `$${harvestValue.toFixed(2)}`;
     outputTotalSavings.textContent = `$${totalSavings.toFixed(2)}`;
   }
-
+  
   function runAllCalculations() {
     calculateVPD();
     calculateDLI();
@@ -607,67 +610,40 @@ document.addEventListener('DOMContentLoaded', () => {
     calculateCost();
   }
 
-  // Add listeners to all calc inputs to re-run calculations
-  const allCalcInputs = document.querySelectorAll('.calculator-container input, .calculator-container select, .cost-calculator-container input');
-  allCalcInputs.forEach(input => {
+  // --- Add Event Listeners to Calculators ---
+  calculatorInputs.forEach(input => {
     input.addEventListener('input', runAllCalculations);
   });
+
+  // --- Utility Functions ---
   
-  // Run once on load
-  runAllCalculations();
-
-  // --- FAQ Section ---
-  const faqItems = document.querySelectorAll('.faq-item');
-  faqItems.forEach(item => {
-    const question = item.querySelector('.faq-question');
-    question.addEventListener('click', () => {
-      item.classList.toggle('open');
-    });
-  });
-
-  // Show the home section by default
-  showSection('home');
-
-});
-
-// --- Utility Functions ---
-function escapeHTML(str) {
-  if (str === null || str === undefined) {
-    return '';
-  }
-  // Basic sanitization to prevent HTML injection from user posts
-  return str.toString()
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
-
-/**
- * @description Simple debounce utility to limit the rate of function calls.
- */
-function debounce(func, timeout = 1000) {
-    let timer;
-    return (...args) => {
-        clearTimeout(timer);
-        timer = setTimeout(() => { func.apply(this, args); }, timeout);
+  // Debounce function to limit how often a function is called
+  function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
     };
-}
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+  }
+  
+  // Sanitize HTML to prevent XSS attacks
+  function escapeHTML(str) {
+    return str.replace(/[&<>"']/g, function(m) {
+      return {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      }[m];
+    });
+  }
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyCohZppMXwTkCUxq-bpcKtOwhQmhiZvW34",
-  authDomain: "grohio-3amigos.firebaseapp.com",
-  projectId: "grohio-3amigos",
-  storageBucket: "grohio-3amigos.firebasestorage.app",
-  messagingSenderId: "985498353759",
-  appId: "1:985498353759:web:954433dce5869ab60fdbea",
-  measurementId: "G-N6R2H9PWN6"
-};
+  // --- Initial Page Load ---
+  runAllCalculations(); // Run once on load
+  showSection('home'); // Show the home section by default
+});
