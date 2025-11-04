@@ -3,29 +3,21 @@
 <head>
     <meta charset="UTF-8">
     
-    <!-- 
-      REMOVED the old, broken session-storage redirect script.
-      Firebase Auth now handles our user state.
-    -->
-    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GROHIO by 3 Amigos Cannabis Co.: The Ultimate Grow Guide</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./style.css">
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F99CV4S2S0"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-N6R2H9PWN6"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
     
-      gtag('config', 'G-N6R2H9PWN6');
+      gtag('config', 'G-F99CV4S2S0');
     </script>
-    <!-- End Google tag -->
-
-</head>
+    </head>
 <body class="bg-black text-gray-300">
 
     <div id="app" class="max-w-5xl mx-auto p-4 md:p-8">
@@ -40,10 +32,6 @@
             <h1 class="text-6xl font-black text-white uppercase tracking-tighter hidden">GROHIO V17.0</h1> 
             <p class="text-xl text-gray-400 mt-3 hidden">The Ultimate Ohio Grower's Platform by 3 Amigos Cannabis Co.</p> 
             
-            <!-- 
-              FIX: Changed text back to "Authenticating..."
-              This text will be replaced by script.js with your User ID.
-            -->
             <p id="user-id-display" class="text-xs text-gray-600 mt-1">Authenticating...</p>
         </header>
 
@@ -84,11 +72,9 @@
                 </ol>
                 <p>That's it! Every tool, technique, and tip in this guide is just a way to provide those five things better. You can do this!</p>
                 
-                <!-- NEW: Video Section - "Meet the Amigos" -->
                 <h3 class="text-brand-purple">Meet the Amigos</h3>
                 <div class="video-container my-8 rounded-xl overflow-hidden shadow-2xl" 
                      style="box-shadow: 0 0 25px 5px rgba(159, 80, 255, 0.5);">
-                    <!-- FIX: Using absolute URL for reliability -->
                     <video controls autoplay loop muted playsinline 
                            style="width: 100%; height: auto; max-height: 500px; object-fit: cover;"
                            src="https://3amigoscannabisco.github.io/testing.grohio/3amigosalley.mp4" 
@@ -97,9 +83,6 @@
                         Your browser does not support the video tag.
                     </video>
                 </div>
-                <!-- END NEW: Video Section -->
-
-
                 <div class="grid md:grid-cols-2 gap-8 mt-10">
                     <div class="card card-hover-glow-blue p-8 shadow-lg">
                         <h3 class="mt-0 text-brand-blue">⚖️ Start Here: Know the Law</h3>
@@ -569,13 +552,10 @@
                 <h3 class="text-brand-purple">Level 6: DIY Tech Automation (Pi & Arduino)</h3>
                 <p>This is where you combine all of the above. You use a mini-computer like a Raspberry Pi or an Arduino to control *everything*. You connect sensors for temperature, humidity, pH, and EC. You write code to turn on fans, pumps, and lights based on the sensor data. This is super fun if you're a tech nerd, but it is **100% not necessary** to grow amazing cannabis. A $10 timer and a $50 Inkbird controller will get you 99% of the way there.</p>
                 
-                <!-- NEW: Automation Video -->
                 <h3 class="text-brand-purple mt-10">Automation in Action</h3>
                 <p>See how integrated systems, from smart controllers to automated watering, can create a perfectly stable environment for your plants to thrive.</p>
                 <div class="video-container my-8 rounded-xl overflow-hidden shadow-2xl" 
-                     style="box-shadow: 0 0 25px 5px rgba(57, 255, 20, 0.5);"> <!-- Green Neon -->
-                    <!-- FIX: Using absolute URL for reliability -->
-                    <video controls autoplay loop muted playsinline 
+                     style="box-shadow: 0 0 25px 5px rgba(57, 255, 20, 0.5);"> <video controls autoplay loop muted playsinline 
                            style="width: 100%; height: auto; max-height: 500px; object-fit: cover;"
                            src="https://3amigoscannabisco.github.io/testing.grohio/labvid1.mp4"
                            onerror="this.onerror=null; this.src='https://3amigoscannabisco.github.io/testing.grohio/1000002260.mp4';"
@@ -583,9 +563,7 @@
                         Your browser does not support the video tag.
                     </video>
                 </div>
-                <!-- END NEW: Automation Video -->
-                
-            </div>
+                </div>
 
             <div id="pests" class="content-section hidden">
                  <h2 class="border-brand-red">🐛 Problem Hub: What's Wrong With My Plant?</h2>
@@ -755,13 +733,10 @@
                     <p class="text-xs text-gray-500 md:col-span-4 mt-2">Tip: Most American nutrient bottles use the 500 scale.</p>
                 </div>
                 
-                <!-- NEW: Tools Video -->
                 <h3 class="text-brand-purple mt-10">Lab & Tools Showcase</h3>
                 <p>A look at the advanced tools and lab equipment that power modern cultivation, from genetic testing to terpene analysis.</p>
                 <div class="video-container my-8 rounded-xl overflow-hidden shadow-2xl" 
-                     style="box-shadow: 0 0 25px 5px rgba(0, 191, 255, 0.5);"> <!-- Blue Neon -->
-                    <!-- FIX: Using absolute URL for reliability -->
-                    <video controls autoplay loop muted playsinline 
+                     style="box-shadow: 0 0 25px 5px rgba(0, 191, 255, 0.5);"> <video controls autoplay loop muted playsinline 
                            style="width: 100%; height: auto; max-height: 500px; object-fit: cover;"
                            src="https://3amigoscannabisco.github.io/testing.grohio/labvid2.mp4"
                            onerror="this.onerror=null; this.src='https://3amigoscannabisco.github.io/testing.grohio/1000002260.mp4';"
@@ -769,9 +744,7 @@
                         Your browser does not support the video tag.
                     </video>
                 </div>
-                <!-- END NEW: Tools Video -->
-                
-            </div>
+                </div>
 
             <div id="cost-calc" class="content-section hidden">
                 <h2 class="border-brand-purple">💲 Grow Cost & Savings Calculator</h2>
@@ -1014,13 +987,45 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- NEW: AutoPot Video -->
+
+                <h3 class="text-brand-purple mt-10">From The Amigos</h3>
+                <p>A collection of photos from our team to yours.</p>
+                <div class="gallery-grid mt-4">
+                    <div class="gallery-item">
+                        <img src="./image1.jpg" alt="From The Amigos - Photo 1">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="./image2.jpg" alt="From The Amigos - Photo 2">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="./image3.jpg" alt="From The Amigos - Photo 3">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="./image4.jpg" alt="From The Amigos - Photo 4">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="./image5.jpg" alt="From The Amigos - Photo 5">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="./image6.jpg" alt="From The Amigos - Photo 6">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="./image7.jpg" alt="From The Amigos - Photo 7">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="./image8.jpg" alt="From The Amigos - Photo 8">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="./image9.jpg" alt="From The Amigos - Photo 9">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="./image10.jpg" alt="From The Amigos - Photo 10">
+                    </div>
+                </div>
                 <h3 class="text-brand-purple mt-10">AutoPot Showcase</h3>
                 <p>A closer look at the AutoPot system, a key part of automated growing.</p>
                 <div class="video-container my-8 rounded-xl overflow-hidden shadow-2xl" 
-                     style="box-shadow: 0 0 25px 5px rgba(255, 49, 98, 0.5);"> <!-- Red/Pink Neon -->
-                    <video controls autoplay loop muted playsinline 
+                     style="box-shadow: 0 0 25px 5px rgba(255, 49, 98, 0.5);"> <video controls autoplay loop muted playsinline 
                            style="width: 100%; height: auto; max-height: 500px; object-fit: cover;"
                            src="https://3amigoscannabisco.github.io/testing.grohio/labvid3.mp4"
                            onerror="this.onerror=null; this.src='https://3amigoscannabisco.github.io/testing.grohio/1000002260.mp4';"
@@ -1028,9 +1033,7 @@
                         Your browser does not support the video tag.
                     </video>
                 </div>
-                <!-- END NEW: AutoPot Video -->
-                
-            </div>
+                </div>
 
             <div id="community" class="content-section hidden">
                 <h2 class="border-brand-purple">📓 Amigo's Notebook (Community Journal)</h2>
@@ -1079,4 +1082,3 @@
     <script type="module" src="./script.js"></script>
 </body>
 </html>
-
