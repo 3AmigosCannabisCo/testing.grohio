@@ -48,6 +48,8 @@ import {
   uploadBytes,
   getDownloadURL,
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+// ADDED: Import Firebase Analytics
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
 // 2. INITIALIZE FIREBASE
 // ---------------------------------------------------------------------
@@ -79,6 +81,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
+// ADDED: Initialize Firebase Analytics
+const analytics = getAnalytics(app);
 
 // Global variable to hold the current user's ID
 let currentUserId = null;
@@ -136,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Sign the user in anonymously on load
   signInAnonymously(auth).catch((error) => {
     console.error("Anonymous Auth Error:", error);
-    userIdDisplay.textContent = 'Authorization Failed. Refresh.';
+    userIdDisplay.textContent = 'Puting Failed. Refresh.';
   });
 
   // Listen for auth state changes
@@ -647,3 +651,5 @@ document.addEventListener('DOMContentLoaded', () => {
   runAllCalculations(); // Run once on load
   showSection('home'); // Show the home section by default
 });
+
+
