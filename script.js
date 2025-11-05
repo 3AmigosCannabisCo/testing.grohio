@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Sign the user in anonymously on load
   signInAnonymously(auth).catch((error) => {
     console.error("Anonymous Auth Error:", error);
-    userIdDisplay.textContent = 'Puting Failed. Refresh.';
+    userIdDisplay.textContent = 'Auth Failed. Refresh.';
   });
 
   // Listen for auth state changes
@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (user) {
       // User is signed in
       currentUserId = user.uid;
-      userIdDisplay.textContent = `Computers Puting ✔️`;
+      userIdDisplay.textContent = `Authenticated ✔️`;
 
       // User is authenticated, now we can load their data and community data
       loadCommunityFeed();
@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       // User is signed out
       currentUserId = null;
-      userIdDisplay.textContent = 'Does Not Compute';
+      userIdDisplay.textContent = 'Not Authenticated';
     }
   });
 
@@ -314,7 +314,24 @@ document.addEventListener('DOMContentLoaded', () => {
       
     } catch (error) {
       console.error("Image upload error: ", error);
-      setGalleryMessage('Error: Upload failed.', 'error');
+      let friendlyMessage = 'Error: Upload failed.';
+      if (error.code) {
+        switch (error.code) {
+          case 'storage/unauthorized':
+            friendlyMessage = 'Error: Permission denied. Check Storage rules.';
+            break;
+          case 'storage/canceled':
+            friendlyMessage = 'Error: Upload canceled.';
+            break;
+          case 'storage/unknown':
+            friendlyMessage = 'Error: An unknown error occurred.';
+            break;
+          case 'firestore/permission-denied':
+              friendlyMessage = 'Error: Permission denied. Check Firestore rules.';
+              break;
+        }
+      }
+      setGalleryMessage(friendlyMessage, 'error');
     }
   });
 
@@ -651,5 +668,3 @@ document.addEventListener('DOMContentLoaded', () => {
   runAllCalculations(); // Run once on load
   showSection('home'); // Show the home section by default
 });
-
-
