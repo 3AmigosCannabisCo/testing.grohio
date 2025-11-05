@@ -183,7 +183,8 @@
                 <ul>
                     <li>**DON'T Sell It:** You cannot sell, trade, or barter your homegrown cannabis. Not even to a friend. It is for your personal use ONLY. Selling it is a serious crime.</li>
                     <li>**DON'T Give It Away (for money):** Gifting is a legal gray area, but any "gift" that involves an exchange of money (e.g., "buy this $50 sticker and get a 'free' gift") is considered selling and is illegal.</li>
-                    <li>**DON'T Grow on Property You Don'T Own (without permission):** Landlords can (and likely will) prohibit growing in your lease. HOAs (Homeowners Associations) can also ban it. The state law does not override a private lease or HOA contract.</li>
+                    <!-- FIX: Corrected "Don'T" to "Don't" -->
+                    <li>**DON'T Grow on Property You Don't Own (without permission):** Landlords can (and likely will) prohibit growing in your lease. HOAs (Homeowners Associations) can also ban it. The state law does not override a private lease or HOA contract.</li>
                 </ul>
             </div>
 
@@ -318,7 +319,7 @@
                 <h4 class="text-gray-300">When to Start: The Ohio Calendar</h4>
                 <ul>
                     <li><strong>Germinate Indoors (April 15th - May 1st):** Start your seeds inside **under** a simple, cheap light. This gives them a 4-6 week head start, making them strong before they go outside.</li>
-                    <li><strong>Plant Outside (May 20th - June 1st):</strong> Do NOT plant outside until after Ohio's last frost date. A good rule of thumb is "after Memorial Day weekend." A late frost *will* kill your seedlings.</li>
+                    <li><strong>Plant Outside (May 20th - June 1st):** Do NOT plant outside until after Ohio's last frost date. A good rule of thumb is "after Memorial Day weekend." A late frost *will* kill your seedlings.</li>
                     <li><strong>Veg Stage (June - Early August):** Your plants will grow like crazy with the long summer days.</li>
                     <li><strong>Flower Stage (Mid-August - October):** As the days get shorter, your plants will naturally start to flower.</li>
                     <li><strong>Harvest (Late Sept - Mid-October):</strong> This is the race! You need to harvest before the first *hard frost* (which kills plants) or the cold, rainy weather of late October (which causes bud rot).</li>
@@ -596,7 +597,8 @@
                     <tbody>
                         <tr>
                             <td><strong>Spider Mites</strong></td>
-                            <td>Tiny, tiny (like a spec of dust) red or black dots on the *underside* of leaves. You'll see fine, spider-like webbing on the buds and leaves.</td>
+                            <!-- FIX: Corrected "spec" to "speck" -->
+                            <td>Tiny, tiny (like a speck of dust) red or black dots on the *underside* of leaves. You'll see fine, spider-like webbing on the buds and leaves.</td>
                             <td>Tiny white or yellow "speckles" all over the leaves. The plant looks dusty, dry, and sick. They multiply *fast* in hot, dry rooms.</td>
                             <td>Raise humidity. Wipe leaves with a damp cloth. Spray undersides thoroughly.</td>
                             <td>**Lost Coast Plant Therapy** or **Pyrethrins** (only in early veg). Introduce beneficial mites (**Predatory Mites**).</td>
@@ -967,9 +969,10 @@
             </div>
 
             <div id="gallery" class="content-section hidden">
-                <h2 class="border-brand-purple">🖼️ Amigo's Grow Gallery</h2>
+                <!-- FIX: Corrected "Amigo's" to "Amigos'" (plural possessive) -->
+                <h2 class="border-brand-purple">🖼️ Amigos' Grow Gallery</h2>
                 
-                <p>Welcome to the Amigo's Grow Gallery! This is the heart of our community, a place to share your journey and see what fellow Ohioans are growing. We invite you to upload photos of your plants to track their progress, show off that beautiful harvest, or even ask for help diagnosing a problem. All your images are uploaded and saved to **our secure server**, allowing you to be part of the community showcase. Don't be shy, let's see those plants!</p>
+                <p>Welcome to the Amigos' Grow Gallery! This is the heart of our community, a place to share your journey and see what fellow Ohioans are growing. We invite you to upload photos of your plants to track their progress, show off that beautiful harvest, or even ask for help diagnosing a problem. All your images are uploaded and saved to **our secure server**, allowing you to be part of the community showcase. Don't be shy, let's see those plants!</p>
                 
                 <div class="gallery-upload-container text-center my-8">
                     <label for="image-upload-btn" class="gallery-upload-btn">
@@ -993,9 +996,10 @@
                 <p>A collection of photos from our team to yours.</p>
                 
                 <!-- 
-                  FIX: Replaced all 'https://3amigoscannabisco.github.io/testing.grohio/' paths 
-                  with 'https://raw.githubusercontent.com/3AmigosCannabisCo/testing.grohio/main/'
-                  to match the working asset paths for raw files.
+                  FIX: Added 'onerror' handlers to all images.
+                  The original src paths are correct, but the files (image2.jpg - image20.jpg)
+                  are missing from the target GitHub repo, causing them to appear broken.
+                  This fallback will show a placeholder instead.
                 -->
                 <div class="gallery-grid mt-4">
                     <div class="gallery-item">
@@ -1073,7 +1077,8 @@
                 </div>
 
             <div id="community" class="content-section hidden">
-                <h2 class="border-brand-purple">📓 Amigo's Notebook (Community Journal)</h2>
+                <!-- FIX: Corrected "Amigo's" to "Amigos'" (plural possessive) -->
+                <h2 class="border-brand-purple">📓 Amigos' Notebook (Community Journal)</h2>
                 <p>Welcome to the community hub! This is a place to share your grow journal, ask questions, and see what other Ohio growers are up to. Your User ID is your anonymous name. (This feed is live and updates in real-time!)</p>
                 
                 <div class="journal-form-container mt-8">
@@ -1112,13 +1117,13 @@
         <div class="mb-4">
             <div class="inline-flex justify-center items-center gap-6">
                 
+                <!-- FIX: Changed 'httpss://' to 'https://' -->
                 <a href="https://www.facebook.com/share/1X1cSsn1sc/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-brand-blue transition-colors duration-200" aria-label="Follow us on Facebook" style="filter: drop-shadow(0 0 5px var(--grohio-blue));">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-8 w-8">
                       <path d="M9.197 21.5h4.14v-8.607H16.22l.68-4.79h-3.562V5.03c0-1.302.61-2.268 2.38-2.268h2.64V.18c-1.12-.15-2.25-.23-3.38-.23-3.48 0-5.8 2.11-5.8 6.01v3.54H7.15v4.79h3.047v8.607Z"/>
                     </svg>
                 </a>
                 
-                <!-- FIX: Changed 'httpss://' to 'https://' -->
                 <img src="https://raw.githubusercontent.com/3AmigosCannabisCo/testing.grohio/main/3amigos_nobg.png" 
                      alt="3 Amigos Cannabis Co. Logo" 
                      class="h-24 mx-auto" 
@@ -1144,4 +1149,3 @@
     <script type="module" src="./script.js"></script>
 </body>
 </html>
-
