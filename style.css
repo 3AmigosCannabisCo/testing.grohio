@@ -644,9 +644,11 @@ textarea.calc-input {
     border-radius: 0.75rem;
     overflow: hidden; /* Keeps image inside rounded corners */
     transition: all 0.2s ease-in-out;
-    opacity: 0; /* Will be faded in by JS */
+    /* opacity: 0; */ /* FIX: Was 0, but JS animation isn't being applied */
+    animation: fadeIn 0.5s ease-out forwards; /* FIX: Apply animation directly */
 }
 .gallery-item.animate-fadeIn { /* Need to make sure animation applies */
+    /* This class is no longer strictly necessary but doesn't hurt */
     animation: fadeIn 0.5s ease-out forwards;
 }
 
